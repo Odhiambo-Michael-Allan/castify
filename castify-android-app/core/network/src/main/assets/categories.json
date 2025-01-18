@@ -1,0 +1,38 @@
+[
+  {
+    "id": "0",
+    "name": "Technology"
+  },
+  {
+    "id": "4",
+    "name": "Society \u0026 Culture"
+  },
+  {
+    "id": "11",
+    "name": "News"
+  },
+  {
+    "id": "1",
+    "name": "Science"
+  },
+  {
+    "id": "17",
+    "name": "Health \u0026 Fitness"
+  },
+  {
+    "id": "5",
+    "name": "Comedy"
+  },
+  {
+    "id": "6",
+    "name": "Arts"
+  },
+  {
+    "id": "12",
+    "name": "Business"
+  },
+  {
+    "id": "21",
+    "name": "Sports"
+  }
+]

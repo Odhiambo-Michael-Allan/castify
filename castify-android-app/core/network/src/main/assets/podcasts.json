@@ -1,0 +1,123 @@
+[
+  {
+    "uri": "https://feeds.libsyn.com/244409/rss",
+    "title": "Now in Android",
+    "description": "This show gives listeners a quick run-down on things that the Android team has done recently that developers may want to check out. It covers library and platform releases, articles, videos, podcasts, samples, codelabs - whatever seems relevant and interesting for Android developers.\n\nSubscribe to Android Developers YouTube → https://goo.gle/AndroidDevs\n\nAndroid’s a big platform and there are many things being released all the time; listen to this podcast to stay up to date on what those things are.",
+    "author": "gdevs.podcast@gmail.com (gdevs.podcast@gmail.com)",
+    "copyright": "2024 © Android Developers",
+    "imageUrl": "https://static.libsyn.com/p/assets/1/4/f/9/14f959f911553fcc27a2322813b393ee/NIA000_PodcastThumbnail-20241010-vj0kfz2md4.png",
+    "categoryIds": [
+      "0",
+      "1"
+    ]
+  },
+  {
+    "uri": "https://feeds.feedburner.com/blogspot/AndroidDevelopersBackstage",
+    "title": "Android Developers Backstage",
+    "description": "Android Backstage, a podcast by and for Android developers. Hosted by developers from the Android engineering team, this show covers topics of interest to Android programmers, with in-depth discussions and interviews with engineers on the Android team at Google.",
+    "author": "gdevs.podcast@gmail.com (gdevs.podcast@gmail.com)",
+    "copyright": "2021 © Android Developers",
+    "imageUrl": "https://static.libsyn.com/p/assets/c/9/e/0/c9e07a90cf263f3b40be95ea3302a6a1/Android_Devs_Backstage_Thumb_v2.png",
+    "categoryIds": [
+      "2",
+      "3"
+    ]
+  },
+  {
+    "uri": "https://www.omnycontent.com/d/playlist/aaea4e69-af51-495e-afc9-a9760146922b/dc5b55ca-5f00-4063-b47f-ab870163d2b7/ca63aa52-ef7b-43ee-8ba5-ab8701645231/podcast.rss",
+    "title": "No Stupid Questions",
+    "description": "Research psychologist Angela Duckworth (author of \"Grit\") and tech and sports executive Mike Maughan really like to ask people questions, and they believe there’s no such thing as a stupid one. So they have a podcast where they can ask each other as many “stupid questions” as they want. New episodes each week. \"No Stupid Questions\" is a production of the Freakonomics Radio Network.\n\n\nTo get every show in our network without ads and a monthly bonus episode of Freakonomics Radio, sign up for SiriusXM Podcasts+ on Apple Podcasts at http://apple.co/SiriusXM.",
+    "copyright": "2024 Dubner Productions and Stitcher",
+    "imageUrl": "https://image.simplecastcdn.com/images/42d2a406-817e-4291-8e96-123ac167308f/d384aac1-850f-43d4-b45a-1c965fdaae21/3000x3000/nsq-3000x3000.jpg?aid\u003drss_feed",
+    "categoryIds": [
+      "4"
+    ]
+  },
+  {
+    "uri": "https://audioboom.com/channels/2399216.rss",
+    "title": "No Such Thing As A Fish",
+    "description": "Award-winning podcast from the QI offices in which the writers of the hit BBC show discuss the best things they\u0027ve found out this week.\n\nHosted by Dan Schreiber (@schreiberland) with James Harkin (@jamesharkin), Andrew Hunter Murray (@andrewhunterm), and Anna Ptaszynski (#GetAnnaOnTwitter)",
+    "copyright": "© 2014 Quite Interesting Ltd\t",
+    "imageUrl": "https://audioboom.com/i/41239450.png",
+    "categoryIds": [
+      "5",
+      "6"
+    ]
+  },
+  {
+    "uri": "https://feeds.megaphone.fm/replyall",
+    "title": "Reply All",
+    "description": "\"\u0027A podcast about the internet\u0027 that is actually an unfailingly original exploration of modern life and how to survive it.\" - The Guardian. Hosted by Alex Goldman and Emmanuel Dzotsi from Gimlet.",
+    "copyright": "All rights reserved",
+    "imageUrl": "https://megaphone.imgix.net/podcasts/05f71746-a825-11e5-aeb5-a7a572df575e/image/uploads_2F1610700524297-f3e2p6fbm79-8b4536488226b56e93a99ce9f7b555b5_2FReplyAll_ShowArt.png?ixlib\u003drails-4.3.1\u0026max-w\u003d3000\u0026max-h\u003d3000\u0026fit\u003dcrop\u0026auto\u003dformat,compress",
+    "categoryIds": [
+      "7",
+      "8"
+    ]
+  },
+  {
+    "uri": "https://feeds.thisamericanlife.org/talpodcast",
+    "title": "This American Life",
+    "copyright": "Copyright 1995-2025 This American Life",
+    "imageUrl": "https://thisamericanlife.org/sites/all/themes/thislife/img/tal-logo-3000x3000.png",
+    "categoryIds": [
+      "9",
+      "10",
+      "11"
+    ]
+  },
+  {
+    "uri": "https://feeds.npr.org/510289/podcast.xml",
+    "title": "Planet Money",
+    "copyright": "Copyright 2015-2021 NPR - For Personal Use Only",
+    "imageUrl": "https://media.npr.org/assets/img/2022/10/24/pm_new_tile_2022_sq-b4af5aab11c84cfae38eafa1db74a6da943d4e7f.jpg?s\u003d1400\u0026c\u003d66\u0026f\u003djpg",
+    "categoryIds": [
+      "12",
+      "13"
+    ]
+  },
+  {
+    "uri": "https://feeds.99percentinvisible.org/99percentinvisible",
+    "title": "99% Invisible",
+    "description": "Design is everywhere in our lives, perhaps most importantly in the places where we\u0027ve just stopped noticing. 99% Invisible is a weekly exploration of the process and power of design and architecture. From award winning producer Roman Mars. Learn more at 99percentinvisible.org.",
+    "copyright": "Copyright © 2024 Roman Mars. All rights reserved.",
+    "imageUrl": "https://image.simplecastcdn.com/images/00c81e60-45f9-4643-9fed-2184b2b6a3d3/a61daa3f-bb9b-4555-b180-18f505919c87/3000x3000/sxm-cover-99percentinvisible-3000x3000-r2021-final.jpg?aid\u003drss_feed",
+    "categoryIds": [
+      "14"
+    ]
+  },
+  {
+    "uri": "https://www.thenakedscientists.com/naked_scientists_podcast.xml",
+    "title": "The Naked Scientists Podcast",
+    "description": "The Naked Scientists flagship science show, includes the latest science news, interviews with top scientists, hands-on science experiments and answers to your science questions.",
+    "copyright": "The Naked Scientists",
+    "imageUrl": "https://www.thenakedscientists.com/sites/default/files/media/media/images/NS_Podcasts_1400.png",
+    "categoryIds": [
+      "15",
+      "16",
+      "17"
+    ]
+  },
+  {
+    "uri": "https://audioboom.com/channels/5025217.rss",
+    "title": "Bare With Us",
+    "description": "Join Leah and Matt as they dive headfirst into relationship issues that EVERYONE has, but are often too afraid to talk about. New episodes every Thursday.",
+    "imageUrl": "https://audioboom.com/i/36572460/s\u003d1400x1400/el\u003d1/rt\u003dfill.jpg",
+    "categoryIds": [
+      "18",
+      "19",
+      "20"
+    ]
+  },
+  {
+    "uri": "https://feeds.simplecast.com/7PvD7RPL",
+    "title": "Full Time with Meg Linehan: A show about women\u0027s soccer",
+    "description": "Full Time with Meg Linehan is a weekly soccer podcast expanding The Athletic’s coverage of the U.S. women’s national team, the National Women’s Soccer League, and the larger world of international soccer. Meg and co-host Tamerra Griffin tackle the culture, context, and conversations about the sport here in America and beyond, with help from fellow writers, guests and insiders from all corners of the game.",
+    "copyright": "2020 - The Athletic",
+    "imageUrl": "https://megaphone.imgix.net/podcasts/18addf62-fe8f-11ea-b7d4-5b62d8b12ee0/image/8f4a805da09c302e7f3551767c7f42e2.jpg?ixlib\u003drails-4.3.1\u0026max-w\u003d3000\u0026max-h\u003d3000\u0026fit\u003dcrop\u0026auto\u003dformat,compress",
+    "categoryIds": [
+      "21",
+      "22"
+    ]
+  }
+]
