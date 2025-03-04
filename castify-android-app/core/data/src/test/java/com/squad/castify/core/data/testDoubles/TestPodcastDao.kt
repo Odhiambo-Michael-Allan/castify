@@ -2,9 +2,9 @@ package com.squad.castify.core.data.testDoubles
 
 import com.squad.castify.core.database.dao.PodcastDao
 import com.squad.castify.core.database.model.CategoryEntity
-import com.squad.castify.core.database.model.PodcastCategoryCrossRef
+import com.squad.castify.core.database.model.PodcastCategoryCrossRefEntity
 import com.squad.castify.core.database.model.PodcastEntity
-import com.squad.castify.core.database.model.PopulatedPodcast
+import com.squad.castify.core.database.model.PopulatedPodcastEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -15,21 +15,21 @@ const val testCategoryId = "17"
 class TestPodcastDao : PodcastDao {
 
     private val entitiesStateFlow = MutableStateFlow( emptyList<PodcastEntity>() )
-    internal var podcastCategoryCrossReferences: List<PodcastCategoryCrossRef> = listOf()
+    internal var podcastCategoryCrossReferenceEntities: List<PodcastCategoryCrossRefEntity> = listOf()
 
-    override fun getPodcastsSortedByLastEpisode(): Flow<List<PopulatedPodcast>> = entitiesStateFlow
+    override fun getPodcastsSortedByLastEpisode(): Flow<List<PopulatedPodcastEntity>> = entitiesStateFlow
         .map { podcastEntities ->
             podcastEntities.map { entity ->
-                entity.asPopulatedPodcast( podcastCategoryCrossReferences )
+                entity.asPopulatedPodcast( podcastCategoryCrossReferenceEntities )
             }
         }
 
     override fun getPodcastsInCategorySortedByLastEpisode(
         categoryId: String
-    ): Flow<List<PopulatedPodcast>> = entitiesStateFlow
+    ): Flow<List<PopulatedPodcastEntity>> = entitiesStateFlow
         .map { podcastEntities ->
             podcastEntities.map { entity ->
-                entity.asPopulatedPodcast( podcastCategoryCrossReferences )
+                entity.asPopulatedPodcast( podcastCategoryCrossReferenceEntities )
             }.filter { populatedPodcast ->
                 categoryId in populatedPodcast.categories.map( CategoryEntity::id ) }
         }
@@ -41,15 +41,18 @@ class TestPodcastDao : PodcastDao {
         }
     }
 
-    override suspend fun insertOrIgnorePodcasts(podcastEntities: List<PodcastEntity>) {
-        TODO("Not yet implemented")
+    override suspend fun insertOrIgnorePodcasts( podcastEntities: List<PodcastEntity> ) {
+        // Keep old values over new values.
+        entitiesStateFlow.update { oldValues ->
+            ( oldValues + podcastEntities ).distinctBy( PodcastEntity::uri )
+        }
     }
 
     override suspend fun insertOrIgnoreCategoryCrossRefEntities(
-        podcastCategoryCrossRefEntities: List<PodcastCategoryCrossRef>
+        podcastCategoryCrossRefEntityEntities: List<PodcastCategoryCrossRefEntity>
     ) {
         // Keep old values.
-        podcastCategoryCrossReferences = ( podcastCategoryCrossReferences + podcastCategoryCrossRefEntities )
+        podcastCategoryCrossReferenceEntities = ( podcastCategoryCrossReferenceEntities + podcastCategoryCrossRefEntityEntities )
             .distinctBy { it.podcastUri to it.categoryId }
     }
 
@@ -61,10 +64,10 @@ class TestPodcastDao : PodcastDao {
 }
 
 private fun PodcastEntity.asPopulatedPodcast(
-    podcastCategoryCrossReferences: List<PodcastCategoryCrossRef>
-) = PopulatedPodcast(
+    podcastCategoryCrossReferenceEntities: List<PodcastCategoryCrossRefEntity>
+) = PopulatedPodcastEntity(
     entity = this,
-    categories = podcastCategoryCrossReferences
+    categories = podcastCategoryCrossReferenceEntities
         .filter { it.podcastUri == uri }
         .map { podcastCategoryCrossRef ->
             CategoryEntity(

@@ -8,7 +8,7 @@ import com.squad.castify.core.database.dao.EpisodeDao
 import com.squad.castify.core.database.dao.PodcastDao
 import com.squad.castify.core.database.model.CategoryEntity
 import com.squad.castify.core.database.model.EpisodeEntity
-import com.squad.castify.core.database.model.PodcastCategoryCrossRef
+import com.squad.castify.core.database.model.PodcastCategoryCrossRefEntity
 import com.squad.castify.core.database.model.PodcastEntity
 import com.squad.castify.core.database.util.DurationConverter
 import com.squad.castify.core.database.util.InstantConverter
@@ -18,7 +18,7 @@ import com.squad.castify.core.database.util.InstantConverter
         CategoryEntity::class,
         PodcastEntity::class,
         EpisodeEntity::class,
-        PodcastCategoryCrossRef::class
+        PodcastCategoryCrossRefEntity::class
     ],
     version = 1,
     exportSchema = true,

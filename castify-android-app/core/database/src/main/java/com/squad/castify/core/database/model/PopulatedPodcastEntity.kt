@@ -8,9 +8,9 @@ import com.squad.castify.core.model.Podcast
 import kotlinx.datetime.Instant
 
 /**
- * External data layer representation of a fully populated Castify podcast.
+ * External data layer representation of a fully populated Castify Podcast.
  */
-data class PopulatedPodcast(
+data class PopulatedPodcastEntity(
     @Embedded
     val entity: PodcastEntity,
 
@@ -18,7 +18,7 @@ data class PopulatedPodcast(
         parentColumn = "uri",
         entityColumn = "id",
         associateBy = Junction(
-            value = PodcastCategoryCrossRef::class,
+            value = PodcastCategoryCrossRefEntity::class,
             parentColumn = "podcast_uri",
             entityColumn = "category_id"
         )
@@ -29,7 +29,7 @@ data class PopulatedPodcast(
     var lastEpisodeDate: Instant? = null
 )
 
-fun PopulatedPodcast.asExternalModel() = Podcast(
+fun PopulatedPodcastEntity.asExternalModel() = Podcast(
     uri = entity.uri,
     title = entity.title,
     description = entity.description ?: "",

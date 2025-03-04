@@ -8,7 +8,7 @@ import com.squad.castify.core.database.dao.EpisodeDao
 import com.squad.castify.core.database.dao.PodcastDao
 import com.squad.castify.core.database.model.CategoryEntity
 import com.squad.castify.core.database.model.EpisodeEntity
-import com.squad.castify.core.database.model.PodcastCategoryCrossRef
+import com.squad.castify.core.database.model.PodcastCategoryCrossRefEntity
 import com.squad.castify.core.database.model.PodcastEntity
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
@@ -17,7 +17,6 @@ import kotlinx.datetime.Instant
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import kotlin.time.Duration
 
 class PodcastsDaoTest {
 
@@ -27,7 +26,7 @@ class PodcastsDaoTest {
     private lateinit var db: CastifyDatabase
 
     @Before
-    fun createDb() {
+    fun setup() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         db = Room.inMemoryDatabaseBuilder(
             context,
@@ -106,10 +105,10 @@ class PodcastsDaoTest {
         )
 
         val categoryPodcastCrossRefEntities = listOf(
-            PodcastCategoryCrossRef( podcastUri = "podcast-uri-1", categoryId = "1" ),
-            PodcastCategoryCrossRef( podcastUri = "podcast-uri-2", categoryId = "1" ),
-            PodcastCategoryCrossRef( podcastUri = "podcast-uri-3", categoryId = "1" ),
-            PodcastCategoryCrossRef( podcastUri = "podcast-uri-4", categoryId = "2" )
+            PodcastCategoryCrossRefEntity( podcastUri = "podcast-uri-1", categoryId = "1" ),
+            PodcastCategoryCrossRefEntity( podcastUri = "podcast-uri-2", categoryId = "1" ),
+            PodcastCategoryCrossRefEntity( podcastUri = "podcast-uri-3", categoryId = "1" ),
+            PodcastCategoryCrossRefEntity( podcastUri = "podcast-uri-4", categoryId = "2" )
         )
 
         categoryDao.upsertCategories( categoryEntities )
@@ -178,14 +177,14 @@ class PodcastsDaoTest {
     }
 }
 
-private fun testPodcastEntity(
+internal fun testPodcastEntity(
     uri: String,
 ) = PodcastEntity(
     uri = uri,
     title = "",
 )
 
-private fun testEpisodeEntity(
+internal fun testEpisodeEntity(
     uri: String,
     podcastUri: String,
     published: Long

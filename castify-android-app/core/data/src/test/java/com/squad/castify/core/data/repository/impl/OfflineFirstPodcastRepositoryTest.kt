@@ -10,11 +10,10 @@ import com.squad.castify.core.data.testDoubles.TestCategoryDao
 import com.squad.castify.core.data.testDoubles.TestPodcastDao
 import com.squad.castify.core.data.testDoubles.testCategoryId
 import com.squad.castify.core.database.dao.CategoryDao
-import com.squad.castify.core.database.dao.PodcastDao
 import com.squad.castify.core.database.model.CategoryEntity
-import com.squad.castify.core.database.model.PodcastCategoryCrossRef
+import com.squad.castify.core.database.model.PodcastCategoryCrossRefEntity
 import com.squad.castify.core.database.model.PodcastEntity
-import com.squad.castify.core.database.model.PopulatedPodcast
+import com.squad.castify.core.database.model.PopulatedPodcastEntity
 import com.squad.castify.core.database.model.asExternalModel
 import com.squad.castify.core.datastore.CastifyPreferencesDataSource
 import com.squad.castify.core.datastore_test.testUserPreferencesDataStore
@@ -71,7 +70,7 @@ class OfflineFirstPodcastRepositoryTest {
             assertEquals(
                 podcastDao.getPodcastsSortedByLastEpisode()
                     .first()
-                    .map( PopulatedPodcast::asExternalModel ),
+                    .map( PopulatedPodcastEntity::asExternalModel ),
                 subject.getPodcasts().first()
             )
         }
@@ -82,7 +81,7 @@ class OfflineFirstPodcastRepositoryTest {
             assertEquals(
                 podcastDao.getPodcastsInCategorySortedByLastEpisode( testCategoryId )
                     .first()
-                    .map( PopulatedPodcast::asExternalModel ),
+                    .map( PopulatedPodcastEntity::asExternalModel ),
                 subject.getPodcastsInCategory( testCategoryId ).first()
             )
         }
@@ -98,7 +97,7 @@ class OfflineFirstPodcastRepositoryTest {
 
             val podcastsFromDb = podcastDao.getPodcastsSortedByLastEpisode()
                 .first()
-                .map( PopulatedPodcast::asExternalModel )
+                .map( PopulatedPodcastEntity::asExternalModel )
 
             assertEquals(
                 podcastsFromNetwork.map( Podcast::uri ).sorted(),
@@ -138,7 +137,7 @@ class OfflineFirstPodcastRepositoryTest {
 
             val podcastsFromDb = podcastDao.getPodcastsSortedByLastEpisode()
                 .first()
-                .map( PopulatedPodcast::asExternalModel )
+                .map( PopulatedPodcastEntity::asExternalModel )
 
             // Assert that items marked deleted on the network have been deleted locally.
             assertEquals(
@@ -177,7 +176,7 @@ class OfflineFirstPodcastRepositoryTest {
 
             val podcastsFromDb = podcastDao.getPodcastsSortedByLastEpisode()
                 .first()
-                .map( PopulatedPodcast::asExternalModel )
+                .map( PopulatedPodcastEntity::asExternalModel )
 
             assertEquals(
                 podcastsFromNetwork.map( Podcast::uri ).sorted(),
@@ -218,9 +217,24 @@ class OfflineFirstPodcastRepositoryTest {
                     .map( NetworkPodcast::categoryCrossReferences )
                     .flatten()
                     .distinct()
-                    .sortedBy( PodcastCategoryCrossRef::toString ),
-                podcastDao.podcastCategoryCrossReferences
-                    .sortedBy( PodcastCategoryCrossRef::toString )
+                    .sortedBy( PodcastCategoryCrossRefEntity::toString ),
+                podcastDao.podcastCategoryCrossReferenceEntities
+                    .sortedBy( PodcastCategoryCrossRefEntity::toString )
             )
+        }
+
+    @Test
+    fun offlineFirstPodcastsRepository_podcasts_in_category_are_fetched_correctly() =
+        testScope.runTest {
+            subject.syncWith( synchronizer )
+
+            val podcasts = podcastDao.getPodcastsInCategorySortedByLastEpisode( testCategoryId )
+                .first()
+
+            assertTrue( podcasts.isNotEmpty() )
+
+            podcasts.forEach { podcast ->
+                assertTrue( podcast.categories.map( CategoryEntity::id ).contains( testCategoryId ) )
+            }
         }
 }

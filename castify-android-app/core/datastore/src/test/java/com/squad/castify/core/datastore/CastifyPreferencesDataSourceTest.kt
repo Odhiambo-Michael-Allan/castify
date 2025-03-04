@@ -45,11 +45,11 @@ class CastifyPreferencesDataSourceTest {
     fun shouldHideOnboarding_userUnfollowsLastPodcast_shouldHideOnboardingIsFalse() =
         testScope.runTest {
             // Given: User completes onboarding by following a single podcast.
-            subject.setPodcastIdFollowed( "1", true )
+            subject.setPodcastUriFollowed( "1", true )
             subject.setShouldHideOnboarding( true )
 
             // When: they unfollow that Podcast.
-            subject.setPodcastIdFollowed( "1", false )
+            subject.setPodcastUriFollowed( "1", false )
 
             // Then: onboarding should be shown again.
             assertFalse( subject.userData.first().shouldHideOnboarding )
@@ -96,4 +96,44 @@ class CastifyPreferencesDataSourceTest {
             subject.getChangeListVersions()
         )
     }
+
+    @Test
+    fun listenedToEpisodeUrisAreSetCorrectly() = testScope.runTest {
+        assertTrue( subject.userData.first().listenedEpisodes.isEmpty() )
+
+        val listenedEpisodeUris = listOf(
+            "episode-uri-1",
+            "episode-uri-2",
+            "episode-uri-3"
+        )
+
+        subject.addListenedEpisodeUris( listenedEpisodeUris )
+
+        assertEquals(
+            listenedEpisodeUris.toSet(),
+            subject.userData.first().listenedEpisodes
+        )
+    }
+
+    @Test
+    fun episodeUris_are_correctly_removed_from_listened_to_episodes_uri_list() =
+        testScope.runTest {
+            val listenedEpisodeUris = listOf(
+                "episode-uri-1",
+                "episode-uri-2",
+                "episode-uri-3"
+            )
+
+            subject.addListenedEpisodeUris( listenedEpisodeUris )
+            subject.removeEpisodeUrisFromListenedToEpisodes(
+                listOf(
+                    "episode-uri-1",
+                    "episode-uri-3"
+                )
+            )
+            assertEquals(
+                setOf( "episode-uri-2" ),
+                subject.userData.first().listenedEpisodes
+            )
+        }
 }

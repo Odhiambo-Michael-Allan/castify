@@ -11,8 +11,8 @@ import com.squad.castify.core.network.model.NetworkPodcast
 interface CastifyNetworkDataSource {
     suspend fun getCategories( ids: List<String>? = null ): List<NetworkCategory>
     suspend fun getPodcasts( ids: List<String>? = null ): List<NetworkPodcast>
-    suspend fun getEpisodes( ids: List<String>? = null ): List<NetworkEpisode>
+    suspend fun getEpisodes(uris: List<String>? = null ): List<NetworkEpisode>
     suspend fun getCategoryChangeList( after: Int? = null ): List<NetworkChangeList>
     suspend fun getPodcastChangeList( after: Int? = null ): List<NetworkChangeList>
-    suspend fun getEpisodeChangeList( after: Int? = null ): List<NetworkChangeList>
+    suspend fun getEpisodeChangeListAfter(after: Int? = null ): List<NetworkChangeList>
 }

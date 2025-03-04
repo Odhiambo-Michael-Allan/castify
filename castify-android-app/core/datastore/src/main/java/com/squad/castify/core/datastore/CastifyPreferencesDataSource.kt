@@ -50,7 +50,7 @@ class CastifyPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setPodcastIdFollowed( podcastId: String, followed: Boolean ) {
+    suspend fun setPodcastUriFollowed(podcastId: String, followed: Boolean ) {
         try {
             userPreferencesDataStore.updateData {
                 it.copy {
@@ -100,6 +100,26 @@ class CastifyPreferencesDataSource @Inject constructor(
             }
         } catch ( ioException: IOException ) {
             Log.e( "Castify-Preferences", "Failed to update user preferences", ioException )
+        }
+    }
+
+    suspend fun addListenedEpisodeUris( listenedEpisodeUris: List<String> ) {
+        userPreferencesDataStore.updateData {
+            it.copy {
+                listenedEpisodeUris.forEach { uri ->
+                    listenedEpisodeIds.put( uri, true )
+                }
+            }
+        }
+    }
+
+    suspend fun removeEpisodeUrisFromListenedToEpisodes( episodeUris: List<String> ) {
+        userPreferencesDataStore.updateData {
+            it.copy {
+                episodeUris.forEach { uri ->
+                    listenedEpisodeIds.remove( uri )
+                }
+            }
         }
     }
 }

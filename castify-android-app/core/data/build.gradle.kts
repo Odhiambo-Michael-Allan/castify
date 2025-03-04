@@ -48,13 +48,15 @@ dependencies {
     implementation( projects.core.network )
     implementation( projects.core.database )
     implementation( projects.core.datastore )
-    implementation( libs.kotlinx.datetime )
+    implementation( projects.core.notifications )
+
 
     implementation( libs.hilt.core )
     implementation( libs.hilt.android )
     ksp( libs.hilt.compiler )
 
     implementation( libs.androidx.core.ktx )
+    implementation( libs.kotlinx.datetime )
 
     coreLibraryDesugaring( libs.android.desugarJdkLibs )
 
@@ -62,4 +64,5 @@ dependencies {
     testImplementation( libs.kotlinx.coroutines.test )
     testImplementation( libs.kotlinx.serialization.json )
     testImplementation( projects.core.datastoreTest )
+    testImplementation( projects.core.testing )
 }

@@ -9,7 +9,7 @@ import com.squad.castify.core.data.repository.PodcastRepository
 import com.squad.castify.core.database.dao.CategoryDao
 import com.squad.castify.core.database.dao.PodcastDao
 import com.squad.castify.core.database.model.CategoryEntity
-import com.squad.castify.core.database.model.PopulatedPodcast
+import com.squad.castify.core.database.model.PopulatedPodcastEntity
 import com.squad.castify.core.database.model.asExternalModel
 import com.squad.castify.core.model.Podcast
 import com.squad.castify.core.network.CastifyNetworkDataSource
@@ -26,11 +26,11 @@ class OfflineFirstPodcastRepository @Inject constructor(
 
     override fun getPodcasts(): Flow<List<Podcast>> =
         podcastDao.getPodcastsSortedByLastEpisode()
-            .map { it.map( PopulatedPodcast::asExternalModel ) }
+            .map { it.map( PopulatedPodcastEntity::asExternalModel ) }
 
     override fun getPodcastsInCategory( categoryId: String ): Flow<List<Podcast>> =
         podcastDao.getPodcastsInCategorySortedByLastEpisode( categoryId = categoryId )
-            .map { it.map( PopulatedPodcast::asExternalModel ) }
+            .map { it.map( PopulatedPodcastEntity::asExternalModel ) }
 
     override fun getPodcast(id: String): Flow<Podcast> {
         TODO("Not yet implemented")
@@ -75,7 +75,7 @@ class OfflineFirstPodcastRepository @Inject constructor(
                         )
 
                         podcastDao.insertOrIgnoreCategoryCrossRefEntities(
-                            podcastCategoryCrossRefEntities = networkPodcasts
+                            podcastCategoryCrossRefEntityEntities = networkPodcasts
                                 .map( NetworkPodcast::categoryCrossReferences )
                                 .flatten()
                                 .distinct()

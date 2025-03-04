@@ -1,7 +1,7 @@
 package com.squad.castify.core.data.model
 
 import com.squad.castify.core.database.model.CategoryEntity
-import com.squad.castify.core.database.model.PodcastCategoryCrossRef
+import com.squad.castify.core.database.model.PodcastCategoryCrossRefEntity
 import com.squad.castify.core.database.model.PodcastEntity
 import com.squad.castify.core.network.model.NetworkPodcast
 
@@ -26,9 +26,9 @@ fun NetworkPodcast.categoryEntityShells() =
         )
     }
 
-fun NetworkPodcast.categoryCrossReferences(): List<PodcastCategoryCrossRef> =
+fun NetworkPodcast.categoryCrossReferences(): List<PodcastCategoryCrossRefEntity> =
     categoryIds.map {
-        PodcastCategoryCrossRef(
+        PodcastCategoryCrossRefEntity(
             podcastUri = uri,
             categoryId = it
         )

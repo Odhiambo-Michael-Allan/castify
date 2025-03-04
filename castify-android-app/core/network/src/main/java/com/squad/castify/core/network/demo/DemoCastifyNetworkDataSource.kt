@@ -34,7 +34,7 @@ class DemoCastifyNetworkDataSource @Inject constructor(
             assets.open( PODCASTS_ASSET ).use( networkJson::decodeFromStream )
         }
 
-    override suspend fun getEpisodes( ids: List<String>? ): List<NetworkEpisode> =
+    override suspend fun getEpisodes(uris: List<String>? ): List<NetworkEpisode> =
         withContext( ioDispatcher ) {
             assets.open( EPISODES_ASSET ).use( networkJson::decodeFromStream )
         }
@@ -47,7 +47,7 @@ class DemoCastifyNetworkDataSource @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getEpisodeChangeList(after: Int?): List<NetworkChangeList> {
+    override suspend fun getEpisodeChangeListAfter(after: Int?): List<NetworkChangeList> {
         TODO("Not yet implemented")
     }
 

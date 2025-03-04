@@ -6,9 +6,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import com.squad.castify.core.database.model.PodcastCategoryCrossRef
+import com.squad.castify.core.database.model.PodcastCategoryCrossRefEntity
 import com.squad.castify.core.database.model.PodcastEntity
-import com.squad.castify.core.database.model.PopulatedPodcast
+import com.squad.castify.core.database.model.PopulatedPodcastEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -27,7 +27,7 @@ interface PodcastDao {
             ORDER BY last_episode_date DESC
         """
     )
-    fun getPodcastsSortedByLastEpisode(): Flow<List<PopulatedPodcast>>
+    fun getPodcastsSortedByLastEpisode(): Flow<List<PopulatedPodcastEntity>>
 
     @Transaction
     @Query(
@@ -46,7 +46,7 @@ interface PodcastDao {
     )
     fun getPodcastsInCategorySortedByLastEpisode(
         categoryId: String
-    ): Flow<List<PopulatedPodcast>>
+    ): Flow<List<PopulatedPodcastEntity>>
 
     @Upsert
     suspend fun upsertPodcasts( podcastEntities: List<PodcastEntity> )
@@ -59,7 +59,7 @@ interface PodcastDao {
 
     @Insert( onConflict = OnConflictStrategy.IGNORE )
     suspend fun insertOrIgnoreCategoryCrossRefEntities(
-        podcastCategoryCrossRefEntities: List<PodcastCategoryCrossRef>
+        podcastCategoryCrossRefEntityEntities: List<PodcastCategoryCrossRefEntity>
     )
 
     @Query(

@@ -32,7 +32,7 @@ import androidx.room.Index
         Index( value = [ "category_id" ] )
     ]
 )
-data class PodcastCategoryCrossRef(
+data class PodcastCategoryCrossRefEntity(
     @ColumnInfo( name = "podcast_uri" )
     val podcastUri: String,
     @ColumnInfo( name = "category_id" )

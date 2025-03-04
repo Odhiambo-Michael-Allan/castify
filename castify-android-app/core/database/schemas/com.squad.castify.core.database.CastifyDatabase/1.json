@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "65487ce0217357b97f5ec6f4f2af1cde",
+    "identityHash": "0686bdcbabd77d44b78e40038b5b1df6",
     "entities": [
       {
         "tableName": "categories",
@@ -82,7 +82,7 @@
       },
       {
         "tableName": "episodes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `podcast_uri` TEXT NOT NULL, `title` TEXT NOT NULL, `subtitle` TEXT, `summary` TEXT, `author` TEXT, `published` INTEGER NOT NULL, `duration` INTEGER, PRIMARY KEY(`uri`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `podcast_uri` TEXT NOT NULL, `title` TEXT NOT NULL, `subtitle` TEXT, `summary` TEXT, `author` TEXT, `published` INTEGER NOT NULL, `duration` INTEGER, PRIMARY KEY(`uri`), FOREIGN KEY(`podcast_uri`) REFERENCES `podcasts`(`uri`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uri",
@@ -139,8 +139,39 @@
             "uri"
           ]
         },
-        "indices": [],
-        "foreignKeys": []
+        "indices": [
+          {
+            "name": "index_episodes_uri",
+            "unique": true,
+            "columnNames": [
+              "uri"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_episodes_uri` ON `${TABLE_NAME}` (`uri`)"
+          },
+          {
+            "name": "index_episodes_podcast_uri",
+            "unique": false,
+            "columnNames": [
+              "podcast_uri"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_episodes_podcast_uri` ON `${TABLE_NAME}` (`podcast_uri`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "podcasts",
+            "onDelete": "CASCADE",
+            "onUpdate": "CASCADE",
+            "columns": [
+              "podcast_uri"
+            ],
+            "referencedColumns": [
+              "uri"
+            ]
+          }
+        ]
       },
       {
         "tableName": "podcast_category_cross_ref",
@@ -215,7 +246,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '65487ce0217357b97f5ec6f4f2af1cde')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0686bdcbabd77d44b78e40038b5b1df6')"
     ]
   }
 }

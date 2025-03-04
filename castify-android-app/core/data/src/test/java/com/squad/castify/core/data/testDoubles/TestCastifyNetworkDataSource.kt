@@ -44,9 +44,9 @@ class TestCastifyNetworkDataSource : CastifyNetworkDataSource {
             idGetter = NetworkPodcast::uri
         )
 
-    override suspend fun getEpisodes( ids: List<String>? ): List<NetworkEpisode> =
+    override suspend fun getEpisodes(uris: List<String>? ): List<NetworkEpisode> =
         allEpisodes.matchIds(
-            ids = ids,
+            ids = uris,
             idGetter = NetworkEpisode::uri
         )
 
@@ -56,7 +56,7 @@ class TestCastifyNetworkDataSource : CastifyNetworkDataSource {
     override suspend fun getPodcastChangeList( after: Int? ): List<NetworkChangeList> =
         modelChangeLists.getValue( Model.Podcasts ).changeListAfter( after )
 
-    override suspend fun getEpisodeChangeList( after: Int? ): List<NetworkChangeList> =
+    override suspend fun getEpisodeChangeListAfter(after: Int? ): List<NetworkChangeList> =
         modelChangeLists.getValue( Model.Episodes ).changeListAfter( after )
 
     fun latestChangeListVersionFor( model: Model ) =
