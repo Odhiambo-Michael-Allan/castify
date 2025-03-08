@@ -44,6 +44,8 @@ android {
 
 dependencies {
 
+    api( projects.core.common )
+
     implementation( projects.core.model )
     implementation( projects.core.network )
     implementation( projects.core.database )
@@ -57,6 +59,7 @@ dependencies {
 
     implementation( libs.androidx.core.ktx )
     implementation( libs.kotlinx.datetime )
+    implementation( libs.androidx.tracing.ktx )
 
     coreLibraryDesugaring( libs.android.desugarJdkLibs )
 

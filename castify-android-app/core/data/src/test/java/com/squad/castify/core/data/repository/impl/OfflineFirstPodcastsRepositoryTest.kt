@@ -33,11 +33,11 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 @OptIn( ExperimentalCoroutinesApi::class )
-class OfflineFirstPodcastRepositoryTest {
+class OfflineFirstPodcastsRepositoryTest {
 
     private val testScope = TestScope( UnconfinedTestDispatcher() )
 
-    private lateinit var subject: OfflineFirstPodcastRepository
+    private lateinit var subject: OfflineFirstPodcastsRepository
     private lateinit var podcastDao: TestPodcastDao
     private lateinit var categoryDao: CategoryDao
     private lateinit var networkDataSource: TestCastifyNetworkDataSource
@@ -57,7 +57,7 @@ class OfflineFirstPodcastRepositoryTest {
         )
         synchronizer = TestSynchronizer( castifyPreferencesDataSource )
 
-        subject = OfflineFirstPodcastRepository(
+        subject = OfflineFirstPodcastsRepository(
             podcastDao = podcastDao,
             categoryDao = categoryDao,
             networkDataSource = networkDataSource,

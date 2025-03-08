@@ -27,28 +27,6 @@ interface EpisodeDao {
     )
     fun fetchEpisodeWithUri( uri: String ): Flow<PopulatedEpisodeEntity>
 
-//    @Transaction
-//    @Query(
-//        value = """
-//            SELECT * FROM episodes WHERE podcast_uri = :podcastUri
-//            ORDER BY datetime( published ) DESC
-//        """
-//    )
-//    fun fetchEpisodesForPodcastWithUriSortedByPublishDate(podcastUri: String ):
-//            Flow<List<PopulatedEpisodeEntity>>
-
-//    @Transaction
-//    @Query(
-//        value = """
-//            SELECT episodes.* FROM episodes
-//            INNER JOIN podcasts ON episodes.podcast_uri = podcasts.uri
-//            WHERE episodes.podcast_uri IN ( :podcastUris )
-//            ORDER BY datetime( published ) DESC
-//        """
-//    )
-//    fun fetchEpisodesSortedByPublishDateForPodcastsWithUris( podcastUris: List<String> ):
-//            Flow<List<PopulatedEpisodeEntity>>
-
     @Query(
         value = """
             DELETE FROM episodes

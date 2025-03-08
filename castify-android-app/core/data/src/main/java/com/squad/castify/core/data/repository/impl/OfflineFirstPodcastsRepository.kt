@@ -5,7 +5,7 @@ import com.squad.castify.core.data.changeListSync
 import com.squad.castify.core.data.model.asEntity
 import com.squad.castify.core.data.model.categoryCrossReferences
 import com.squad.castify.core.data.model.categoryEntityShells
-import com.squad.castify.core.data.repository.PodcastRepository
+import com.squad.castify.core.data.repository.PodcastsRepository
 import com.squad.castify.core.database.dao.CategoryDao
 import com.squad.castify.core.database.dao.PodcastDao
 import com.squad.castify.core.database.model.CategoryEntity
@@ -18,11 +18,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class OfflineFirstPodcastRepository @Inject constructor(
+class OfflineFirstPodcastsRepository @Inject constructor(
     private val podcastDao: PodcastDao,
     private val categoryDao: CategoryDao,
     private val networkDataSource: CastifyNetworkDataSource,
-) : PodcastRepository {
+) : PodcastsRepository {
 
     override fun getPodcasts(): Flow<List<Podcast>> =
         podcastDao.getPodcastsSortedByLastEpisode()
@@ -32,7 +32,7 @@ class OfflineFirstPodcastRepository @Inject constructor(
         podcastDao.getPodcastsInCategorySortedByLastEpisode( categoryId = categoryId )
             .map { it.map( PopulatedPodcastEntity::asExternalModel ) }
 
-    override fun getPodcast(id: String): Flow<Podcast> {
+    override fun getPodcastWithUri(uri: String): Flow<Podcast> {
         TODO("Not yet implemented")
     }
 

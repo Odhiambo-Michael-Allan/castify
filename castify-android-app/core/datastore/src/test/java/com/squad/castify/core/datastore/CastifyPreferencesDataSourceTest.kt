@@ -1,8 +1,11 @@
 package com.squad.castify.core.datastore
 
 import com.squad.castify.core.datastore_test.testUserPreferencesDataStore
+import com.squad.castify.core.model.DarkThemeConfig
+import com.squad.castify.core.model.ThemeBrand
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -136,4 +139,34 @@ class CastifyPreferencesDataSourceTest {
                 subject.userData.first().listenedEpisodes
             )
         }
+
+    @Test
+    fun castifyPreferencesDataSource_theme_brand_is_set_correctly() = testScope.runTest {
+        assertEquals(
+            ThemeBrand.DEFAULT,
+            subject.userData.first().themeBrand
+        )
+        ThemeBrand.entries.forEach {
+            subject.setThemeBrand( it )
+            assertEquals( it, subject.userData.first().themeBrand )
+        }
+    }
+
+    @Test
+    fun castifyPreferencesDataSource_dark_theme_config_is_set_correctly() = testScope.runTest {
+        assertEquals(
+            DarkThemeConfig.FOLLOW_SYSTEM,
+            subject.userData
+                .map { it.darkThemeConfig }
+                .first()
+        )
+
+        DarkThemeConfig.entries.forEach { darkThemeConfig ->
+            subject.setDarkThemeConfig( darkThemeConfig )
+            assertEquals(
+                darkThemeConfig,
+                subject.userData.map { it.darkThemeConfig }.first()
+            )
+        }
+    }
 }

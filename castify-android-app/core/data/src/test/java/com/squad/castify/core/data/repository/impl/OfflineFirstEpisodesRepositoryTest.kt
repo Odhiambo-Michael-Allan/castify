@@ -3,6 +3,7 @@ package com.squad.castify.core.data.repository.impl
 import com.squad.castify.core.data.Synchronizer
 import com.squad.castify.core.data.model.asEntity
 import com.squad.castify.core.data.model.podcastEntityShell
+import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.testDoubles.Model
 import com.squad.castify.core.data.testDoubles.TestCastifyNetworkDataSource
 import com.squad.castify.core.data.testDoubles.TestEpisodeDao
@@ -31,10 +32,10 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 @OptIn( ExperimentalCoroutinesApi::class )
-class OfflineFirstEpisodeRepositoryTest {
+class OfflineFirstEpisodesRepositoryTest {
 
     private val testScope = TestScope( UnconfinedTestDispatcher() )
-    private lateinit var subject: OfflineFirstEpisodeRepository
+    private lateinit var subject: OfflineFirstEpisodesRepository
     private lateinit var castifyPreferencesDataSource: CastifyPreferencesDataSource
     private lateinit var episodeDao: TestEpisodeDao
     private lateinit var podcastDao: PodcastDao
@@ -58,7 +59,7 @@ class OfflineFirstEpisodeRepositoryTest {
         notifier = TestNotifier()
         synchronizer = TestSynchronizer( castifyPreferencesDataSource )
 
-        subject = OfflineFirstEpisodeRepository(
+        subject = OfflineFirstEpisodesRepository(
             episodeDao = episodeDao,
             podcastDao = podcastDao,
             networkDataSource = networkDataSource,
@@ -74,10 +75,12 @@ class OfflineFirstEpisodeRepositoryTest {
                 episodeDao.fetchEpisodesSortedByPublishDate(
                     useFilterPodcastUris = true,
                     filterPodcastUris = setOf( "0" )
-                )
-                    .first()
-                    .map( PopulatedEpisodeEntity::asExternalModel ),
-                subject.fetchEpisodesForPodcastWithUriSortedByPublishDate( "0" ).first()
+                ).first().map( PopulatedEpisodeEntity::asExternalModel ),
+                subject.fetchEpisodesMatchingQuerySortedByPublishDate(
+                    query = EpisodeQuery(
+                        filterPodcastUris = setOf( "0" )
+                    )
+                ).first()
             )
         }
 

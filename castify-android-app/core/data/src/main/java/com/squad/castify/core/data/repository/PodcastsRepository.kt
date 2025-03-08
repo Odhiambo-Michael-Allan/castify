@@ -4,8 +4,8 @@ import com.squad.castify.core.data.Syncable
 import com.squad.castify.core.model.Podcast
 import kotlinx.coroutines.flow.Flow
 
-interface PodcastRepository : Syncable {
+interface PodcastsRepository : Syncable {
     fun getPodcasts(): Flow<List<Podcast>>
-    fun getPodcast( id: String ): Flow<Podcast>
+    fun getPodcastWithUri( uri: String ): Flow<Podcast>
     fun getPodcastsInCategory( categoryId: String ): Flow<List<Podcast>>
 }

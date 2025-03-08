@@ -122,6 +122,30 @@ class CastifyPreferencesDataSource @Inject constructor(
             }
         }
     }
+
+    suspend fun setThemeBrand( themeBrand: ThemeBrand ) {
+        userPreferencesDataStore.updateData {
+            it.copy {
+                this.themeBrand = when ( themeBrand ) {
+                    ThemeBrand.DEFAULT -> ThemeBrandProto.THEME_BRAND_DEFAULT
+                    ThemeBrand.ANDROID -> ThemeBrandProto.THEME_BRAND_ANDROID
+                }
+            }
+        }
+    }
+
+    suspend fun setDarkThemeConfig( darkThemeConfig: DarkThemeConfig ) {
+        userPreferencesDataStore.updateData {
+            it.copy {
+                this.darkThemeConfig = when ( darkThemeConfig ) {
+                    DarkThemeConfig.FOLLOW_SYSTEM ->
+                        DarkThemeConfigProto.DARK_THEME_CONFIG_FOLLOW_SYSTEM
+                    DarkThemeConfig.LIGHT -> DarkThemeConfigProto.DARK_THEME_CONFIG_LIGHT
+                    DarkThemeConfig.DARK -> DarkThemeConfigProto.DARK_THEME_CONFIG_DARK
+                }
+            }
+        }
+    }
 }
 
 private fun UserPreferencesKt.Dsl.updateShouldHideOnboardingIfNecessary() {

@@ -4,10 +4,10 @@ import com.squad.castify.core.data.Synchronizer
 import com.squad.castify.core.data.changeListSync
 import com.squad.castify.core.data.model.asEntity
 import com.squad.castify.core.data.model.podcastEntityShell
-import com.squad.castify.core.data.repository.EpisodeRepository
+import com.squad.castify.core.data.repository.EpisodeQuery
+import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.database.dao.EpisodeDao
 import com.squad.castify.core.database.dao.PodcastDao
-import com.squad.castify.core.database.model.PodcastEntity
 import com.squad.castify.core.database.model.PopulatedEpisodeEntity
 import com.squad.castify.core.database.model.asExternalModel
 import com.squad.castify.core.datastore.CastifyPreferencesDataSource
@@ -20,30 +20,30 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-internal class OfflineFirstEpisodeRepository @Inject constructor(
+internal class OfflineFirstEpisodesRepository @Inject constructor(
     private val episodeDao: EpisodeDao,
     private val podcastDao: PodcastDao,
     private val networkDataSource: CastifyNetworkDataSource,
     private val preferencesDataSource: CastifyPreferencesDataSource,
     private val notifier: Notifier
-) : EpisodeRepository {
+) : EpisodesRepository {
 
     override fun fetchEpisodeWithUri( uri: String ): Flow<Episode> = episodeDao
         .fetchEpisodeWithUri( uri )
         .map { it.asExternalModel() }
 
-    override fun fetchEpisodesForPodcastWithUriSortedByPublishDate(
-        podcastUri: String
-    ): Flow<List<Episode>> = episodeDao
-        .fetchEpisodesSortedByPublishDate(
-            useFilterPodcastUris = true,
-            filterPodcastUris = setOf( podcastUri )
-        )
-        .map { it.map( PopulatedEpisodeEntity::asExternalModel ) }
-
-    override fun fetchEpisodesForPodcastsWithUrisSortedByPublishDate(podcastUris: List<String>) {
-        TODO("Not yet implemented")
-    }
+    override fun fetchEpisodesMatchingQuerySortedByPublishDate(
+        query: EpisodeQuery
+    ): Flow<List<Episode>> = episodeDao.fetchEpisodesSortedByPublishDate(
+        useFilterPodcastUris = query.filterPodcastUris != null,
+        filterPodcastUris = query.filterPodcastUris ?: emptySet()
+    ).map { populatedEpisodeEntities ->
+        var result = populatedEpisodeEntities
+        if ( query.filterEpisodeUris != null ) {
+            result = result.filter { it.episodeEntity.uri in query.filterEpisodeUris }
+        }
+        result
+    }.map { it.map( PopulatedEpisodeEntity::asExternalModel ) }
 
 
     override suspend fun syncWith( synchronizer: Synchronizer ): Boolean {
