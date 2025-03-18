@@ -11,7 +11,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 21
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -53,6 +53,14 @@ dependencies {
     ksp( libs.hilt.compiler )
     implementation( libs.hilt.core )
     implementation( libs.hilt.android )
+
+    implementation( libs.coil.kt )
+    implementation( libs.coil.kt.svg )
+    implementation( libs.kotlinx.serialization.json )
+    implementation( libs.okhttp.logging )
+    implementation( libs.retrofit.core )
+    implementation( libs.retrofit.kotlin.serialization )
+    implementation( libs.androidx.tracing.ktx )
 
     testImplementation(libs.junit)
     testImplementation( libs.kotlinx.coroutines.test )

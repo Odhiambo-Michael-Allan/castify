@@ -26,6 +26,7 @@ internal class OfflineFirstCategoryRepository @Inject constructor(
     override fun getCategories(): Flow<List<Category>> =
         categoryDao.getCategoryEntities()
             .map {
+                println( "CATEGORIES FROM OFFLINE FIRST CATEGORY REPO: $it" )
                 it.map( CategoryEntity::asExternalModel )
             }
 
@@ -40,7 +41,9 @@ internal class OfflineFirstCategoryRepository @Inject constructor(
             },
             modelDeleter = categoryDao::deleteCategories,
             modelUpdater = { changedIds ->
+                println( "UPDATING CATEGORIES IN DATABASE" )
                 val networkCategories = network.getCategories( ids = changedIds )
+                println( "NETWORK CATEGORIES: $networkCategories" )
                 categoryDao.upsertCategories(
                     categoryEntities = networkCategories.map( NetworkCategory::asEntity )
                 )

@@ -19,8 +19,8 @@
     "copyright": "2021 © Android Developers",
     "imageUrl": "https://static.libsyn.com/p/assets/c/9/e/0/c9e07a90cf263f3b40be95ea3302a6a1/Android_Devs_Backstage_Thumb_v2.png",
     "categoryIds": [
-      "2",
-      "3"
+      "12",
+      "6"
     ]
   },
   {
@@ -51,8 +51,8 @@
     "copyright": "All rights reserved",
     "imageUrl": "https://megaphone.imgix.net/podcasts/05f71746-a825-11e5-aeb5-a7a572df575e/image/uploads_2F1610700524297-f3e2p6fbm79-8b4536488226b56e93a99ce9f7b555b5_2FReplyAll_ShowArt.png?ixlib\u003drails-4.3.1\u0026max-w\u003d3000\u0026max-h\u003d3000\u0026fit\u003dcrop\u0026auto\u003dformat,compress",
     "categoryIds": [
-      "7",
-      "8"
+      "12",
+      "5"
     ]
   },
   {
@@ -61,9 +61,8 @@
     "copyright": "Copyright 1995-2025 This American Life",
     "imageUrl": "https://thisamericanlife.org/sites/all/themes/thislife/img/tal-logo-3000x3000.png",
     "categoryIds": [
-      "9",
-      "10",
-      "11"
+      "5",
+      "1"
     ]
   },
   {
@@ -72,8 +71,8 @@
     "copyright": "Copyright 2015-2021 NPR - For Personal Use Only",
     "imageUrl": "https://media.npr.org/assets/img/2022/10/24/pm_new_tile_2022_sq-b4af5aab11c84cfae38eafa1db74a6da943d4e7f.jpg?s\u003d1400\u0026c\u003d66\u0026f\u003djpg",
     "categoryIds": [
-      "12",
-      "13"
+      "1",
+      "17"
     ]
   },
   {
@@ -83,7 +82,7 @@
     "copyright": "Copyright © 2024 Roman Mars. All rights reserved.",
     "imageUrl": "https://image.simplecastcdn.com/images/00c81e60-45f9-4643-9fed-2184b2b6a3d3/a61daa3f-bb9b-4555-b180-18f505919c87/3000x3000/sxm-cover-99percentinvisible-3000x3000-r2021-final.jpg?aid\u003drss_feed",
     "categoryIds": [
-      "14"
+      "21"
     ]
   },
   {
@@ -93,9 +92,8 @@
     "copyright": "The Naked Scientists",
     "imageUrl": "https://www.thenakedscientists.com/sites/default/files/media/media/images/NS_Podcasts_1400.png",
     "categoryIds": [
-      "15",
-      "16",
-      "17"
+      "0",
+      "4"
     ]
   },
   {
@@ -104,9 +102,8 @@
     "description": "Join Leah and Matt as they dive headfirst into relationship issues that EVERYONE has, but are often too afraid to talk about. New episodes every Thursday.",
     "imageUrl": "https://audioboom.com/i/36572460/s\u003d1400x1400/el\u003d1/rt\u003dfill.jpg",
     "categoryIds": [
-      "18",
-      "19",
-      "20"
+      "4",
+      "11"
     ]
   },
   {
@@ -116,8 +113,8 @@
     "copyright": "2020 - The Athletic",
     "imageUrl": "https://megaphone.imgix.net/podcasts/18addf62-fe8f-11ea-b7d4-5b62d8b12ee0/image/8f4a805da09c302e7f3551767c7f42e2.jpg?ixlib\u003drails-4.3.1\u0026max-w\u003d3000\u0026max-h\u003d3000\u0026fit\u003dcrop\u0026auto\u003dformat,compress",
     "categoryIds": [
-      "21",
-      "22"
+      "1",
+      "17"
     ]
   }
 ]
