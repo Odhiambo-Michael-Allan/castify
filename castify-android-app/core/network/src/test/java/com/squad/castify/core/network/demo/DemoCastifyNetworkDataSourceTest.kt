@@ -34,8 +34,8 @@ class DemoCastifyNetworkDataSourceTest {
     fun testDeserializationOfCategories() = runTest ( testDispatcher ) {
         assertEquals(
             NetworkCategory(
-                id = "0",
-                name = "Technology"
+                id = "12",
+                name = "TV \u0026 Film"
             ),
             subject.getCategories().first()
         )
@@ -61,22 +61,22 @@ class DemoCastifyNetworkDataSourceTest {
     fun testDeserializationOfEpisodes() = runTest( testDispatcher ) {
         assertEquals(
             NetworkEpisode(
-                uri = "http://nowinandroid.libsyn.com/112-android-16-developer-preview-1-passkeys-spotlight-week-and-more",
+                uri = "http://nowinandroid.libsyn.com/113-android-16-developer-preview-2-android-xr-android-studio-ladybug-and-more",
                 podcastUri = "https://feeds.libsyn.com/244409/rss",
-                title = "112 - Android 16 Developer Preview 1, Passkeys Spotlight Week, and more!",
+                title = "113 - Android 16 Developer Preview 2, Android XR, Android Studio Ladybug, and more!",
                 author = "",
-                summary = "\u003cp\u003eWelcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover the First Developer Preview of Android 16, our Spotlight Week on Passkeys, Stability and Performance Improvements to the Android Emulator and more!\u003c/p\u003e \u003cp\u003eFor links to these items, check out Now in Android #112 on Medium → https://goo.gle/3OUlGMV \u003c/p\u003e \u003cp\u003eWatch more Now in Android → https://goo.gle/now-in-android \u003cbr /\u003e Subscribe to Android Developers YouTube → https://goo.gle/AndroidDevs \u003c/p\u003e",
-                subtitle = "Welcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover the First Developer Preview of Android 16, our Spotlight Week on Passkeys, Stability and Performance...",
+                summary = "\u003cp\u003eWelcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover updates on the Second Developer Preview of Android 16, Android XR, Spotlight Week on Android Camera and Media, Android Studio Ladybug Feature Drop and more!\u003c/p\u003e \u003cp\u003eFor links to these items, check out Now in Android #113 on Medium → https://goo.gle/3PNx39R \u003c/p\u003e \u003cp\u003eWatch more Now in Android → https://goo.gle/now-in-android \u003cbr /\u003e Subscribe to Android Developers → https://goo.gle/AndroidDevs  \u003c/p\u003e",
+                subtitle = "Welcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover updates on the Second Developer Preview of Android 16, Android XR, Spotlight Week on Android Camera and Media,...",
                 publishedDate = LocalDateTime(
-                    year = 2024,
-                    monthNumber = 12,
-                    dayOfMonth = 13,
-                    hour = 20,
-                    minute = 34,
-                    second = 21,
+                    year = 2025,
+                    monthNumber = 1,
+                    dayOfMonth = 27,
+                    hour = 21,
+                    minute = 4,
+                    second = 11,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                duration = Duration.parse( "PT9M19S" )
+                duration = Duration.parse( "PT7M4S" )
             ),
             subject.getEpisodes().first()
         )

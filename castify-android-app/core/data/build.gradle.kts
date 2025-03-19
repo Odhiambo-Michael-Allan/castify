@@ -1,37 +1,14 @@
 plugins {
-    alias( libs.plugins.android.library )
-    alias( libs.plugins.jetbrains.kotlin.android )
-    alias( libs.plugins.ksp )
-    alias( libs.plugins.hilt )
+    alias( libs.plugins.castify.android.library )
+    alias( libs.plugins.castify.hilt )
 }
 
 android {
     namespace = "com.squad.castify.core.data"
-    compileSdk = 34
 
     defaultConfig {
-        minSdk = 21
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        isCoreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     testOptions {
@@ -52,16 +29,9 @@ dependencies {
     implementation( projects.core.datastore )
     implementation( projects.core.notifications )
 
-
-    implementation( libs.hilt.core )
-    implementation( libs.hilt.android )
-    ksp( libs.hilt.compiler )
-
     implementation( libs.androidx.core.ktx )
     implementation( libs.kotlinx.datetime )
     implementation( libs.androidx.tracing.ktx )
-
-    coreLibraryDesugaring( libs.android.desugarJdkLibs )
 
     testImplementation( libs.junit )
     testImplementation( libs.kotlinx.coroutines.test )

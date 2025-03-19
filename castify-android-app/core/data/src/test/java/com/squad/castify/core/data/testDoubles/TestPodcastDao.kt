@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
-const val testCategoryId = "17"
+const val testCategoryId = "8"
 
 class TestPodcastDao : PodcastDao {
 

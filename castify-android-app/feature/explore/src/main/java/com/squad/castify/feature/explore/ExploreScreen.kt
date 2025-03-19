@@ -412,7 +412,7 @@ fun ExploreScreenPopulated(
 ) {
     CastifyTheme {
         ExploreScreen(
-            isSyncing = true,
+            isSyncing = false,
             categoriesUiState = CategoriesUiState.Shown(
                 model = FilterableCategoriesModel(
                     categories = previewParameters.categories,

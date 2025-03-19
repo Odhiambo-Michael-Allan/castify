@@ -1,38 +1,54 @@
 [
   {
-    "id": "0",
-    "name": "Technology"
+    "id": "12",
+    "name": "TV \u0026 Film"
   },
   {
-    "id": "4",
+    "id": "2",
     "name": "Society \u0026 Culture"
-  },
-  {
-    "id": "11",
-    "name": "News"
   },
   {
     "id": "1",
     "name": "Science"
   },
   {
-    "id": "17",
+    "id": "7",
     "name": "Health \u0026 Fitness"
   },
   {
+    "id": "4",
+    "name": "Arts"
+  },
+  {
+    "id": "11",
+    "name": "True Crime"
+  },
+  {
+    "id": "0",
+    "name": "Technology"
+  },
+  {
+    "id": "9",
+    "name": "Education"
+  },
+  {
+    "id": "10",
+    "name": "Leisure"
+  },
+  {
     "id": "5",
+    "name": "News"
+  },
+  {
+    "id": "3",
     "name": "Comedy"
   },
   {
     "id": "6",
-    "name": "Arts"
-  },
-  {
-    "id": "12",
     "name": "Business"
   },
   {
-    "id": "21",
+    "id": "8",
     "name": "Sports"
   }
 ]

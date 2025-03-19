@@ -116,7 +116,7 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
 
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 
 androidx-compose-material3-navigationSuite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite" }
 androidx-compose-material3-adaptive = { group = "androidx.compose.material3.adaptive", name = "adaptive" }
@@ -156,3 +156,9 @@ compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 room = { id = "androidx.room", version.ref = "room" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobufPlugin" }
 
+# Plugins defined by this project.
+castify-hilt = { id = "castify.hilt", version = "1.0.0" }
+castify-android-library = { id = "castify.android.library", version = "1.0.0" }
+castify-android-room = { id = "castify.android.room", version = "1.0.0" }
+castify-android-library-compose = { id = "castify.android.library.compose", version = "1.0.0" }
+castify-android-feature = { id = "castify.android.feature", version = "1.0.0" }
