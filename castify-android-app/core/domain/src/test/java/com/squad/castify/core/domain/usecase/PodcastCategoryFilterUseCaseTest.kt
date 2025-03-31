@@ -150,16 +150,22 @@ private val sampleEpisodes = listOf(
     Episode(
         uri = "episode-0-uri",
         published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
-        podcast = samplePodcasts[0]
+        podcast = samplePodcasts[0],
+        audioUri = "",
+        audioMimeType = ""
     ),
     Episode(
         uri = "episode-1-uri",
         published = Instant.parse( "2021-11-01T00:00:00.000Z" ),
-        podcast = samplePodcasts[0]
+        podcast = samplePodcasts[0],
+        audioUri = "",
+        audioMimeType = ""
     ),
     Episode(
         uri = "episode-2-uri",
         published = Instant.parse( "2021-11-08T00:00:00.000Z" ),
-        podcast = samplePodcasts[1]
+        podcast = samplePodcasts[1],
+        audioUri = "",
+        audioMimeType = ""
     )
 )

@@ -1,4 +1,4 @@
-package com.squad.castify.feature.explore
+package com.squad.castify.core.media
 
 import org.junit.Test
 

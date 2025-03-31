@@ -60,6 +60,7 @@ dependencies {
     implementation( projects.core.data )
     implementation( projects.core.model )
     implementation( projects.sync )
+    implementation( projects.core.media )
 
     implementation( libs.androidx.compose.material3.adaptive )
     implementation( libs.androidx.compose.material3.adaptive.layout )

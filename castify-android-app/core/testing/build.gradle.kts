@@ -23,6 +23,7 @@ dependencies {
 
     implementation( projects.core.model )
     implementation( projects.core.notifications )
+    implementation( projects.core.media )
 
     implementation( libs.androidx.core.ktx )
     implementation( libs.androidx.test.rules )

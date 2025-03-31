@@ -8,5 +8,6 @@ annotation class Dispatcher( val castifyDispatcher: CastifyDispatchers )
 
 enum class CastifyDispatchers {
     Default,
-    IO
+    IO,
+    Main
 }

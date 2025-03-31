@@ -115,20 +115,26 @@ private val sampleEpisodes = listOf(
         title = "Episode 1",
         subTitle = "",
         published = Clock.System.now(),
-        podcast = samplePodcast1
+        podcast = samplePodcast1,
+        audioUri = "",
+        audioMimeType = ""
     ),
     Episode(
         uri = "episode-uri-2",
         title = "Episode 2",
         subTitle = "",
         published = Clock.System.now(),
-        podcast = samplePodcast2
+        podcast = samplePodcast2,
+        audioUri = "",
+        audioMimeType = ""
     ),
     Episode(
         uri = "episode-uri-3",
         title = "Episode 3",
         subTitle = "",
         published = Clock.System.now(),
-        podcast = samplePodcast1
+        podcast = samplePodcast1,
+        audioUri = "",
+        audioMimeType = ""
     )
 )

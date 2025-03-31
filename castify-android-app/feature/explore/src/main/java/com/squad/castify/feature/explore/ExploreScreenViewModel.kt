@@ -3,18 +3,16 @@ package com.squad.castify.feature.explore
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.squad.castify.core.data.repository.CategoryRepository
-import com.squad.castify.core.data.repository.PodcastsRepository
 import com.squad.castify.core.data.repository.UserDataRepository
-import com.squad.castify.core.data.repository.UserEpisodesRepository
 import com.squad.castify.core.data.util.SyncManager
-import com.squad.castify.core.domain.model.FilterableCategoriesModel
-import com.squad.castify.core.domain.model.PodcastCategoryFilterResult
 import com.squad.castify.core.domain.usecase.FilterableCategoriesUseCase
-import com.squad.castify.core.domain.usecase.GetFollowablePodcastsUseCase
 import com.squad.castify.core.domain.usecase.PodcastCategoryFilterUseCase
+import com.squad.castify.core.media.download.DownloadTracker
+import com.squad.castify.core.media.extensions.toEpisode
+import com.squad.castify.core.media.extensions.toMediaItem
+import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.model.Category
-import com.squad.castify.core.model.UserData
+import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.PodcastFeedUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,6 +21,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -36,7 +35,9 @@ class ExploreScreenViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val filterableCategoriesUseCase: FilterableCategoriesUseCase,
     private val podcastCategoryFilterUseCase: PodcastCategoryFilterUseCase,
-    private val syncManager: SyncManager,
+    private val episodePlayerServiceConnection: EpisodePlayerServiceConnection,
+    private val downloadTracker: DownloadTracker,
+    syncManager: SyncManager,
 ) : ViewModel() {
 
     private val selectedCategory = MutableStateFlow<Category?>( null )
@@ -58,10 +59,19 @@ class ExploreScreenViewModel @Inject constructor(
         )
 
     val podcastFeedUiState: StateFlow<PodcastFeedUiState> =
-        selectedCategory.flatMapLatest { category ->
-            podcastCategoryFilterUseCase( category )
-        }.map { model: PodcastCategoryFilterResult ->
-            PodcastFeedUiState.Success( model = model )
+        combine(
+            selectedCategory.flatMapLatest { category ->
+                podcastCategoryFilterUseCase( category )
+            },
+            downloadTracker.downloadedEpisodes,
+            downloadTracker.downloadingEpisodes,
+        ) { podcastFilterCategoryResult, downloadedEpisodes, downloadingEpisodes ->
+            println( "UPDATING UI STATE.." )
+            PodcastFeedUiState.Success(
+                model = podcastFilterCategoryResult,
+                downloads = downloadedEpisodes,
+                downloadingEpisodes = downloadingEpisodes
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed( 5_000 ),
@@ -87,4 +97,21 @@ class ExploreScreenViewModel @Inject constructor(
         }
     }
 
+    fun playEpisode( userEpisode: UserEpisode ) =
+        episodePlayerServiceConnection.playEpisode( userEpisode )
+
+    fun downloadEpisode( userEpisode: UserEpisode ) =
+        episodePlayerServiceConnection.downloadEpisode( userEpisode )
+
+    fun resumeDownload( userEpisode: UserEpisode ) =
+        downloadTracker.resumeDownload( userEpisode.toEpisode().toMediaItem() )
+
+    fun removeDownload( userEpisode: UserEpisode ) =
+        downloadTracker.removeDownload( userEpisode.toEpisode().toMediaItem() )
+
+    fun retryDownload( userEpisode: UserEpisode ) =
+        downloadTracker.retryDownload( userEpisode.toEpisode().toMediaItem() )
+
+    fun pauseDownload( userEpisode: UserEpisode ) =
+        downloadTracker.pauseDownload( userEpisode.toEpisode().toMediaItem() )
 }

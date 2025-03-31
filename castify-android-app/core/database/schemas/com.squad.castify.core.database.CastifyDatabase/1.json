@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "0686bdcbabd77d44b78e40038b5b1df6",
+    "identityHash": "578b1ff5512c5c127b0567475c23f020",
     "entities": [
       {
         "tableName": "categories",
@@ -82,7 +82,7 @@
       },
       {
         "tableName": "episodes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `podcast_uri` TEXT NOT NULL, `title` TEXT NOT NULL, `subtitle` TEXT, `summary` TEXT, `author` TEXT, `published` INTEGER NOT NULL, `duration` INTEGER, PRIMARY KEY(`uri`), FOREIGN KEY(`podcast_uri`) REFERENCES `podcasts`(`uri`) ON UPDATE CASCADE ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uri` TEXT NOT NULL, `podcast_uri` TEXT NOT NULL, `title` TEXT NOT NULL, `audioUri` TEXT NOT NULL, `audioMimeType` TEXT NOT NULL, `subtitle` TEXT, `summary` TEXT, `author` TEXT, `published` INTEGER NOT NULL, `duration` INTEGER, PRIMARY KEY(`uri`), FOREIGN KEY(`podcast_uri`) REFERENCES `podcasts`(`uri`) ON UPDATE CASCADE ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "uri",
@@ -99,6 +99,18 @@
           {
             "fieldPath": "title",
             "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "audioUri",
+            "columnName": "audioUri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "audioMimeType",
+            "columnName": "audioMimeType",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -246,7 +258,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0686bdcbabd77d44b78e40038b5b1df6')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '578b1ff5512c5c127b0567475c23f020')"
     ]
   }
 }

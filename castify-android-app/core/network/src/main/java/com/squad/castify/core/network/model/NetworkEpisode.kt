@@ -13,6 +13,8 @@ data class NetworkEpisode(
     val uri: String,
     val podcastUri: String,
     val title: String,
+    val audioUri: String,
+    val audioMimeType: String,
     val subtitle: String? = null,
     val summary: String? = null,
     val author: String? = null,

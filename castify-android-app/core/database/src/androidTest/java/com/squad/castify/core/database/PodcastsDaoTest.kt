@@ -192,6 +192,8 @@ internal fun testEpisodeEntity(
     uri = uri,
     podcastUri = podcastUri,
     title = "",
+    audioUri = "",
+    audioMimeType = "",
     published = Instant.fromEpochMilliseconds( published ),
 )
 

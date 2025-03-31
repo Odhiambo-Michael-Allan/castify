@@ -44,6 +44,8 @@ androidxWindowManager = "1.3.0"
 androidxComposeRuntimeTracing = "1.0.0-beta01"
 androidxWork = "2.9.0"
 androidTools = "31.6.1"
+media3Version = "1.4.0"
+androidxMediaVersion = "1.5.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -135,6 +137,29 @@ androidx-compose-runtime-tracing = { group = "androidx.compose.runtime", name = 
 
 androidx-work-ktx = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "androidxWork" }
 androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "androidxWork" }
+
+androidx-media = { module = "androidx.media:media", version.ref = "androidxMediaVersion" }
+
+# Media3
+
+# Common Kotlin-specific functionality
+androidx-media3-common-ktx = { module = "androidx.media3:media3-common-ktx", version.ref = "media3Version" }
+# Common functionality used across multiple media libraries
+androidx-media3-common = { module = "androidx.media3:media3-common", version.ref = "media3Version" }
+# For media playback using ExoPlayer
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Version" }
+# For exposing and controlling media sessions.
+androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3Version" }
+# For integrating with Cast
+androidx-media3-cast = { module = "androidx.media3:media3-cast", version.ref = "media3Version" }
+# Common functionality for loading data
+androidx-media3-datasource = { module = "androidx.media3:media3-datasource", version.ref = "media3Version" }
+# For loading data using the Cronet network stack
+androidx-media3-datasource-cronet = { module = "androidx.media3:media3-datasource-cronet", version.ref = "media3Version" }
+# For loading data using the OkHttp network stack.
+androidx-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3Version" }
+# For loading data using librtmp
+androidx-media3-datasource-rtmp = { module = "androidx.media3:media3-datasource-rtmp", version.ref = "media3Version" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

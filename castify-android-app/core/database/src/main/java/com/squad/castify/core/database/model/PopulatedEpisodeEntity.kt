@@ -30,6 +30,8 @@ data class PopulatedEpisodeEntity(
 fun PopulatedEpisodeEntity.asExternalModel() = Episode(
     uri = episodeEntity.uri,
     title = episodeEntity.title,
+    audioUri = episodeEntity.audioUri,
+    audioMimeType = episodeEntity.audioMimeType,
     subTitle = episodeEntity.subtitle ?: "",
     summary = episodeEntity.summary ?: "",
     author = episodeEntity.author ?: "",

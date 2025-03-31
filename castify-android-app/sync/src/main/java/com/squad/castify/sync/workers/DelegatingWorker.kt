@@ -9,7 +9,9 @@ import androidx.work.WorkerParameters
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import kotlin.reflect.KClass
 
 /**
@@ -29,11 +31,21 @@ class DelegatingWorker(
     private val workerClassName =
         workerParameters.inputData.getString( WORKER_CLASS_NAME ) ?: ""
 
-    private val delegateWorker =
-        EntryPointAccessors.fromApplication<HiltWorkerFactoryEntryPoint>( appContext )
-            .hiltWorkerFactory()
-            .createWorker( appContext, workerClassName, workerParameters )
-    as? CoroutineWorker ?: throw IllegalArgumentException( "Unable to find appropriate worker" )
+    private val factory = EntryPointAccessors.fromApplication<HiltWorkerFactoryEntryPoint>( appContext )
+        .hiltWorkerFactory()
+
+    private val worker = factory
+        .createWorker( appContext, workerClassName, workerParameters )
+
+    init {
+        println( "WORKER CLASS NAME: $workerClassName" )
+        println( "HILT WORKER FACTORY: $factory" )
+        println( "WORKER: $worker" )
+    }
+
+    private val delegateWorker = worker
+            as? CoroutineWorker ?: throw IllegalArgumentException( "Unable to find appropriate worker" )
+
 
     override suspend fun doWork(): Result = delegateWorker.doWork()
 
@@ -55,7 +67,7 @@ private const val WORKER_CLASS_NAME = "RouterWorkerDelegateClassName"
  * Adds metadata to a WorkRequest to identify what [CoroutineWorker] the [DelegatingWorker] should
  * delegate to.
  */
-internal fun KClass<out CoroutineWorker>.delegatedData() =
+fun KClass<out CoroutineWorker>.delegatedData() =
     Data.Builder()
         .putString( WORKER_CLASS_NAME, qualifiedName )
         .build()

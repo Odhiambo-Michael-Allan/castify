@@ -1,5 +1,6 @@
 package com.squad.castify.core.ui
 
+import androidx.annotation.OptIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,11 +13,19 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,10 +37,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.offline.Download
 import com.squad.castify.core.designsystem.component.DynamicAsyncImage
+import com.squad.castify.core.designsystem.component.PlayingAnimation
 import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.core.designsystem.theme.CastifyTheme
+import com.squad.castify.core.designsystem.theme.GoogleRed
 import com.squad.castify.core.model.UserEpisode
+import com.squad.castify.core.ui.bottomsheets.DownloadFailedBottomSheetContent
+import com.squad.castify.core.ui.bottomsheets.PauseDownloadModalBottomSheetContent
+import com.squad.castify.core.ui.bottomsheets.RemoveDownloadModalBottomSheetContent
+import com.squad.castify.core.ui.bottomsheets.ResumeDownloadBottomSheetContent
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaInstant
@@ -41,12 +58,24 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.time.Duration
 
+@OptIn(UnstableApi::class)
+@kotlin.OptIn( ExperimentalMaterial3Api::class )
 @Composable
 fun EpisodeCard(
     modifier: Modifier = Modifier,
     userEpisode: UserEpisode,
-    downloadFailed: Boolean = false,
+    downloadState: Int?,
+    isPlaying: Boolean,
+    downloadingEpisodes: Map<String, Float>,
+    onPlayEpisode: () -> Unit,
+    onDownloadEpisode: () -> Unit,
+    onRemoveDownload: () -> Unit,
+    onRetryDownload: () -> Unit,
+    onResumeDownload: () -> Unit,
+    onPauseDownload: () -> Unit,
 ) {
+    var showModalBottomSheet by remember { mutableStateOf( false ) }
+
     Card(
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
@@ -62,8 +91,8 @@ fun EpisodeCard(
             ) {
                 DynamicAsyncImage(
                     modifier = Modifier
-                        .size( 52.dp )
-                        .clip( MaterialTheme.shapes.small ),
+                        .size(52.dp)
+                        .clip(MaterialTheme.shapes.small),
                     imageUrl = userEpisode.followablePodcast.podcast.imageUrl,
                     contentDescription = null
                 )
@@ -109,25 +138,33 @@ fun EpisodeCard(
                             containerColor = Color.Transparent
                         ),
                         border = BorderStroke( 1.2.dp, MaterialTheme.colorScheme.outline ),
-                        onClick = {}
+                        onClick = onPlayEpisode
                     ) {
                         Row (
                             modifier = Modifier.padding( 8.dp, 4.dp ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = CastifyIcons.Play,
-                                tint = MaterialTheme.colorScheme.primary,
-                                contentDescription = null
-                            )
-                            Spacer( modifier = Modifier.width( 4.dp ) )
-                            Text(
-                                text = durationFormatted(
-                                    duration = userEpisode.duration ?: Duration.ZERO
-                                ),
-                                style = MaterialTheme.typography.labelLarge,
-                                fontWeight = FontWeight.SemiBold
-                            )
+                            if ( isPlaying ) {
+                                PlayingAnimation()
+                                Spacer( modifier = Modifier.width( 6.dp ) )
+                                Text(
+                                    text = "playing..",
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = CastifyIcons.Play,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    contentDescription = null
+                                )
+                                Spacer( modifier = Modifier.width( 4.dp ) )
+                                Text(
+                                    text = durationFormatted(
+                                        duration = userEpisode.duration ?: Duration.ZERO
+                                    ),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
                         }
                     }
                     Spacer( modifier = Modifier.width( 4.dp ) )
@@ -141,13 +178,56 @@ fun EpisodeCard(
                         )
                     }
                     IconButton(
-                        onClick = {}
+                        onClick = {
+                            when ( downloadState ) {
+                                // Do nothing in these two states..
+                                Download.STATE_REMOVING, Download.STATE_RESTARTING -> {}
+                                null -> { onDownloadEpisode() }
+                                else -> { showModalBottomSheet = !showModalBottomSheet }
+                            }
+                        }
                     ) {
-                        Icon(
-                            imageVector = CastifyIcons.DownloadDefault,
-                            tint = MaterialTheme.colorScheme.primary,
-                            contentDescription = null
-                        )
+                        when ( downloadState ) {
+                            Download.STATE_FAILED,
+                                Download.STATE_COMPLETED,
+                                Download.STATE_REMOVING,
+                                Download.STATE_STOPPED,
+                                null -> {
+                                    Icon(
+                                        imageVector = when ( downloadState ) {
+                                            Download.STATE_FAILED -> CastifyIcons.Error
+                                            Download.STATE_COMPLETED -> CastifyIcons.Downloaded
+                                            Download.STATE_STOPPED -> CastifyIcons.Pause
+                                            else -> CastifyIcons.DownloadDefault
+                                        },
+                                        tint = when ( downloadState ) {
+                                            Download.STATE_FAILED -> GoogleRed
+                                            else -> MaterialTheme.colorScheme.primary
+                                        },
+                                        contentDescription = null
+                                    )
+                                }
+                            else -> when ( downloadState ) {
+                                Download.STATE_DOWNLOADING -> {
+                                    CircularProgressIndicator(
+                                        progress = {
+                                            downloadingEpisodes[ userEpisode.audioUri ] ?: 0f
+                                        },
+                                        modifier = Modifier
+                                            .width(CastifyIcons.DownloadDefault.defaultWidth)
+                                            .height(CastifyIcons.DownloadDefault.defaultHeight)
+                                    )
+                                }
+                                else -> {
+                                    CircularProgressIndicator(
+                                        strokeWidth = 3.dp,
+                                        modifier = Modifier
+                                            .width(CastifyIcons.DownloadDefault.defaultWidth)
+                                            .height(CastifyIcons.DownloadDefault.defaultHeight)
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
                 IconButton(
@@ -156,6 +236,55 @@ fun EpisodeCard(
                     Icon(
                         imageVector = CastifyIcons.MoreVert,
                         contentDescription = null
+                    )
+                }
+            }
+        }
+    }
+
+    if ( showModalBottomSheet ) {
+        ModalBottomSheet(
+            onDismissRequest = { showModalBottomSheet = false }
+        ) {
+            when ( downloadState ) {
+                Download.STATE_COMPLETED, Download.STATE_QUEUED -> {
+                    RemoveDownloadModalBottomSheetContent(
+                        modifier = Modifier.padding( 8.dp, 0.dp ),
+                        onRemoveDownload = {
+                            onRemoveDownload()
+                            showModalBottomSheet = false
+                        }
+                    )
+                }
+                Download.STATE_DOWNLOADING -> {
+                    PauseDownloadModalBottomSheetContent(
+                        modifier = Modifier.padding( 8.dp, 0.dp ),
+                        onPauseDownload = {
+                            onPauseDownload()
+                            showModalBottomSheet = false
+                        }
+                    )
+                }
+                Download.STATE_FAILED -> {
+                    DownloadFailedBottomSheetContent(
+                        modifier = Modifier.padding( 8.dp, 0.dp ),
+                        onCancelDownload = {
+                            onRemoveDownload()
+                            showModalBottomSheet = false
+                        },
+                        onRetryDownload = {
+                            onRetryDownload()
+                            showModalBottomSheet = false
+                        }
+                    )
+                }
+                Download.STATE_STOPPED -> {
+                    ResumeDownloadBottomSheetContent(
+                        modifier = Modifier.padding( 8.dp, 0.dp ),
+                        onResumeDownload = {
+                            onResumeDownload()
+                            showModalBottomSheet = false
+                        }
                     )
                 }
             }
@@ -180,6 +309,7 @@ fun durationFormatted( duration: Duration ): String =
         }
     }
 
+@OptIn(UnstableApi::class )
 @Preview
 @Composable
 fun EpisodeCardPreview(
@@ -189,7 +319,18 @@ fun EpisodeCardPreview(
     CastifyTheme {
         EpisodeCard(
             modifier = Modifier.padding( 16.dp ),
-            userEpisode = previewData.episodes.first()
+            userEpisode = previewData.episodes.first(),
+            downloadState = Download.STATE_FAILED,
+            isPlaying = false,
+            downloadingEpisodes = mapOf(
+                previewData.episodes.first().audioUri to 0.4f
+            ),
+            onPlayEpisode = {},
+            onDownloadEpisode = {},
+            onResumeDownload = {},
+            onRetryDownload = {},
+            onRemoveDownload = {},
+            onPauseDownload = {}
         )
     }
 }

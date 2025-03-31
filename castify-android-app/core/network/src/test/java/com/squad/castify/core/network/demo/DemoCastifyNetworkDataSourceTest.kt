@@ -61,23 +61,25 @@ class DemoCastifyNetworkDataSourceTest {
     fun testDeserializationOfEpisodes() = runTest( testDispatcher ) {
         assertEquals(
             NetworkEpisode(
-                uri = "http://nowinandroid.libsyn.com/113-android-16-developer-preview-2-android-xr-android-studio-ladybug-and-more",
+                uri = "http://nowinandroid.libsyn.com/114-google-io-2025-android-studio-at-10-android-16-betas-and-more",
                 podcastUri = "https://feeds.libsyn.com/244409/rss",
-                title = "113 - Android 16 Developer Preview 2, Android XR, Android Studio Ladybug, and more!",
+                title = "114 - Google I/O 2025, Android Studio at 10, Android 16 Betas, and more!",
                 author = "",
-                summary = "\u003cp\u003eWelcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover updates on the Second Developer Preview of Android 16, Android XR, Spotlight Week on Android Camera and Media, Android Studio Ladybug Feature Drop and more!\u003c/p\u003e \u003cp\u003eFor links to these items, check out Now in Android #113 on Medium → https://goo.gle/3PNx39R \u003c/p\u003e \u003cp\u003eWatch more Now in Android → https://goo.gle/now-in-android \u003cbr /\u003e Subscribe to Android Developers → https://goo.gle/AndroidDevs  \u003c/p\u003e",
-                subtitle = "Welcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover updates on the Second Developer Preview of Android 16, Android XR, Spotlight Week on Android Camera and Media,...",
+                summary = "\u003cp\u003eWelcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover the return of Google I/O, Android Studio Turning 10, the Android 16 Betas, Imagen in Firebase, the latest in AndroidX, and more!\u003c/p\u003e \u003cp\u003eFor links to these items, check out Now in Android #114 on Medium → https://goo.gle/4hA69xv \u003cbr /\u003e Catch the latest episode of #TheAndroidShow here → https://goo.gle/tas-mar25 \u003c/p\u003e \u003cp\u003eWatch more Now in Android → https://goo.gle/now-in-android \u003cbr /\u003e Subscribe to Android Developers → https://goo.gle/AndroidDevs  \u003c/p\u003e",
+                subtitle = "Welcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover the return of Google I/O, Android Studio Turning 10, the Android 16 Betas, Imagen in Firebase, the latest in...",
                 publishedDate = LocalDateTime(
                     year = 2025,
-                    monthNumber = 1,
-                    dayOfMonth = 27,
-                    hour = 21,
-                    minute = 4,
-                    second = 11,
+                    monthNumber = 3,
+                    dayOfMonth = 21,
+                    hour = 2,
+                    minute = 7,
+                    second = 55,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                duration = Duration.parse( "PT7M4S" )
-            ),
+                duration = Duration.parse( "PT6M27S" ),
+                audioUri = "https://traffic.libsyn.com/secure/nowinandroid/NIA114_final.mp3?dest-id\u003d1831685",
+                audioMimeType = "audio/mpeg"
+                ),
             subject.getEpisodes().first()
         )
     }

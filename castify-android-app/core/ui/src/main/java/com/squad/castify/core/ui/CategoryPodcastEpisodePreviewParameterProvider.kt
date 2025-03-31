@@ -148,7 +148,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[1].podcast
+                podcast = podcasts[1].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),
@@ -167,7 +169,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[1].podcast
+                podcast = podcasts[1].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),
@@ -186,7 +190,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[2].podcast
+                podcast = podcasts[2].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),
@@ -205,7 +211,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[2].podcast
+                podcast = podcasts[2].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),
@@ -224,7 +232,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[3].podcast
+                podcast = podcasts[3].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),
@@ -242,7 +252,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[3].podcast
+                podcast = podcasts[3].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),
@@ -261,7 +273,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[3].podcast
+                podcast = podcasts[3].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),
@@ -280,7 +294,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[3].podcast
+                podcast = podcasts[3].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),
@@ -299,7 +315,9 @@ object PreviewParameterData {
                     second = 21,
                     nanosecond = 0
                 ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[3].podcast
+                podcast = podcasts[3].podcast,
+                audioUri = "",
+                audioMimeType = ""
             ),
             userData = userData
         ),

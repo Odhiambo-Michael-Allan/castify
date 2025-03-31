@@ -32,6 +32,8 @@ data class EpisodeEntity(
     @ColumnInfo( name = "podcast_uri" )
     val podcastUri: String,
     val title: String,
+    val audioUri: String,
+    val audioMimeType: String,
     val subtitle: String? = null,
     val summary: String? = null,
     val author: String? = null,
@@ -42,6 +44,8 @@ data class EpisodeEntity(
 fun EpisodeEntity.asExternalModel() = Episode(
     uri = uri,
     title = title,
+    audioUri = audioUri,
+    audioMimeType = audioMimeType,
     subTitle = subtitle ?: "",
     summary = summary ?: "",
     author = author ?: "",

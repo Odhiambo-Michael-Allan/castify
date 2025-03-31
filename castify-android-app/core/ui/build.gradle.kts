@@ -24,6 +24,8 @@ dependencies {
     implementation( libs.androidx.appcompat )
     implementation( libs.material )
 
+    implementation( libs.androidx.media3.exoplayer )
+
     androidTestImplementation( libs.androidx.junit )
     androidTestImplementation( libs.androidx.espresso.core )
 

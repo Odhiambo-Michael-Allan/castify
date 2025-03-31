@@ -9,6 +9,8 @@ import kotlin.time.Duration
 data class Episode(
     val uri: String = "",
     val title: String = "",
+    val audioUri: String,
+    val audioMimeType: String,
     val subTitle: String = "",
     val summary: String = "",
     val author: String = "",

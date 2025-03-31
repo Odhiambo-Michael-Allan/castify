@@ -61,6 +61,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.offline.Download
 import com.squad.castify.core.designsystem.component.CastifyLoadingWheel
 import com.squad.castify.core.designsystem.component.DynamicAsyncImage
 import com.squad.castify.core.designsystem.component.ToggleFollowPodcastIconButton
@@ -70,6 +72,7 @@ import com.squad.castify.core.domain.model.FilterableCategoriesModel
 import com.squad.castify.core.domain.model.PodcastCategoryFilterResult
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.FollowablePodcast
+import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
 import com.squad.castify.core.ui.EpisodeCard
@@ -95,7 +98,13 @@ internal fun ExploreScreen(
         categoriesUiState = categoriesUiState,
         podcastFeedUiState = podcastFeedUiState,
         onCategoryChange = viewModel::updateCategorySelection,
-        onFollowPodcast = { viewModel.updatePodcastFollowed( it.podcast.uri, !it.isFollowed ) }
+        onFollowPodcast = { viewModel.updatePodcastFollowed( it.podcast.uri, !it.isFollowed ) },
+        onPlayEpisode = viewModel::playEpisode,
+        onDownloadEpisode = viewModel::downloadEpisode,
+        onResumeDownload = viewModel::resumeDownload,
+        onRemoveDownload = viewModel::removeDownload,
+        onRetryDownload = viewModel::retryDownload,
+        onPauseDownload = viewModel::pauseDownload,
     )
 }
 
@@ -106,8 +115,14 @@ internal fun ExploreScreen(
     isSyncing: Boolean,
     categoriesUiState: CategoriesUiState,
     podcastFeedUiState: PodcastFeedUiState,
-    onCategoryChange: (Category ) -> Unit,
-    onFollowPodcast: (FollowablePodcast ) -> Unit
+    onCategoryChange: ( Category ) -> Unit,
+    onFollowPodcast: ( FollowablePodcast ) -> Unit,
+    onPlayEpisode: ( UserEpisode ) -> Unit,
+    onDownloadEpisode: ( UserEpisode ) -> Unit,
+    onRetryDownload: ( UserEpisode ) -> Unit,
+    onRemoveDownload: ( UserEpisode ) -> Unit,
+    onResumeDownload: ( UserEpisode ) -> Unit,
+    onPauseDownload: ( UserEpisode ) -> Unit,
 ) {
 
     val isCategoriesLoading = categoriesUiState is CategoriesUiState.Loading
@@ -137,6 +152,7 @@ internal fun ExploreScreen(
                         modifier = modifier
                             .fillMaxWidth()
                             .weight(1f),
+//                        beyondViewportPageCount = 1,
                         state = pagerState
                     ) {
                         LazyVerticalGrid(
@@ -149,7 +165,13 @@ internal fun ExploreScreen(
                                 onFollowPodcast = onFollowPodcast
                             )
                             episodesFeed(
-                                podcastFeedUiState = podcastFeedUiState
+                                podcastFeedUiState = podcastFeedUiState,
+                                onPlayEpisode = onPlayEpisode,
+                                onDownloadEpisode = onDownloadEpisode,
+                                onResumeDownload = onResumeDownload,
+                                onRemoveDownload = onRemoveDownload,
+                                onRetryDownload = onRetryDownload,
+                                onPauseDownload = onPauseDownload,
                             )
                         }
                     }
@@ -386,7 +408,13 @@ fun FollowablePodcastCard(
 }
 
 fun LazyGridScope.episodesFeed(
-    podcastFeedUiState: PodcastFeedUiState
+    podcastFeedUiState: PodcastFeedUiState,
+    onPlayEpisode: ( UserEpisode ) -> Unit,
+    onDownloadEpisode: ( UserEpisode ) -> Unit,
+    onRetryDownload: ( UserEpisode ) -> Unit,
+    onRemoveDownload: ( UserEpisode ) -> Unit,
+    onResumeDownload: ( UserEpisode ) -> Unit,
+    onPauseDownload: ( UserEpisode ) -> Unit,
 ) {
     when ( podcastFeedUiState ) {
         PodcastFeedUiState.Loading -> Unit
@@ -397,7 +425,16 @@ fun LazyGridScope.episodesFeed(
             ) {
                 EpisodeCard(
                     modifier = Modifier.padding( DEFAULT_START_END_PADDING ),
-                    userEpisode = it
+                    userEpisode = it,
+                    onPlayEpisode = { onPlayEpisode( it ) },
+                    onDownloadEpisode = { onDownloadEpisode( it ) },
+                    isPlaying = false,
+                    downloadState = podcastFeedUiState.downloads[ it.audioUri ],
+                    downloadingEpisodes = podcastFeedUiState.downloadingEpisodes,
+                    onRetryDownload = { onRetryDownload( it ) },
+                    onRemoveDownload = { onRemoveDownload( it ) },
+                    onResumeDownload = { onResumeDownload( it ) },
+                    onPauseDownload = { onPauseDownload( it ) }
                 )
             }
         }
@@ -423,10 +460,18 @@ fun ExploreScreenPopulated(
                 model = PodcastCategoryFilterResult(
                     topPodcasts = previewParameters.podcasts,
                     episodes = previewParameters.episodes
-                )
+                ),
+                downloads = emptyMap(),
+                downloadingEpisodes = emptyMap()
             ),
             onCategoryChange = {},
-            onFollowPodcast = {}
+            onFollowPodcast = {},
+            onPlayEpisode = {},
+            onDownloadEpisode = {},
+            onRetryDownload = {},
+            onResumeDownload = {},
+            onRemoveDownload = {},
+            onPauseDownload = {},
         )
     }
 }
@@ -440,11 +485,18 @@ fun ExploreScreenLoading() {
             categoriesUiState = CategoriesUiState.Loading,
             podcastFeedUiState = PodcastFeedUiState.Loading,
             onCategoryChange = {},
-            onFollowPodcast = {}
+            onFollowPodcast = {},
+            onPlayEpisode = {},
+            onDownloadEpisode = {},
+            onRetryDownload = {},
+            onResumeDownload = {},
+            onRemoveDownload = {},
+            onPauseDownload = {},
         )
     }
 }
 
+@androidx.annotation.OptIn( UnstableApi::class )
 @DevicePreviews
 @Composable
 fun ExploreScreenPopulatedAndLoading(
@@ -463,9 +515,23 @@ fun ExploreScreenPopulatedAndLoading(
             model = PodcastCategoryFilterResult(
                 topPodcasts = previewParameters.podcasts,
                 episodes = previewParameters.episodes
-            )
+            ),
+            downloads = mapOf(
+                previewParameters.episodes.first().audioUri to Download.STATE_DOWNLOADING,
+                previewParameters.episodes[1].audioUri to Download.STATE_STOPPED,
+                previewParameters.episodes[2].audioUri to Download.STATE_RESTARTING,
+                previewParameters.episodes[3].audioUri to Download.STATE_REMOVING,
+                previewParameters.episodes[4].audioUri to Download.STATE_QUEUED
+            ),
+            downloadingEpisodes = emptyMap()
         ),
         onCategoryChange = {},
-        onFollowPodcast = {}
+        onFollowPodcast = {},
+        onPlayEpisode = {},
+        onDownloadEpisode = {},
+        onRetryDownload = {},
+        onResumeDownload = {},
+        onRemoveDownload = {},
+        onPauseDownload = {},
     )
 }

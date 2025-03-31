@@ -11,6 +11,8 @@ import kotlin.time.Duration
 data class UserEpisode internal constructor(
     val uri: String,
     val title: String,
+    val audioUri: String,
+    val audioMimeType: String,
     val subTitle: String,
     val summary: String,
     val author: String,
@@ -21,6 +23,8 @@ data class UserEpisode internal constructor(
     constructor( episode: Episode, userData: UserData ) : this (
         uri = episode.uri,
         title = episode.title,
+        audioUri = episode.audioUri,
+        audioMimeType = episode.audioMimeType,
         subTitle = episode.subTitle,
         summary = episode.summary,
         author = episode.author,

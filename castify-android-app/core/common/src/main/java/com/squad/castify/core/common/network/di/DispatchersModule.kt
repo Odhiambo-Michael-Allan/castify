@@ -19,4 +19,8 @@ object DispatchersModule {
     @Provides
     @Dispatcher( CastifyDispatchers.Default )
     fun providesDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
+    @Provides
+    @Dispatcher( CastifyDispatchers.Main )
+    fun providesMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
 }

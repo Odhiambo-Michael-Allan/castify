@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="exo_download_notification_channel_name">Downloads</string>
+    <string name="download_live_content_unsupported">Download of live content is unsupported</string>
+    <string name="download_start_error">Download start error</string>
+
+</resources>
