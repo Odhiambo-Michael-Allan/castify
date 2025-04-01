@@ -214,8 +214,8 @@ internal fun CastifyApp(
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 6.dp),
+                    .align( Alignment.BottomCenter )
+                    .padding( bottom = 6.dp ),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Surface (

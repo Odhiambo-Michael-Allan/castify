@@ -14,6 +14,9 @@ import androidx.media3.exoplayer.offline.DownloadManager
 import androidx.media3.exoplayer.offline.DownloadRequest
 import androidx.media3.exoplayer.offline.DownloadService
 import com.squad.castify.core.media.R
+import com.squad.castify.core.media.extensions.toEpisode
+import com.squad.castify.core.media.extensions.toMediaItem
+import com.squad.castify.core.model.UserEpisode
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -98,6 +101,10 @@ class CastifyDownloadTracker @Inject constructor(
                 false
             )
         }
+    }
+
+    override fun downloadEpisode( userEpisode: UserEpisode ) {
+        downloadMediaItem( userEpisode.toEpisode().toMediaItem() )
     }
 
     override fun retryDownload( mediaItem: MediaItem ) {
@@ -228,6 +235,7 @@ interface DownloadTracker {
     fun resumeDownload( mediaItem: MediaItem )
     fun removeDownload( mediaItem: MediaItem )
     fun retryDownload( mediaItem: MediaItem )
+    fun downloadEpisode( userEpisode: UserEpisode )
 
 }
 

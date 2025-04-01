@@ -53,6 +53,7 @@ android {
 dependencies {
 
     implementation( projects.feature.explore )
+    implementation( projects.feature.nowplaying )
 
     implementation( projects.core.common )
     implementation( projects.core.ui )

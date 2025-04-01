@@ -1,10 +1,12 @@
 package com.squad.castify.navigation
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.squad.castify.feature.explore.navigation.ExploreRoute
 import com.squad.castify.feature.explore.navigation.exploreScreen
+import com.squad.castify.feature.nowplaying.NowPlayingBottomBar
 import com.squad.castify.ui.CastifyAppState
 
 /**
@@ -23,11 +25,14 @@ fun CastifyNavHost(
 
     val navHostController = appState.navHostController
 
-    NavHost(
-        modifier = modifier,
-        navController = navHostController,
-        startDestination = ExploreRoute
-    ) {
-        exploreScreen()
+    Column {
+        NavHost(
+            modifier = modifier.weight( 1f ),
+            navController = navHostController,
+            startDestination = ExploreRoute
+        ) {
+            exploreScreen()
+        }
+        NowPlayingBottomBar()
     }
 }

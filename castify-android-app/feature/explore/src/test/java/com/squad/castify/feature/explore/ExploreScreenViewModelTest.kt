@@ -6,6 +6,7 @@ import com.squad.castify.core.domain.model.FilterableCategoriesModel
 import com.squad.castify.core.domain.model.PodcastCategoryFilterResult
 import com.squad.castify.core.domain.usecase.FilterableCategoriesUseCase
 import com.squad.castify.core.domain.usecase.PodcastCategoryFilterUseCase
+import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.Episode
 import com.squad.castify.core.model.FollowablePodcast
@@ -20,7 +21,6 @@ import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
 import com.squad.castify.core.testing.rules.MainDispatcherRule
 import com.squad.castify.core.testing.util.TestSyncManager
-import com.squad.castify.core.ui.PodcastFeedUiState
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -71,7 +71,7 @@ class ExploreScreenViewModelTest {
             filterableCategoriesUseCase = filterableCategoriesUseCase,
             podcastCategoryFilterUseCase = podcastCategoryFilterUseCase,
             syncManager = syncManager,
-            episodePlayerServiceConnection = episodePlayerServiceConnection,
+            episodePlayer = episodePlayerServiceConnection,
             downloadTracker = downloadTracker
         )
     }
@@ -136,7 +136,8 @@ class ExploreScreenViewModelTest {
                     )
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -181,7 +182,8 @@ class ExploreScreenViewModelTest {
                     )
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -205,7 +207,8 @@ class ExploreScreenViewModelTest {
                     )
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -235,7 +238,8 @@ class ExploreScreenViewModelTest {
                     }
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -257,7 +261,8 @@ class ExploreScreenViewModelTest {
                     }
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -294,7 +299,8 @@ class ExploreScreenViewModelTest {
                     }
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -319,7 +325,8 @@ class ExploreScreenViewModelTest {
                     }
                 ),
                 downloads = testDownloads,
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -349,7 +356,8 @@ class ExploreScreenViewModelTest {
                     }
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -374,10 +382,70 @@ class ExploreScreenViewModelTest {
                     }
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = downloadingEpisodes
+                downloadingEpisodes = downloadingEpisodes,
+                playerState = PlayerState()
             ),
             viewModel.podcastFeedUiState.value
         )
+    }
+
+    @Test
+    fun whenPlayerStateChanges_podcastFeedUiStateIsUpdated() = runTest {
+        backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.categoriesUiState.collect() }
+        backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.podcastFeedUiState.collect() }
+
+        categoriesRepository.sendCategories( sampleCategories )
+        podcastsRepository.sendPodcasts( samplePodcasts )
+        episodesRepository.sendEpisodes( sampleEpisodes )
+        userDataRepository.setUserData( emptyUserData )
+
+        assertEquals(
+            PodcastFeedUiState.Success(
+                model = PodcastCategoryFilterResult(
+                    topPodcasts = listOf( samplePodcasts[0], samplePodcasts[2] ).map {
+                        FollowablePodcast(
+                            podcast = it,
+                            isFollowed = false
+                        )
+                    },
+                    episodes = listOf( sampleEpisodes[0], sampleEpisodes[1] ).map {
+                        UserEpisode( it, emptyUserData )
+                    }
+                ),
+                downloads = emptyMap(),
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState()
+            ),
+            viewModel.podcastFeedUiState.value
+        )
+
+        val playerState = PlayerState(
+            currentlyPlayingEpisodeUri = "test/uri/1",
+            isPlaying = true,
+            isBuffering = false
+        )
+        episodePlayerServiceConnection.setPlayerState( playerState )
+
+        assertEquals(
+            PodcastFeedUiState.Success(
+                model = PodcastCategoryFilterResult(
+                    topPodcasts = listOf( samplePodcasts[0], samplePodcasts[2] ).map {
+                        FollowablePodcast(
+                            podcast = it,
+                            isFollowed = false
+                        )
+                    },
+                    episodes = listOf( sampleEpisodes[0], sampleEpisodes[1] ).map {
+                        UserEpisode( it, emptyUserData )
+                    }
+                ),
+                downloads = emptyMap(),
+                downloadingEpisodes = emptyMap(),
+                playerState = playerState
+            ),
+            viewModel.podcastFeedUiState.value
+        )
+
     }
 }
 

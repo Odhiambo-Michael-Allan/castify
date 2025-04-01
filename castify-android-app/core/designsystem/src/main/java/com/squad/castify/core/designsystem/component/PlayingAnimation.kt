@@ -27,7 +27,7 @@ fun PlayingAnimation(
 ) {
     val infiniteTransition = rememberInfiniteTransition( label = "" )
 
-    val barHeights = List( 3 ) { index ->
+    val barHeights = List( 5 ) { index ->
         infiniteTransition.animateFloat(
             initialValue = 1f,
             targetValue = 18f,
@@ -40,13 +40,13 @@ fun PlayingAnimation(
 
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
         verticalAlignment = Alignment.Bottom
     ) {
         barHeights.forEach { height ->
             Box(
                 modifier = Modifier
-                    .width( 5.dp )
+                    .width( 2.dp )
                     .height( height.value.dp )
                     .background(
                         MaterialTheme.colorScheme.primary,

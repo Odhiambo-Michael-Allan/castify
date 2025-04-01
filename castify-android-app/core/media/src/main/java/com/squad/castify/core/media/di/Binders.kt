@@ -6,6 +6,8 @@ import com.squad.castify.core.media.download.CastifyDownloadTracker
 import com.squad.castify.core.media.download.DownloadTracker
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnectionImpl
+import com.squad.castify.core.media.player.PlaybackPositionUpdater
+import com.squad.castify.core.media.player.PlaybackPositionUpdaterImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -28,5 +30,11 @@ abstract class MediaDiModuleBinders {
     abstract fun bindsDownloadTracker(
         downloadTracker: CastifyDownloadTracker
     ): DownloadTracker
+
+    @Binds
+    @Singleton
+    abstract fun bindsPlaybackPositionUpdater(
+        updater: PlaybackPositionUpdaterImpl
+    ): PlaybackPositionUpdater
 
 }

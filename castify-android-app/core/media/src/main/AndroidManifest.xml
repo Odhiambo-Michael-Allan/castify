@@ -29,7 +29,8 @@
 
         </receiver>
 
-        <service android:name=".download.CastifyDownloadService"
+        <service
+            android:name=".download.CastifyDownloadService"
             android:exported="false"
             android:foregroundServiceType="dataSync">
 

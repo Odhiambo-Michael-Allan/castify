@@ -6,5 +6,7 @@
     <string name="retry">Retry</string>
     <string name="resume">Resume</string>
     <string name="pause">Pause</string>
+    <string name="playing">playing..</string>
+    <string name="loading">loading..</string>
 
 </resources>

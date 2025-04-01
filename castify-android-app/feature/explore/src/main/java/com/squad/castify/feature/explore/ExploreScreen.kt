@@ -70,13 +70,13 @@ import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.core.designsystem.theme.CastifyTheme
 import com.squad.castify.core.domain.model.FilterableCategoriesModel
 import com.squad.castify.core.domain.model.PodcastCategoryFilterResult
+import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.FollowablePodcast
 import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
 import com.squad.castify.core.ui.EpisodeCard
-import com.squad.castify.core.ui.PodcastFeedUiState
 import com.squad.castify.core.ui.PreviewData
 import kotlinx.coroutines.launch
 
@@ -428,13 +428,14 @@ fun LazyGridScope.episodesFeed(
                     userEpisode = it,
                     onPlayEpisode = { onPlayEpisode( it ) },
                     onDownloadEpisode = { onDownloadEpisode( it ) },
-                    isPlaying = false,
+                    isPlaying = podcastFeedUiState.playerState.isPlaying && podcastFeedUiState.playerState.currentlyPlayingEpisodeUri == it.uri,
+                    isBuffering = podcastFeedUiState.playerState.isBuffering && podcastFeedUiState.playerState.currentlyPlayingEpisodeUri == it.uri,
                     downloadState = podcastFeedUiState.downloads[ it.audioUri ],
                     downloadingEpisodes = podcastFeedUiState.downloadingEpisodes,
                     onRetryDownload = { onRetryDownload( it ) },
                     onRemoveDownload = { onRemoveDownload( it ) },
                     onResumeDownload = { onResumeDownload( it ) },
-                    onPauseDownload = { onPauseDownload( it ) }
+                    onPauseDownload = { onPauseDownload( it ) },
                 )
             }
         }
@@ -462,7 +463,12 @@ fun ExploreScreenPopulated(
                     episodes = previewParameters.episodes
                 ),
                 downloads = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState(
+                    isPlaying = true,
+                    isBuffering = true,
+                    currentlyPlayingEpisodeUri = previewParameters.episodes.first().uri
+                ),
             ),
             onCategoryChange = {},
             onFollowPodcast = {},
@@ -523,7 +529,12 @@ fun ExploreScreenPopulatedAndLoading(
                 previewParameters.episodes[3].audioUri to Download.STATE_REMOVING,
                 previewParameters.episodes[4].audioUri to Download.STATE_QUEUED
             ),
-            downloadingEpisodes = emptyMap()
+            downloadingEpisodes = emptyMap(),
+            playerState = PlayerState(
+                isPlaying = true,
+                isBuffering = true,
+                currentlyPlayingEpisodeUri = previewParameters.episodes.first().uri
+            ),
         ),
         onCategoryChange = {},
         onFollowPodcast = {},

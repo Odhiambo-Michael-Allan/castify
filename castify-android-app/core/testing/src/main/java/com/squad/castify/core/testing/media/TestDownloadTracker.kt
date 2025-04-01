@@ -6,6 +6,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.offline.DownloadRequest
 import com.squad.castify.core.media.download.DownloadTracker
+import com.squad.castify.core.model.UserEpisode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,6 +52,10 @@ class TestDownloadTracker : DownloadTracker {
     }
 
     override fun retryDownload(mediaItem: MediaItem) {
+        TODO("Not yet implemented")
+    }
+
+    override fun downloadEpisode( userEpisode: UserEpisode ) {
         TODO("Not yet implemented")
     }
 

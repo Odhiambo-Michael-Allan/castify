@@ -31,7 +31,8 @@ data class PreviewData(
 
 object PreviewParameterData {
 
-    private val userData: UserData = UserData(
+    // TODO( MAKE THIS PRIVATE )
+    val userData: UserData = UserData(
         themeBrand = ThemeBrand.ANDROID,
         darkThemeConfig = DarkThemeConfig.DARK,
         useDynamicColor = false,
@@ -150,7 +151,8 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[1].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                author = "Now in Android"
             ),
             userData = userData
         ),
