@@ -49,7 +49,8 @@ fun UserEpisode.toEpisode() = Episode(
     author = author,
     published = published,
     duration = duration,
-    podcast = followablePodcast.podcast
+    podcast = followablePodcast.podcast,
+    durationPlayed = durationPlayed,
 )
 
 const val DURATION_KEY = "DURATION-MS"

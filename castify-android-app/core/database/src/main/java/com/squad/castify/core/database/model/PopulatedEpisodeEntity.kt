@@ -7,6 +7,8 @@ import androidx.room.Relation
 import com.squad.castify.core.model.Episode
 import java.util.Objects
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 /**
  * External data layer representation of a fully populated Castify Episode.
@@ -36,6 +38,7 @@ fun PopulatedEpisodeEntity.asExternalModel() = Episode(
     summary = episodeEntity.summary ?: "",
     author = episodeEntity.author ?: "",
     published = episodeEntity.published,
-    duration = Duration.parseOrNull( episodeEntity.duration.toString() ),
+    duration = Duration.parseOrNull( episodeEntity.duration.toString() ) ?: (0L).toDuration( DurationUnit.MILLISECONDS ),
+    durationPlayed = Duration.parseOrNull( episodeEntity.durationPlayed.toString() ) ?: (0L).toDuration( DurationUnit.MILLISECONDS ),
     podcast = podcastEntity.asExternalModel()
 )

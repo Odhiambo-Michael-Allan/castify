@@ -3,6 +3,7 @@ package com.squad.castify.feature.nowplaying
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -36,133 +38,117 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.squad.castify.core.designsystem.component.DynamicAsyncImage
 import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.core.designsystem.theme.CastifyTheme
+import com.squad.castify.core.media.extensions.toEpisode
 import com.squad.castify.core.media.player.PlaybackPosition
+import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.Episode
-import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
 import com.squad.castify.core.ui.PreviewData
-import com.squad.castify.core.ui.PreviewParameterData.podcasts
-import com.squad.castify.core.ui.PreviewParameterData.userData
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 
 @Composable
 fun NowPlayingBottomBar(
-    viewModel: NowPlayingViewModel = hiltViewModel()
+    viewModel: NowPlayingBottomBarViewModel = hiltViewModel()
 ) {
+    val nowPlayingBottomBarUiState by viewModel.uiState.collectAsStateWithLifecycle()
     val playbackPosition by viewModel.playbackPosition.collectAsStateWithLifecycle()
 
     NowPlayingBottomBarContent(
-        currentlyPlayingEpisode =UserEpisode(
-            episode = Episode(
-                uri = "http://nowinandroid.libsyn.com/112-android-16-developer-preview-1-passkeys-spotlight-week-and-more",
-                title = "112 - Android 16 Developer Preview 1, Passkeys Spotlight Week, and more!",
-                subTitle = "Welcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover the First Developer Preview of Android 16, our Spotlight Week on Passkeys, Stability and Performance...",
-                summary = "\u003cp\u003eWelcome to Now in Android, your ongoing guide to what\u0027s new and notable in the world of Android development. In this episode, we’ll cover the First Developer Preview of Android 16, our Spotlight Week on Passkeys, Stability and Performance Improvements to the Android Emulator and more!\u003c/p\u003e \u003cp\u003eFor links to these items, check out Now in Android #112 on Medium → https://goo.gle/3OUlGMV \u003c/p\u003e \u003cp\u003eWatch more Now in Android → https://goo.gle/now-in-android \u003cbr /\u003e Subscribe to Android Developers YouTube → https://goo.gle/AndroidDevs \u003c/p\u003e",
-                published = LocalDateTime(
-                    year = 2024,
-                    monthNumber = 12,
-                    dayOfMonth = 13,
-                    hour = 10,
-                    minute = 34,
-                    second = 21,
-                    nanosecond = 0
-                ).toInstant( TimeZone.UTC ),
-                podcast = podcasts[1].podcast,
-                audioUri = "",
-                audioMimeType = "",
-                author = "Now in Android"
-            ),
-            userData = userData
-        ),
-        isPlaying = true,
+        uiState = nowPlayingBottomBarUiState,
         playbackPosition = playbackPosition,
-        onTogglePlay = {}
+        onTogglePlay = viewModel::togglePlay
     )
+
 }
 
 @Composable
 private fun NowPlayingBottomBarContent(
     modifier: Modifier = Modifier,
-    currentlyPlayingEpisode: UserEpisode?,
-    isPlaying: Boolean,
+    uiState: NowPlayingBottomBarUiState,
     playbackPosition: PlaybackPosition,
-    onTogglePlay: () -> Unit,
+    onTogglePlay: ( Episode ) -> Unit,
 ) {
-    AnimatedVisibility(
-        visible = currentlyPlayingEpisode != null
-    ) {
-        currentlyPlayingEpisode?.let { playingEpisode ->
-            Column (
-                modifier = modifier
-                    .background( MaterialTheme.colorScheme.surfaceColorAtElevation( 1.dp ) )
+    when ( uiState ) {
+        NowPlayingBottomBarUiState.Loading -> Unit
+        is NowPlayingBottomBarUiState.Success -> {
+            AnimatedVisibility(
+                visible = uiState.currentlyPlayingEpisode != null
             ) {
-                ElevatedCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    shape = RectangleShape,
-                    onClick = { /*TODO*/ }
-                ) {
-                    Row (
-                        modifier = Modifier.padding( 0.dp, 8.dp ),
-                        verticalAlignment = Alignment.CenterVertically,
+                uiState.currentlyPlayingEpisode?.let { playingEpisode ->
+                    Column (
+                        modifier = modifier
+                            .background( MaterialTheme.colorScheme.surfaceColorAtElevation( 1.dp ) )
                     ) {
-                        Spacer( modifier = Modifier.width( 12.dp ) )
-                        DynamicAsyncImage(
-                            modifier = Modifier
-                                .size(45.dp)
-                                .clip(RoundedCornerShape(10.dp)),
-                            imageUrl = playingEpisode.followablePodcast.podcast.imageUrl,
-                            contentDescription = null
-                        )
-                        Spacer( modifier = Modifier.width( 15.dp ) )
-                        Column (
+                        ElevatedCard(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(1f)
+                                .wrapContentHeight(),
+                            shape = RectangleShape,
+                            onClick = { /*TODO*/ }
                         ) {
-                            NowPlayingBottomBarContentText(
-                                text = playingEpisode.title,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            NowPlayingBottomBarContentText(
-                                text = playingEpisode.author,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
+                            Row (
+                                modifier = Modifier.padding( 0.dp, 8.dp ),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Spacer( modifier = Modifier.width( 12.dp ) )
+                                DynamicAsyncImage(
+                                    modifier = Modifier
+                                        .size(45.dp)
+                                        .clip(RoundedCornerShape(10.dp)),
+                                    imageUrl = playingEpisode.podcast.imageUrl,
+                                    contentDescription = null
+                                )
+                                Spacer( modifier = Modifier.width( 15.dp ) )
+                                Column (
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    NowPlayingBottomBarContentText(
+                                        text = playingEpisode.title,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    if ( playingEpisode.author.isNotEmpty() ) {
+                                        Spacer( modifier = Modifier.height( 4.dp ) )
+                                        NowPlayingBottomBarContentText(
+                                            text = playingEpisode.author,
+                                            style = MaterialTheme.typography.bodySmall
+                                        )
+                                    }
+                                }
 
-                        IconButton(
-                            onClick = onTogglePlay
+                                IconButton(
+                                    onClick = { onTogglePlay( playingEpisode ) }
+                                ) {
+                                    Icon(
+                                        imageVector = if ( uiState.playerState.isPlaying ) CastifyIcons.Pause else CastifyIcons.Play,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        }
+                        // Progress Bar
+                        Box(
+                            modifier = Modifier
+                                .height(1.dp)
+                                .fillMaxWidth()
                         ) {
-                            Icon(
-                                imageVector = if ( isPlaying ) CastifyIcons.Pause else CastifyIcons.Play,
-                                contentDescription = null
+                            Box(
+                                modifier = Modifier
+                                    .background(MaterialTheme.colorScheme.primary.copy(0.3f))
+                                    .fillMaxWidth()
+                                    .fillMaxHeight()
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.CenterStart)
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .fillMaxWidth(playbackPosition.ratio)
+                                    .fillMaxHeight()
                             )
                         }
                     }
-                }
-                // Progress Bar
-                Box(
-                    modifier = Modifier
-                        .height(1.dp)
-                        .fillMaxWidth()
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.primary.copy(0.3f))
-                            .fillMaxWidth()
-                            .fillMaxHeight()
-                    )
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.CenterStart)
-                            .background(MaterialTheme.colorScheme.primary)
-                            .fillMaxWidth(playbackPosition.ratio)
-                            .fillMaxHeight()
-                    )
                 }
             }
         }
@@ -180,6 +166,7 @@ private fun NowPlayingBottomBarContentText(
         Text(
             text = text,
             style = style,
+            fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
@@ -196,8 +183,12 @@ private fun NowPlayingBottomBarContentPreview(
 ) {
     CastifyTheme {
         NowPlayingBottomBarContent(
-            currentlyPlayingEpisode = previewData.episodes.first(),
-            isPlaying = true,
+            uiState = NowPlayingBottomBarUiState.Success(
+                currentlyPlayingEpisode = previewData.episodes.first().toEpisode(),
+                playerState = PlayerState(
+                    isPlaying = false
+                )
+            ),
             playbackPosition = PlaybackPosition( 3, 5 ),
             onTogglePlay = {}
         )

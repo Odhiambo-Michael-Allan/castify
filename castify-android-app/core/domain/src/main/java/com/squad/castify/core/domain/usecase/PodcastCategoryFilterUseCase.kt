@@ -44,6 +44,8 @@ class PodcastCategoryFilterUseCase @Inject constructor(
                 )
             }
         ) { userData, podcasts, episodes ->
+            println( "PODCAST CATEGORY FILTER USE CASE: DURATION: ${episodes.mapNotNull { it.duration }}" )
+            println( "PODCAST CATEGORY FILTER USE CASE: DURATION PLAYED: ${episodes.mapNotNull { it.durationPlayed }}" )
             PodcastCategoryFilterResult(
                 topPodcasts = podcasts.map {
                     FollowablePodcast(

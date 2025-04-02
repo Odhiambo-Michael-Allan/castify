@@ -14,7 +14,7 @@ import androidx.compose.material.icons.rounded.Downloading
 import androidx.compose.material.icons.rounded.Error
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.MoreVert
-import androidx.compose.material.icons.rounded.PauseCircle
+import androidx.compose.material.icons.rounded.Pause
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.PlayCircleOutline
 import androidx.compose.material.icons.rounded.Search
@@ -28,15 +28,16 @@ object CastifyIcons {
     val Add = Icons.Rounded.Add
     val Check = Icons.Rounded.Check
     val Error = Icons.Rounded.Error
-    val Play = Icons.Rounded.PlayCircleOutline
+    val PlayCircle = Icons.Rounded.PlayCircleOutline
+    val Play = Icons.Rounded.PlayArrow
     val PlaylistPlay = Icons.AutoMirrored.Rounded.PlaylistPlay
     val PlaylistAdd = Icons.AutoMirrored.Rounded.PlaylistAdd
     val DownloadDefault = Icons.Rounded.ArrowCircleDown
     val MoreVert = Icons.Rounded.MoreVert
-    val Downloaded = Icons.Rounded.CheckCircle
+    val CheckCircle = Icons.Rounded.CheckCircle
     val Downloading = Icons.Rounded.Downloading
     val Cancel = Icons.Outlined.Cancel
     val Retry = Icons.Default.Replay
-    val Pause = Icons.Rounded.PauseCircle
+    val Pause = Icons.Rounded.Pause
     val Resume = Icons.Rounded.PlayArrow
 }

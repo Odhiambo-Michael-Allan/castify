@@ -12,6 +12,8 @@ import com.squad.castify.core.model.UserEpisode
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class CategoryPodcastEpisodePreviewParameterProvider : PreviewParameterProvider<PreviewData> {
     override val values: Sequence<PreviewData> = sequenceOf(
@@ -152,7 +154,9 @@ object PreviewParameterData {
                 podcast = podcasts[1].podcast,
                 audioUri = "",
                 audioMimeType = "",
-                author = "Now in Android"
+                author = "Now in Android",
+                duration = (5L).toDuration( DurationUnit.SECONDS ),
+                durationPlayed = (3L).toDuration( DurationUnit.SECONDS )
             ),
             userData = userData
         ),
@@ -173,7 +177,9 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[1].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                duration = (0L).toDuration( DurationUnit.MILLISECONDS ),
+                durationPlayed = (0L).toDuration( DurationUnit.MILLISECONDS )
             ),
             userData = userData
         ),
@@ -194,7 +200,9 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[2].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                duration = (0L).toDuration( DurationUnit.MILLISECONDS ),
+                durationPlayed = (0L).toDuration( DurationUnit.MILLISECONDS )
             ),
             userData = userData
         ),
@@ -215,7 +223,9 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[2].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                duration = (0L).toDuration( DurationUnit.MILLISECONDS ),
+                durationPlayed = (0L).toDuration( DurationUnit.MILLISECONDS )
             ),
             userData = userData
         ),
@@ -236,7 +246,9 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[3].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                duration = (0L).toDuration( DurationUnit.MILLISECONDS ),
+                durationPlayed = (0L).toDuration( DurationUnit.MILLISECONDS )
             ),
             userData = userData
         ),
@@ -256,7 +268,9 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[3].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                duration = (0L).toDuration( DurationUnit.MILLISECONDS ),
+                durationPlayed = (0L).toDuration( DurationUnit.MILLISECONDS )
             ),
             userData = userData
         ),
@@ -277,7 +291,9 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[3].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                duration = (0L).toDuration( DurationUnit.MILLISECONDS ),
+                durationPlayed = (0L).toDuration( DurationUnit.MILLISECONDS )
             ),
             userData = userData
         ),
@@ -298,7 +314,9 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[3].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                duration = (0L).toDuration( DurationUnit.MILLISECONDS ),
+                durationPlayed = (0L).toDuration( DurationUnit.MILLISECONDS )
             ),
             userData = userData
         ),
@@ -319,7 +337,9 @@ object PreviewParameterData {
                 ).toInstant( TimeZone.UTC ),
                 podcast = podcasts[3].podcast,
                 audioUri = "",
-                audioMimeType = ""
+                audioMimeType = "",
+                duration = (0L).toDuration( DurationUnit.MILLISECONDS ),
+                durationPlayed = (0L).toDuration( DurationUnit.MILLISECONDS )
             ),
             userData = userData
         ),

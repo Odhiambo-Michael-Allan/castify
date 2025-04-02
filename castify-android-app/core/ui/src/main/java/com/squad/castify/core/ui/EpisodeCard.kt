@@ -11,19 +11,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +68,7 @@ fun EpisodeCard(
     downloadState: Int?,
     isPlaying: Boolean,
     isBuffering: Boolean,
+    isCompleted: Boolean,
     downloadingEpisodes: Map<String, Float>,
     onPlayEpisode: () -> Unit,
     onDownloadEpisode: () -> Unit,
@@ -166,17 +164,42 @@ fun EpisodeCard(
                                     text = stringResource( id = R.string.playing ),
                                     fontWeight = FontWeight.SemiBold
                                 )
-                            } else {
-                                Icon(
-                                    imageVector = CastifyIcons.Play,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    contentDescription = null
-                                )
+                            }
+                            else {
+                                if ( userEpisode.durationPlayed > Duration.ZERO ) {
+                                    CircularProgressIndicator(
+                                        progress = {
+                                            ( userEpisode.durationPlayed
+                                                .div( userEpisode.duration )
+                                            ).toFloat()
+                                        },
+                                        modifier = Modifier
+                                            .width(CastifyIcons.DownloadDefault.defaultWidth)
+                                            .height(CastifyIcons.DownloadDefault.defaultHeight)
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = if ( isCompleted ) {
+                                            CastifyIcons.Check
+                                        } else CastifyIcons.PlayCircle,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        contentDescription = null
+                                    )
+                                }
                                 Spacer( modifier = Modifier.width( 4.dp ) )
+
                                 Text(
-                                    text = durationFormatted(
-                                        duration = userEpisode.duration ?: Duration.ZERO
-                                    ),
+                                    text = buildString {
+                                        append(
+                                            durationFormatted(
+                                                duration = userEpisode.duration
+                                            )
+                                        )
+                                        if ( userEpisode.durationPlayed > Duration.ZERO ) {
+                                            append( " " )
+                                            append( stringResource( id = R.string.left ) )
+                                        }
+                                    },
                                     style = MaterialTheme.typography.labelLarge,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -212,7 +235,7 @@ fun EpisodeCard(
                                     Icon(
                                         imageVector = when ( downloadState ) {
                                             Download.STATE_FAILED -> CastifyIcons.Error
-                                            Download.STATE_COMPLETED -> CastifyIcons.Downloaded
+                                            Download.STATE_COMPLETED -> CastifyIcons.CheckCircle
                                             Download.STATE_STOPPED -> CastifyIcons.Pause
                                             else -> CastifyIcons.DownloadDefault
                                         },
@@ -336,9 +359,10 @@ fun EpisodeCardPreview(
         EpisodeCard(
             modifier = Modifier.padding( 16.dp ),
             userEpisode = previewData.episodes.first(),
-            downloadState = Download.STATE_FAILED,
-            isPlaying = true,
-            isBuffering = true,
+            downloadState = Download.STATE_COMPLETED,
+            isPlaying = false,
+            isBuffering = false,
+            isCompleted = true,
             downloadingEpisodes = mapOf(
                 previewData.episodes.first().audioUri to 0.4f
             ),

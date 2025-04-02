@@ -18,6 +18,7 @@ import javax.inject.Inject
 
 interface PlaybackPositionUpdater {
     val playbackPosition: StateFlow<PlaybackPosition>
+    val totalDurationPreviousMediaItemPlayed: StateFlow<Long>
 
     fun cleanUp()
 }
@@ -32,6 +33,10 @@ class PlaybackPositionUpdaterImpl @Inject constructor(
 
     private var _playbackPosition = MutableStateFlow( episodePlayerServiceConnection.getCurrentPlaybackPosition() )
     override val playbackPosition = _playbackPosition.asStateFlow()
+
+    private val _totalDurationPreviousMediaItemPlayed = MutableStateFlow( _playbackPosition.value.played )
+    override val totalDurationPreviousMediaItemPlayed =
+        _totalDurationPreviousMediaItemPlayed.asStateFlow()
 
     private val coroutineScope = CoroutineScope( dispatcher + SupervisorJob() )
 
@@ -59,8 +64,17 @@ class PlaybackPositionUpdaterImpl @Inject constructor(
         }
     }
 
+
     private fun stopPeriodicUpdates() {
         periodicUpdatesStarted = false
+        /**
+         * The updates may be stopping because the player is transitioning to another media item.
+         * If that's the case, we need to report the total duration of playback of the previous
+         * media item and then fetch the playback position of the current media item if a
+         * transition occurred.
+         */
+        _totalDurationPreviousMediaItemPlayed.value = _playbackPosition.value.played
+        _playbackPosition.value = episodePlayerServiceConnection.getCurrentPlaybackPosition()
         handler.removeCallbacksAndMessages( null )
     }
 

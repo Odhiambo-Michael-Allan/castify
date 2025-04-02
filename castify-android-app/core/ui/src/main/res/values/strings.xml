@@ -8,5 +8,7 @@
     <string name="pause">Pause</string>
     <string name="playing">playing..</string>
     <string name="loading">loading..</string>
+    <string name="completed">Completed</string>
+    <string name="left">left</string>
 
 </resources>

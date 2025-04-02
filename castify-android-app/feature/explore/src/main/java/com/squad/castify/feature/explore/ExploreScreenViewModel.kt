@@ -98,7 +98,7 @@ class ExploreScreenViewModel @Inject constructor(
     }
 
     fun playEpisode( userEpisode: UserEpisode ) =
-        episodePlayer.playEpisode( userEpisode )
+        episodePlayer.playEpisode( userEpisode.toEpisode() )
 
     fun downloadEpisode( userEpisode: UserEpisode ) =
         downloadTracker.downloadEpisode( userEpisode )

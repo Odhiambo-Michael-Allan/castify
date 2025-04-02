@@ -4,6 +4,8 @@ import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import com.squad.castify.core.media.download.CastifyDownloadTracker
 import com.squad.castify.core.media.download.DownloadTracker
+import com.squad.castify.core.media.player.DurationPlayedUpdater
+import com.squad.castify.core.media.player.DurationPlayedPlayedUpdaterImpl
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnectionImpl
 import com.squad.castify.core.media.player.PlaybackPositionUpdater
@@ -36,5 +38,11 @@ abstract class MediaDiModuleBinders {
     abstract fun bindsPlaybackPositionUpdater(
         updater: PlaybackPositionUpdaterImpl
     ): PlaybackPositionUpdater
+
+    @Binds
+    @Singleton
+    abstract fun bindsDurationPlayedUpdater(
+        durationUpdater: DurationPlayedPlayedUpdaterImpl
+    ): DurationPlayedUpdater
 
 }

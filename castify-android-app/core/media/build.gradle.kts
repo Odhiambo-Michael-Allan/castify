@@ -20,6 +20,7 @@ dependencies {
     implementation( projects.core.common )
     implementation( projects.core.data )
     implementation( projects.core.model )
+    implementation( projects.core.notifications )
 //    implementation( projects.sync )
 
     implementation( libs.androidx.core.ktx )
@@ -40,4 +41,5 @@ dependencies {
 
     testImplementation( libs.junit )
     testImplementation( libs.kotlinx.coroutines.test )
+    testImplementation( projects.core.testing )
 }

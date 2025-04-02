@@ -7,6 +7,10 @@ import com.squad.castify.core.model.Episode
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 class TestEpisodesRepository : EpisodesRepository {
@@ -14,8 +18,8 @@ class TestEpisodesRepository : EpisodesRepository {
     private val episodesFlow: MutableSharedFlow<List<Episode>> =
         MutableSharedFlow( replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST )
 
-    override fun fetchEpisodeWithUri( uri: String ): Flow<Episode> = episodesFlow.map { episodes ->
-        episodes.find { it.uri == uri }!!
+    override fun fetchEpisodeWithUri( uri: String ): Flow<Episode?> = episodesFlow.flatMapLatest { episodes ->
+        flowOf( episodes.find { it.uri == uri } )
     }
 
     override fun fetchEpisodesMatchingQuerySortedByPublishDate(
@@ -35,7 +39,14 @@ class TestEpisodesRepository : EpisodesRepository {
         result
     }
 
-    override suspend fun syncWith(synchronizer: Synchronizer): Boolean = true
+    override suspend fun upsertEpisode( episode: Episode ) {
+        val currentEpisodes = episodesFlow.first().toMutableSet()
+        currentEpisodes.removeIf { it.uri == episode.uri }
+        currentEpisodes.add( episode )
+        episodesFlow.tryEmit( currentEpisodes.toList() )
+    }
+
+    override suspend fun syncWith( synchronizer: Synchronizer ): Boolean = true
 
     /**
      * A test-only API to allow controlling the list of news resources from tests.

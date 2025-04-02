@@ -15,6 +15,7 @@ data class Episode(
     val summary: String = "",
     val author: String = "",
     val published: Instant,
-    val duration: Duration? = null,
+    val duration: Duration,
+    val durationPlayed: Duration,
     val podcast: Podcast
 )

@@ -17,7 +17,8 @@ data class UserEpisode internal constructor(
     val summary: String,
     val author: String,
     val published: Instant,
-    val duration: Duration?,
+    val duration: Duration,
+    val durationPlayed: Duration,
     val followablePodcast: FollowablePodcast
 ) {
     constructor( episode: Episode, userData: UserData ) : this (
@@ -30,6 +31,7 @@ data class UserEpisode internal constructor(
         author = episode.author,
         published = episode.published,
         duration = episode.duration,
+        durationPlayed = episode.durationPlayed,
         followablePodcast = FollowablePodcast(
             podcast = episode.podcast,
             isFollowed = episode.podcast.uri in userData.followedPodcasts

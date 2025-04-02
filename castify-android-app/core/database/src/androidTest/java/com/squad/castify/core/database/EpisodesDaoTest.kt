@@ -12,6 +12,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
+import kotlin.time.toJavaDuration
 
 
 class EpisodesDaoTest {
@@ -62,7 +65,7 @@ class EpisodesDaoTest {
             .fetchEpisodeWithUri( "episode-uri-1" )
             .first()
 
-        assertEquals( "2", episode.podcastEntity.uri )
+        assertEquals( "2", episode!!.podcastEntity.uri )
     }
 
     @Test
@@ -187,6 +190,49 @@ class EpisodesDaoTest {
                     useFilterPodcastUris = true,
                     filterPodcastUris = setOf( "2" )
                 ).first()
+        )
+    }
+
+    @Test
+    fun episodeDao_episode_is_correctly_upserted() = runTest {
+        val podcastEntities = listOf(
+            testPodcastEntity( uri = "0" ),
+            testPodcastEntity( uri = "1" ),
+            testPodcastEntity( uri = "2" )
+        )
+
+        val episodeEntities = listOf(
+            testEpisodeEntity(
+                uri = "episode-uri-1",
+                podcastUri = "2",
+                published = 0L
+            ),
+            testEpisodeEntity(
+                uri = "episode-uri-2",
+                podcastUri = "2",
+                published = 2L
+            ),
+            testEpisodeEntity(
+                uri = "episode-uri-3",
+                podcastUri = "0",
+                published = 1L
+            )
+        )
+
+        podcastDao.upsertPodcasts( podcastEntities )
+        episodeDao.upsertEpisodes( episodeEntities )
+
+        val durationPlayed = (2L).toDuration( DurationUnit.MILLISECONDS ).toJavaDuration()
+
+        episodeDao.upsertEpisode(
+            episodeEntities.first().copy(
+                durationPlayed = durationPlayed
+            )
+        )
+
+        assertEquals(
+            durationPlayed,
+            episodeDao.fetchEpisodeWithUri( "episode-uri-1" ).first()!!.episodeEntity.durationPlayed
         )
     }
 

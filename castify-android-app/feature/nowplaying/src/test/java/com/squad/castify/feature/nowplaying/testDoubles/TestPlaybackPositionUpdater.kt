@@ -10,6 +10,9 @@ class TestPlaybackPositionUpdater : PlaybackPositionUpdater {
 
     private val _playbackPosition = MutableStateFlow( PlaybackPosition.zero )
     override val playbackPosition = _playbackPosition.asStateFlow()
+    override fun cleanUp() {
+        TODO("Not yet implemented")
+    }
 
     fun setPlaybackPosition( playbackPosition: PlaybackPosition ) {
         _playbackPosition.value = playbackPosition

@@ -9,6 +9,7 @@ import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.database.dao.EpisodeDao
 import com.squad.castify.core.database.dao.PodcastDao
 import com.squad.castify.core.database.model.PopulatedEpisodeEntity
+import com.squad.castify.core.database.model.asEntity
 import com.squad.castify.core.database.model.asExternalModel
 import com.squad.castify.core.datastore.CastifyPreferencesDataSource
 import com.squad.castify.core.model.Episode
@@ -28,9 +29,9 @@ internal class OfflineFirstEpisodesRepository @Inject constructor(
     private val notifier: Notifier
 ) : EpisodesRepository {
 
-    override fun fetchEpisodeWithUri( uri: String ): Flow<Episode> = episodeDao
+    override fun fetchEpisodeWithUri( uri: String ): Flow<Episode?> = episodeDao
         .fetchEpisodeWithUri( uri )
-        .map { it.asExternalModel() }
+        .map { it?.asExternalModel() }
 
     override fun fetchEpisodesMatchingQuerySortedByPublishDate(
         query: EpisodeQuery
@@ -44,6 +45,13 @@ internal class OfflineFirstEpisodesRepository @Inject constructor(
         }
         result
     }.map { it.map( PopulatedEpisodeEntity::asExternalModel ) }
+
+    override suspend fun upsertEpisode( episode: Episode ) {
+        val episodeEntity = episode.asEntity()
+        println( "OFFLINE FIRST EPISODE REPO: EPISODE DURATION PLAYED: ${episode.durationPlayed}" )
+        println( "OFFLINE FIRST EPISODE REPO: EPISODE ENTITY DURATION PLAYED: ${episodeEntity.durationPlayed}" )
+        episodeDao.upsertEpisode( episodeEntity )
+    }
 
 
     override suspend fun syncWith( synchronizer: Synchronizer ): Boolean {

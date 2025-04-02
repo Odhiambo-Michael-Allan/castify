@@ -29,6 +29,7 @@ import com.squad.castify.core.common.network.di.ApplicationScope
 import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.media.extensions.toMediaItem
+import com.squad.castify.core.media.notification.CastifyMediaNotificationProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -65,10 +66,16 @@ class EpisodePlayerService : MediaLibraryService() {
     @Inject
     lateinit var downloadCache: Cache
 
+    @Inject
+    lateinit var castifyMediaNotificationProvider: CastifyMediaNotificationProvider
+
+    /** Create this and forget about it. It knows what to do. */
+    @Inject
+    lateinit var durationPlayedUpdater: DurationPlayedUpdater
+
     private var mediaItems = emptyList<MediaItem>()
 
-    protected lateinit var mediaSession: MediaLibrarySession
-    private var currentMediaItemIndex: Int = 0
+    lateinit var mediaSession: MediaLibrarySession
 
     private val catalogueRootMediaItem: MediaItem by lazy {
         MediaItem.Builder()
@@ -112,6 +119,8 @@ class EpisodePlayerService : MediaLibraryService() {
      */
     private val exoPlayer: Player by lazy {
         val player = ExoPlayer.Builder(this )
+            .setAudioAttributes( castifyAudioAttributes, true )
+            .setHandleAudioBecomingNoisy( true )
             .setMediaSourceFactory(
                 DefaultMediaSourceFactory( this ).setDataSourceFactory( cacheDataSourceFactory )
             ).build()
@@ -152,6 +161,8 @@ class EpisodePlayerService : MediaLibraryService() {
                 mediaItems = episodes.map { it.toMediaItem() }
             }
         }
+
+        setMediaNotificationProvider( castifyMediaNotificationProvider )
 
     }
 

@@ -5,8 +5,9 @@ import com.squad.castify.core.model.Episode
 import kotlinx.coroutines.flow.Flow
 
 interface EpisodesRepository : Syncable {
-    fun fetchEpisodeWithUri( uri: String ): Flow<Episode>
+    fun fetchEpisodeWithUri( uri: String ): Flow<Episode?>
     fun fetchEpisodesMatchingQuerySortedByPublishDate( query: EpisodeQuery ): Flow<List<Episode>>
+    suspend fun upsertEpisode( episode: Episode )
 }
 
 /**

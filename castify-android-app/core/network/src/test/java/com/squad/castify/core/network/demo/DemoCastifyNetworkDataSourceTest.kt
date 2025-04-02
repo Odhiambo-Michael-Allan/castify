@@ -34,7 +34,7 @@ class DemoCastifyNetworkDataSourceTest {
     fun testDeserializationOfCategories() = runTest ( testDispatcher ) {
         assertEquals(
             NetworkCategory(
-                id = "12",
+                id = "23",
                 name = "TV \u0026 Film"
             ),
             subject.getCategories().first()
@@ -51,7 +51,7 @@ class DemoCastifyNetworkDataSourceTest {
                 author = "gdevs.podcast@gmail.com (gdevs.podcast@gmail.com)",
                 copyright = "2024 © Android Developers",
                 imageUrl = "https://static.libsyn.com/p/assets/1/4/f/9/14f959f911553fcc27a2322813b393ee/NIA000_PodcastThumbnail-20241010-vj0kfz2md4.png",
-                categoryIds = listOf( "0", "1" )
+                categoryIds = listOf( "0" )
             ),
             subject.getPodcasts().first()
         )

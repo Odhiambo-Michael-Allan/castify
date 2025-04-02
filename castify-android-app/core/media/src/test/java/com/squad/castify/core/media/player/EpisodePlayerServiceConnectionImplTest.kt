@@ -18,7 +18,6 @@ class EpisodePlayerServiceConnectionImplTest {
     fun setUp() {
         subject = EpisodePlayerServiceConnectionImpl(
             serviceConnector = serviceConnector,
-            downloadTracker = downloadTracker,
             dispatcher = UnconfinedTestDispatcher()
         )
     }

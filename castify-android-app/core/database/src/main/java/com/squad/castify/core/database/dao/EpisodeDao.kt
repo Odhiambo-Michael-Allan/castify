@@ -17,6 +17,9 @@ interface EpisodeDao {
     @Upsert
     suspend fun upsertEpisodes( episodeEntities: List<EpisodeEntity> )
 
+    @Upsert
+    suspend fun upsertEpisode( episodeEntity: EpisodeEntity )
+
     @Transaction
     @Query(
         value = """
@@ -25,7 +28,7 @@ interface EpisodeDao {
             WHERE episodes.uri = :uri
         """
     )
-    fun fetchEpisodeWithUri( uri: String ): Flow<PopulatedEpisodeEntity>
+    fun fetchEpisodeWithUri( uri: String ): Flow<PopulatedEpisodeEntity?>
 
     @Query(
         value = """

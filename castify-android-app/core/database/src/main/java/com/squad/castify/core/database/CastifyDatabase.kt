@@ -1,5 +1,6 @@
 package com.squad.castify.core.database
 
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -20,7 +21,10 @@ import com.squad.castify.core.database.util.InstantConverter
         EpisodeEntity::class,
         PodcastCategoryCrossRefEntity::class
     ],
-    version = 1,
+    version = 2,
+    autoMigrations = [
+        AutoMigration( from = 1, to = 2 )
+    ],
     exportSchema = true,
 )
 @TypeConverters( InstantConverter::class, DurationConverter::class )

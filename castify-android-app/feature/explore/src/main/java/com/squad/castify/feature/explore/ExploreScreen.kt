@@ -79,6 +79,7 @@ import com.squad.castify.core.ui.DevicePreviews
 import com.squad.castify.core.ui.EpisodeCard
 import com.squad.castify.core.ui.PreviewData
 import kotlinx.coroutines.launch
+import kotlin.time.DurationUnit
 
 private val DEFAULT_START_END_PADDING = 16.dp
 
@@ -423,6 +424,10 @@ fun LazyGridScope.episodesFeed(
                 podcastFeedUiState.model.episodes,
                 key = { it.uri }
             ) {
+                val durationPlayed = it.durationPlayed.toLong( DurationUnit.SECONDS )
+                val duration = it.duration.toLong( DurationUnit.SECONDS )
+                val isCompleted = durationPlayed > 0 && durationPlayed >= duration
+
                 EpisodeCard(
                     modifier = Modifier.padding( DEFAULT_START_END_PADDING ),
                     userEpisode = it,
@@ -432,6 +437,7 @@ fun LazyGridScope.episodesFeed(
                     isBuffering = podcastFeedUiState.playerState.isBuffering && podcastFeedUiState.playerState.currentlyPlayingEpisodeUri == it.uri,
                     downloadState = podcastFeedUiState.downloads[ it.audioUri ],
                     downloadingEpisodes = podcastFeedUiState.downloadingEpisodes,
+                    isCompleted = isCompleted,
                     onRetryDownload = { onRetryDownload( it ) },
                     onRemoveDownload = { onRemoveDownload( it ) },
                     onResumeDownload = { onResumeDownload( it ) },
