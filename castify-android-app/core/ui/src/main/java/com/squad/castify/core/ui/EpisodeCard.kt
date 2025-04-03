@@ -58,6 +58,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 @OptIn(UnstableApi::class)
 @kotlin.OptIn( ExperimentalMaterial3Api::class )
@@ -68,7 +69,6 @@ fun EpisodeCard(
     downloadState: Int?,
     isPlaying: Boolean,
     isBuffering: Boolean,
-    isCompleted: Boolean,
     downloadingEpisodes: Map<String, Float>,
     onPlayEpisode: () -> Unit,
     onDownloadEpisode: () -> Unit,
@@ -78,6 +78,11 @@ fun EpisodeCard(
     onPauseDownload: () -> Unit,
 ) {
     var showModalBottomSheet by remember { mutableStateOf( false ) }
+
+    val durationPlayed = userEpisode.durationPlayed
+    val duration = userEpisode.duration
+    val isCompleted = ( durationPlayed.inWholeMilliseconds + 500L ) >= duration.inWholeMilliseconds
+    val hasPreviouslyBeenPlayed = durationPlayed > Duration.ZERO
 
     Card(
         colors = CardDefaults.cardColors(
@@ -166,7 +171,7 @@ fun EpisodeCard(
                                 )
                             }
                             else {
-                                if ( userEpisode.durationPlayed > Duration.ZERO ) {
+                                if ( userEpisode.durationPlayed > Duration.ZERO && !isCompleted ) {
                                     CircularProgressIndicator(
                                         progress = {
                                             ( userEpisode.durationPlayed
@@ -192,10 +197,15 @@ fun EpisodeCard(
                                     text = buildString {
                                         append(
                                             durationFormatted(
-                                                duration = userEpisode.duration
+                                                duration = if ( hasPreviouslyBeenPlayed && isCompleted ) {
+                                                    userEpisode.duration
+                                                } else {
+                                                    userEpisode.duration
+                                                        .minus( userEpisode.durationPlayed )
+                                                }
                                             )
                                         )
-                                        if ( userEpisode.durationPlayed > Duration.ZERO ) {
+                                        if ( !isCompleted && hasPreviouslyBeenPlayed ) {
                                             append( " " )
                                             append( stringResource( id = R.string.left ) )
                                         }
@@ -358,11 +368,10 @@ fun EpisodeCardPreview(
     CastifyTheme {
         EpisodeCard(
             modifier = Modifier.padding( 16.dp ),
-            userEpisode = previewData.episodes.first(),
+            userEpisode = previewData.episodes[1],
             downloadState = Download.STATE_COMPLETED,
             isPlaying = false,
             isBuffering = false,
-            isCompleted = true,
             downloadingEpisodes = mapOf(
                 previewData.episodes.first().audioUri to 0.4f
             ),

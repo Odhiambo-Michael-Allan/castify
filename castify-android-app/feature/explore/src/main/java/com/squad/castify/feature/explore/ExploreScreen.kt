@@ -424,9 +424,6 @@ fun LazyGridScope.episodesFeed(
                 podcastFeedUiState.model.episodes,
                 key = { it.uri }
             ) {
-                val durationPlayed = it.durationPlayed.toLong( DurationUnit.SECONDS )
-                val duration = it.duration.toLong( DurationUnit.SECONDS )
-                val isCompleted = durationPlayed > 0 && durationPlayed >= duration
 
                 EpisodeCard(
                     modifier = Modifier.padding( DEFAULT_START_END_PADDING ),
@@ -437,12 +434,12 @@ fun LazyGridScope.episodesFeed(
                     isBuffering = podcastFeedUiState.playerState.isBuffering && podcastFeedUiState.playerState.currentlyPlayingEpisodeUri == it.uri,
                     downloadState = podcastFeedUiState.downloads[ it.audioUri ],
                     downloadingEpisodes = podcastFeedUiState.downloadingEpisodes,
-                    isCompleted = isCompleted,
                     onRetryDownload = { onRetryDownload( it ) },
                     onRemoveDownload = { onRemoveDownload( it ) },
                     onResumeDownload = { onResumeDownload( it ) },
                     onPauseDownload = { onPauseDownload( it ) },
                 )
+
             }
         }
     }

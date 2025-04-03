@@ -18,6 +18,7 @@ import com.squad.castify.core.network.model.NetworkEpisode
 import com.squad.castify.core.notifications.Notifier
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -107,8 +108,26 @@ internal class OfflineFirstEpisodesRepository @Inject constructor(
                         podcastEntities = networkEpisodes.map( NetworkEpisode::podcastEntityShell )
                     )
 
+                    val newEpisodeEntities = networkEpisodes.map( NetworkEpisode::asEntity ).toMutableList()
+                    val existingEpisodeEntities = episodeDao.fetchEpisodesSortedByPublishDate(
+                        filterPodcastUris = chunkedUris.toSet()
+                    ).first().map { it.episodeEntity }
+
+                    /** We need to transfer the duration played to the episodes that will be
+                     * updated otherwise it will be reset to null */
+                    existingEpisodeEntities.forEach { existingEpisode ->
+                        newEpisodeEntities.find { it.uri == existingEpisode.uri }?.let { newEpisode ->
+                            newEpisodeEntities.remove( newEpisode )
+                            newEpisodeEntities.add(
+                                newEpisode.copy(
+                                    durationPlayed = existingEpisode.durationPlayed
+                                )
+                            )
+                        }
+                    }
+
                     episodeDao.upsertEpisodes(
-                        episodeEntities = networkEpisodes.map( NetworkEpisode::asEntity )
+                        episodeEntities = newEpisodeEntities
                     )
                 }
 
