@@ -34,6 +34,7 @@ import kotlinx.datetime.Instant
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.time.Duration
 
 @OptIn( ExperimentalCoroutinesApi::class )
 class ExploreScreenViewModelTest {
@@ -512,20 +513,26 @@ private val sampleEpisodes = listOf(
         published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
         podcast = samplePodcasts[0],
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     ),
     Episode(
         uri = "episode-1-uri",
         published = Instant.parse( "2021-11-01T00:00:00.000Z" ),
         podcast = samplePodcasts[0],
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     ),
     Episode(
         uri = "episode-2-uri",
         published = Instant.parse( "2021-11-08T00:00:00.000Z" ),
         podcast = samplePodcasts[1],
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     )
 )

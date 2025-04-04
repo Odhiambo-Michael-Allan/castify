@@ -5,8 +5,13 @@ import androidx.media3.common.Player
 import com.squad.castify.core.media.player.ServiceConnector
 
 class TestServiceConnector : ServiceConnector {
+
+    private val _player = TestPlayer()
+
+    private val disconnectListeners = mutableListOf<() -> Unit>()
+
     override val player: Player?
-        get() = null
+        get() = _player
 
     override suspend fun establishConnection() = Unit
 
@@ -14,5 +19,12 @@ class TestServiceConnector : ServiceConnector {
         TODO("Not yet implemented")
     }
 
-    override fun addDisconnectListener( disconnectListener: () -> Unit ) = Unit
+    override fun addDisconnectListener( disconnectListener: () -> Unit ) {
+        disconnectListeners.add( disconnectListener )
+    }
+
+    /* Test only API to allow simulation of a disconnect from tests. */
+    fun disconnect() {
+        disconnectListeners.forEach { it.invoke() }
+    }
 }

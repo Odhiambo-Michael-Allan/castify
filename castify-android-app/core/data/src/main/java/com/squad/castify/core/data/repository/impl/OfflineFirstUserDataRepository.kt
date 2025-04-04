@@ -7,6 +7,7 @@ import com.squad.castify.core.model.ThemeBrand
 import com.squad.castify.core.model.UserData
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlin.time.Duration
 
 internal class OfflineFirstUserDataRepository @Inject constructor(
     private val castifyPreferencesDataSource: CastifyPreferencesDataSource
@@ -36,5 +37,33 @@ internal class OfflineFirstUserDataRepository @Inject constructor(
 
     override suspend fun setThemeBrand( themeBrand: ThemeBrand ) {
         castifyPreferencesDataSource.setThemeBrand( themeBrand )
+    }
+
+    override suspend fun setPlaybackPitch( pitch: Float ) {
+        castifyPreferencesDataSource.setPlaybackPitch( pitch )
+    }
+
+    override suspend fun setPlaybackSpeed( speed: Float ) {
+        castifyPreferencesDataSource.setPlaybackSpeed( speed )
+    }
+
+    override suspend fun setSeekBackDuration( duration: Int ) {
+        castifyPreferencesDataSource.setSeekBackDuration( duration )
+    }
+
+    override suspend fun setSeekForwardDuration( duration: Int ) {
+        castifyPreferencesDataSource.setSeekForwardDuration( duration )
+    }
+
+    override suspend fun setCurrentlyPlayingEpisodeUri( uri: String ) {
+        castifyPreferencesDataSource.setCurrentlyPlayingEpisodeUri( uri )
+    }
+
+    override suspend fun setCurrentlyPlayingEpisodeDurationPlayed( duration: Duration ) {
+        castifyPreferencesDataSource.setCurrentlyPlayingEpisodeDurationPlayed( duration )
+    }
+
+    override suspend fun setUrisOfEpisodesInQueue( episodeUris: Set<String> ) {
+        castifyPreferencesDataSource.setUrisOfEpisodesInQueue( episodeUris )
     }
 }

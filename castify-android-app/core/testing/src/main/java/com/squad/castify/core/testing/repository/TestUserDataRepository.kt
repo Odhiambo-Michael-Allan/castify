@@ -8,6 +8,7 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlin.time.Duration
 
 class TestUserDataRepository : UserDataRepository {
 
@@ -85,6 +86,58 @@ class TestUserDataRepository : UserDataRepository {
         }
     }
 
+    override suspend fun setPlaybackPitch( pitch: Float ) {
+        currentUserData.let { current ->
+            _userData.tryEmit(
+                current.copy(
+                    playbackPitch = pitch
+                )
+            )
+        }
+    }
+
+    override suspend fun setPlaybackSpeed( speed: Float ) {
+        currentUserData.let { current ->
+            _userData.tryEmit(
+                current.copy(
+                    playbackSpeed = speed
+                )
+            )
+        }
+    }
+
+    override suspend fun setSeekBackDuration(duration: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setSeekForwardDuration(duration: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setCurrentlyPlayingEpisodeUri( uri: String ) {
+        currentUserData.let { current ->
+            _userData.tryEmit(
+                current.copy(
+                    currentlyPlayingEpisodeUri = uri
+                )
+            )
+        }
+    }
+
+    override suspend fun setCurrentlyPlayingEpisodeDurationPlayed( duration: Duration ) {
+        currentUserData.let { current ->
+            _userData.tryEmit(
+                current.copy(
+                    currentlyPlayingEpisodeDurationPlayed = duration
+                )
+            )
+        }
+    }
+
+    override suspend fun setUrisOfEpisodesInQueue(episodeUris: Set<String>) {
+        TODO("Not yet implemented")
+    }
+
     /**
      * A test-only API to allow setting of user data directly.
      */
@@ -98,6 +151,13 @@ val emptyUserData = UserData(
     darkThemeConfig = DarkThemeConfig.FOLLOW_SYSTEM,
     shouldHideOnboarding = false,
     useDynamicColor = false,
+    playbackPitch = 1f,
+    playbackSpeed = 1f,
+    seekbackDuration = 10,
+    seekForwardDuration = 30,
+    currentlyPlayingEpisodeUri = "",
+    currentlyPlayingEpisodeDurationPlayed = Duration.ZERO,
     followedPodcasts = emptySet(),
-    listenedEpisodes = emptySet()
+    listenedEpisodes = emptySet(),
+    urisOfEpisodesInQueue = emptySet()
 )

@@ -7,7 +7,6 @@ import com.squad.castify.core.model.Episode
 import com.squad.castify.core.model.Podcast
 import com.squad.castify.core.testing.media.TestEpisodePlayerServiceConnection
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
-import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.rules.MainDispatcherRule
 import com.squad.castify.feature.nowplaying.testDoubles.TestPlaybackPositionUpdater
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +21,7 @@ import org.junit.Rule
 import org.junit.Test
 
 @OptIn( ExperimentalCoroutinesApi::class )
-class NowPlayingBottomBarViewModelTest {
+class NowPlayingScreenViewModelTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
@@ -31,11 +30,11 @@ class NowPlayingBottomBarViewModelTest {
     private val episodePlayerServiceConnection = TestEpisodePlayerServiceConnection()
     private val episodesRepository = TestEpisodesRepository()
 
-    private lateinit var viewModel: NowPlayingBottomBarViewModel
+    private lateinit var viewModel: NowPlayingScreenViewModel
 
     @Before
     fun setUp() {
-        viewModel = NowPlayingBottomBarViewModel(
+        viewModel = NowPlayingScreenViewModel(
             playbackPositionUpdater = playbackPositionUpdater,
             episodesRepository = episodesRepository,
             episodePlayerServiceConnection = episodePlayerServiceConnection
@@ -66,7 +65,7 @@ class NowPlayingBottomBarViewModelTest {
         backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.uiState.collect() }
 
         assertEquals(
-            NowPlayingBottomBarUiState.Loading,
+            NowPlayingScreenUiState.Loading,
             viewModel.uiState.value
         )
 
@@ -85,7 +84,7 @@ class NowPlayingBottomBarViewModelTest {
         episodesRepository.sendEpisodes( sampleEpisodes )
 
         assertEquals(
-            NowPlayingBottomBarUiState.Success(
+            NowPlayingScreenUiState.Success(
                 playerState = playerState,
                 currentlyPlayingEpisode = null
             ),
@@ -107,7 +106,7 @@ class NowPlayingBottomBarViewModelTest {
         episodesRepository.sendEpisodes( sampleEpisodes )
 
         assertEquals(
-            NowPlayingBottomBarUiState.Success(
+            NowPlayingScreenUiState.Success(
                 currentlyPlayingEpisode = sampleEpisodes.first(),
                 playerState = playerState
             ),
@@ -125,7 +124,7 @@ class NowPlayingBottomBarViewModelTest {
         episodesRepository.sendEpisodes( listOf( episode ) )
 
         assertEquals(
-            NowPlayingBottomBarUiState.Success(
+            NowPlayingScreenUiState.Success(
                 currentlyPlayingEpisode = episode,
                 playerState = playerState
             ),

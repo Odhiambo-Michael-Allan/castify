@@ -17,7 +17,7 @@ import kotlin.time.toDuration
 
 interface DurationPlayedUpdater {}
 
-class DurationPlayedPlayedUpdaterImpl @Inject constructor(
+class DurationPlayedUpdaterImpl @Inject constructor(
     @Dispatcher( CastifyDispatchers.IO ) private val dispatcher: CoroutineDispatcher,
     private val episodePlayerServiceConnection: EpisodePlayerServiceConnection,
     private val episodesRepository: EpisodesRepository,

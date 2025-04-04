@@ -1,6 +1,5 @@
 package com.squad.castify.core.media.player
 
-import android.media.session.PlaybackState
 import com.squad.castify.core.media.testDoubles.TestPlaybackPositionUpdater
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.Episode
@@ -29,7 +28,7 @@ class DurationPlayedUpdaterTest {
 
     @Before
     fun setUp() {
-        subject = DurationPlayedUpdater(
+        subject = DurationPlayedUpdaterImpl(
             dispatcher = UnconfinedTestDispatcher(),
             episodePlayerServiceConnection = episodePlayerServiceConnection,
             episodesRepository = episodesRepository,
@@ -80,20 +79,26 @@ private val sampleEpisodes = listOf(
         published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
         podcast = samplePodcast,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     ),
     Episode(
         uri = "episode-1-uri",
         published = Instant.parse( "2021-11-01T00:00:00.000Z" ),
         podcast = samplePodcast,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     ),
     Episode(
         uri = "episode-2-uri",
         published = Instant.parse( "2021-11-08T00:00:00.000Z" ),
         podcast = samplePodcast,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     )
 )

@@ -9,6 +9,7 @@ import com.squad.castify.core.model.UserData
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import kotlin.time.Duration
 
 class CastifyPreferencesDataSource @Inject constructor(
     private val userPreferencesDataStore: DataStore<UserPreferences>
@@ -38,7 +39,19 @@ class CastifyPreferencesDataSource @Inject constructor(
                 useDynamicColor = it.useDynamicColor,
                 shouldHideOnboarding = it.shouldHideOnboarding,
                 followedPodcasts = it.followedPodcastIdsMap.keys,
-                listenedEpisodes = it.listenedEpisodeIdsMap.keys
+                listenedEpisodes = it.listenedEpisodeIdsMap.keys,
+                playbackPitch = it.playbackPitch.takeIf { pitch -> pitch > 0 }
+                    ?: DEFAULT_PLAYBACK_PITCH,
+                playbackSpeed = it.playbackSpeed.takeIf { speed -> speed > 0 }
+                    ?: DEFAULT_PLAYBACK_SPEED,
+                seekbackDuration = it.seekBackDuration.takeIf { duration -> duration > 0 }
+                    ?: DEFAULT_SEEK_BACK_DURATION,
+                seekForwardDuration = it.seekForwardDuration.takeIf { duration -> duration > 0 }
+                    ?: DEFAULT_SEEK_FORWARD_DURATION,
+                currentlyPlayingEpisodeUri = it.currentlyPlayingEpisodeUri,
+                currentlyPlayingEpisodeDurationPlayed = Duration.parseOrNull(
+                    it.currentlyPlayingEpisodeDurationPlayed ) ?: Duration.ZERO,
+                urisOfEpisodesInQueue = it.urisOfEpisodesInQueueMap.keys
             )
         }
 
@@ -146,8 +159,60 @@ class CastifyPreferencesDataSource @Inject constructor(
             }
         }
     }
+
+    suspend fun setPlaybackPitch( pitch: Float ) {
+        userPreferencesDataStore.updateData {
+            it.copy { playbackPitch = pitch }
+        }
+    }
+
+    suspend fun setPlaybackSpeed( speed: Float ) {
+        userPreferencesDataStore.updateData {
+            it.copy { playbackSpeed = speed }
+        }
+    }
+
+    suspend fun setSeekBackDuration( duration: Int ) {
+        userPreferencesDataStore.updateData {
+            it.copy { seekBackDuration = duration }
+        }
+    }
+
+    suspend fun setSeekForwardDuration( duration: Int ) {
+        userPreferencesDataStore.updateData {
+            it.copy { seekForwardDuration = duration }
+        }
+    }
+
+    suspend fun setCurrentlyPlayingEpisodeUri( uri: String ) {
+        userPreferencesDataStore.updateData {
+            it.copy { currentlyPlayingEpisodeUri = uri }
+        }
+    }
+
+    suspend fun setCurrentlyPlayingEpisodeDurationPlayed( duration: Duration ) {
+        userPreferencesDataStore.updateData {
+            it.copy { currentlyPlayingEpisodeDurationPlayed = duration.toIsoString() }
+        }
+    }
+
+    suspend fun setUrisOfEpisodesInQueue( uris: Set<String> ) {
+        userPreferencesDataStore.updateData {
+            it.copy {
+                uris.forEach { uri ->
+                    urisOfEpisodesInQueue.put( uri, true )
+                }
+            }
+        }
+    }
 }
 
 private fun UserPreferencesKt.Dsl.updateShouldHideOnboardingIfNecessary() {
     if ( followedPodcastIds.isEmpty() ) shouldHideOnboarding = false
 }
+
+internal const val DEFAULT_PLAYBACK_PITCH = 1f
+internal const val DEFAULT_PLAYBACK_SPEED = 1f
+internal const val DEFAULT_SEEK_BACK_DURATION = 10
+internal const val DEFAULT_SEEK_FORWARD_DURATION = 30
+internal val DEFAULT_CURRENTLY_PLAYING_EPISODE_DURATION_PLAYED = Duration.ZERO

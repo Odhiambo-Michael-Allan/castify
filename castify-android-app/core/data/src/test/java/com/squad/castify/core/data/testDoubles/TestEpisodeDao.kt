@@ -6,6 +6,7 @@ import com.squad.castify.core.database.model.PodcastEntity
 import com.squad.castify.core.database.model.PopulatedEpisodeEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
@@ -35,6 +36,13 @@ class TestEpisodeDao : EpisodeDao {
                     compareBy( EpisodeEntity::published ).reversed()
                 )
         }
+    }
+
+    override suspend fun upsertEpisode( episodeEntity: EpisodeEntity ) {
+        val currentEpisodes = episodeEntitiesStateFlow.first().toMutableList()
+        currentEpisodes.removeIf { it.uri == episodeEntity.uri }
+        currentEpisodes.add( episodeEntity )
+        episodeEntitiesStateFlow.tryEmit( currentEpisodes )
     }
 
     override fun fetchEpisodeWithUri( uri: String ): Flow<PopulatedEpisodeEntity> =

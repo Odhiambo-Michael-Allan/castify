@@ -5,6 +5,7 @@ import android.app.PendingIntent.FLAG_IMMUTABLE
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -28,6 +29,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import com.squad.castify.core.common.network.di.ApplicationScope
 import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.media.extensions.toMediaItem
 import com.squad.castify.core.media.notification.CastifyMediaNotificationProvider
 import dagger.hilt.android.AndroidEntryPoint
@@ -72,6 +74,9 @@ class EpisodePlayerService : MediaLibraryService() {
     /** Create this and forget about it. It knows what to do. */
     @Inject
     lateinit var durationPlayedUpdater: DurationPlayedUpdater
+
+    @Inject
+    lateinit var userDataRepository: UserDataRepository
 
     private var mediaItems = emptyList<MediaItem>()
 
@@ -125,6 +130,7 @@ class EpisodePlayerService : MediaLibraryService() {
                 DefaultMediaSourceFactory( this ).setDataSourceFactory( cacheDataSourceFactory )
             ).build()
         player.addAnalyticsListener( EventLogger( null, "exoplayer-castify" ) )
+        player.addListener( playerListener )
         player
     }
 
@@ -175,8 +181,8 @@ class EpisodePlayerService : MediaLibraryService() {
         super.onTaskRemoved( rootIntent )
         // The choice what to do here is app specific. Some apps stop playback, while others allow
         // playback to continue and allow users to stop it with the notification.
-        releaseMediaSession()
-        stopSelf()
+//        releaseMediaSession()
+//        stopSelf()
     }
 
     override fun onDestroy() {
@@ -204,6 +210,16 @@ class EpisodePlayerService : MediaLibraryService() {
 
         override fun onPlayerError( error: PlaybackException ) {
             super.onPlayerError( error )
+        }
+
+        override fun onMediaItemTransition( mediaItem: MediaItem?, reason: Int ) {
+            super.onMediaItemTransition( mediaItem, reason )
+            Log.d( "EPISODE PLAYER SERVICE", "MEDIA ITEM TRANSITION, ID: ${mediaItem?.mediaId}" )
+            mediaItem?.let {
+                serviceScope.launch {
+                    userDataRepository.setCurrentlyPlayingEpisodeUri( it.mediaId )
+                }
+            }
         }
     }
 

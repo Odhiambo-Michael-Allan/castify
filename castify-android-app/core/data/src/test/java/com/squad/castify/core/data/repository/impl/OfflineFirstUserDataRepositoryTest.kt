@@ -18,6 +18,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @OptIn( ExperimentalCoroutinesApi::class )
 class OfflineFirstUserDataRepositoryTest {
@@ -51,7 +54,14 @@ class OfflineFirstUserDataRepositoryTest {
                     useDynamicColor = false,
                     shouldHideOnboarding = false,
                     followedPodcasts = emptySet(),
-                    listenedEpisodes = emptySet()
+                    listenedEpisodes = emptySet(),
+                    playbackPitch = 1f,
+                    playbackSpeed = 1f,
+                    seekbackDuration = 10,
+                    seekForwardDuration = 30,
+                    currentlyPlayingEpisodeUri = "",
+                    currentlyPlayingEpisodeDurationPlayed = Duration.ZERO,
+                    urisOfEpisodesInQueue = emptySet()
                 ),
                 subject.userData.first()
             )
@@ -198,4 +208,137 @@ class OfflineFirstUserDataRepositoryTest {
             subject.setPodcastWithUriFollowed( "1", false )
             assertFalse( subject.userData.first().shouldHideOnboarding )
         }
+
+    @Test
+    fun testPlaybackPitchIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            1f,
+            subject.userData
+                .map { it.playbackPitch }
+                .first()
+        )
+
+        setOf( 0.5f, 1f, 1.5f, 2f ).forEach { pitch ->
+            subject.setPlaybackPitch( pitch )
+
+            assertEquals(
+                pitch,
+                subject.userData
+                    .map { it.playbackPitch }
+                    .first()
+            )
+        }
+    }
+
+    @Test
+    fun testPlaybackSpeedIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            1f,
+            subject.userData
+                .map { it.playbackSpeed }
+                .first()
+        )
+
+        setOf( 0.5f, 1f, 1.5f, 2f ).forEach { speed ->
+            subject.setPlaybackSpeed( speed )
+
+            assertEquals(
+                speed,
+                subject.userData
+                    .map { it.playbackSpeed }
+                    .first()
+            )
+        }
+    }
+
+    @Test
+    fun testSeekBackDurationIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            10,
+            subject.userData
+                .map { it.seekbackDuration }
+                .first()
+        )
+        subject.setSeekBackDuration( 30 )
+        assertEquals(
+            30,
+            subject.userData
+                .map { it.seekbackDuration }
+                .first()
+        )
+    }
+
+    @Test
+    fun testSeekForwardDurationIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            30,
+            subject.userData
+                .map { it.seekForwardDuration }
+                .first()
+        )
+        subject.setSeekForwardDuration( 10 )
+        assertEquals(
+            10,
+            subject.userData
+                .map { it.seekForwardDuration }
+                .first()
+        )
+    }
+
+    @Test
+    fun testCurrentlyPlayingEpisodeUriIsSetCorrectly() = testScope.runTest {
+        assertTrue(
+            subject.userData
+                .map { it.currentlyPlayingEpisodeUri }
+                .first()
+                .isEmpty()
+        )
+        val testUri = "test/episode/uri"
+        subject.setCurrentlyPlayingEpisodeUri( testUri )
+
+        assertEquals(
+            testUri,
+            subject.userData
+                .map { it.currentlyPlayingEpisodeUri }
+                .first()
+        )
+    }
+
+    @Test
+    fun testCurrentlyPlayingEpisodeDurationPlayedIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            Duration.ZERO,
+            subject.userData
+                .map { it.currentlyPlayingEpisodeDurationPlayed }
+                .first()
+        )
+        val testDuration = (30000L).toDuration( DurationUnit.MILLISECONDS )
+        subject.setCurrentlyPlayingEpisodeDurationPlayed( testDuration )
+
+        assertEquals(
+            testDuration,
+            subject.userData
+                .map { it.currentlyPlayingEpisodeDurationPlayed }
+                .first()
+        )
+    }
+
+    @Test
+    fun testUrisOfEpisodesInQueueAreSetCorrectly() = testScope.runTest {
+        assertTrue(
+            subject.userData
+                .map { it.urisOfEpisodesInQueue }
+                .first()
+                .isEmpty()
+        )
+        val testUris = setOf( "uri-1", "uri-2", "uri-3" )
+        subject.setUrisOfEpisodesInQueue( testUris )
+
+        assertEquals(
+            testUris,
+            subject.userData
+                .map { it.urisOfEpisodesInQueue }
+                .first()
+        )
+    }
 }

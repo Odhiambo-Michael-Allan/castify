@@ -69,6 +69,7 @@ fun EpisodeCard(
     downloadState: Int?,
     isPlaying: Boolean,
     isBuffering: Boolean,
+    isCompleted: Boolean,
     downloadingEpisodes: Map<String, Float>,
     onPlayEpisode: () -> Unit,
     onDownloadEpisode: () -> Unit,
@@ -81,7 +82,6 @@ fun EpisodeCard(
 
     val durationPlayed = userEpisode.durationPlayed
     val duration = userEpisode.duration
-    val isCompleted = ( durationPlayed.inWholeMilliseconds + 500L ) >= duration.inWholeMilliseconds
     val hasPreviouslyBeenPlayed = durationPlayed > Duration.ZERO
 
     Card(
@@ -372,6 +372,7 @@ fun EpisodeCardPreview(
             downloadState = Download.STATE_COMPLETED,
             isPlaying = false,
             isBuffering = false,
+            isCompleted = false,
             downloadingEpisodes = mapOf(
                 previewData.episodes.first().audioUri to 0.4f
             ),

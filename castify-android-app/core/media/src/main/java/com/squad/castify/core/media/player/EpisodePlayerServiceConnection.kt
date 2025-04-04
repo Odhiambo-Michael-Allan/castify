@@ -2,13 +2,17 @@ package com.squad.castify.core.media.player
 
 import android.util.Log
 import androidx.annotation.OptIn
+import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import com.squad.castify.core.common.network.CastifyDispatchers
 import com.squad.castify.core.common.network.Dispatcher
+import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.media.extensions.toMediaItem
 import com.squad.castify.core.model.Episode
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,6 +22,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,8 +41,11 @@ interface EpisodePlayerServiceConnection {
 
 @OptIn( UnstableApi::class )
 class EpisodePlayerServiceConnectionImpl @Inject constructor(
+    @Dispatcher( CastifyDispatchers.Main ) dispatcher: CoroutineDispatcher,
     private val serviceConnector: ServiceConnector,
-    @Dispatcher( CastifyDispatchers.Main ) dispatcher: CoroutineDispatcher
+    private val userDataRepository: UserDataRepository,
+    private val episodesRepository: EpisodesRepository,
+    private val episodeToMediaItemConverter: EpisodeToMediaItemConverter
 ) : EpisodePlayerServiceConnection {
 
 
@@ -57,11 +67,39 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
         coroutineScope.launch {
             serviceConnector.establishConnection()
             serviceConnector.addDisconnectListener {
-                coroutineScope.cancel()
+                println( "EPISODE PLAYER SERVICE CONNECTION: RECEIVED DISCONNECT NOTIFICATION" )
                 onDisconnectListeners.forEach { it.invoke() }
+                coroutineScope.cancel()
             }
             player = serviceConnector.player?.apply {
                 addListener( playerListener )
+                val previouslyPlayingEpisodeUri = userDataRepository.userData
+                    .map { it.currentlyPlayingEpisodeUri }
+                    .first()
+                println( "EPISODE-PLAYER-SERVICE-CONNECTION: PREVIOUSLY PLAYING EPISODE URI: $previouslyPlayingEpisodeUri" )
+                val previouslyPlayingEpisode = episodesRepository.fetchEpisodeWithUri(
+                    previouslyPlayingEpisodeUri
+                ).first()
+                println( "EPISODE-PLAYER-SERVICE-CONNECTION: PREVIOUSLY PLAYING EPISODE: $previouslyPlayingEpisode" )
+                previouslyPlayingEpisode?.let {
+                    setMediaItem(
+                        episodeToMediaItemConverter.convert( previouslyPlayingEpisode ),
+                        previouslyPlayingEpisode.durationPlayed.inWholeMilliseconds
+                    )
+                    prepare()
+                }
+            }
+        }
+        coroutineScope.launch { observePlaybackParameters() }
+    }
+
+    private suspend fun observePlaybackParameters() {
+        userDataRepository.userData.collect { userData ->
+            player?.let {
+                it.playbackParameters = PlaybackParameters(
+                    userData.playbackSpeed,
+                    userData.playbackPitch
+                )
             }
         }
     }
@@ -72,6 +110,7 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
         player?.let {
             PlaybackPosition(
                 played = it.currentPosition,
+                buffered = it.bufferedPosition,
                 total = it.duration
             )
         } ?: run { PlaybackPosition.zero }
@@ -91,7 +130,14 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
     private fun play( episode: Episode ) {
         player?.let {
             val isPrepared = it.playbackState != Player.STATE_IDLE
-            it.setMediaItems( listOf( episode.toMediaItem() ), 0, C.TIME_UNSET )
+            it.setMediaItem(
+                episode.toMediaItem(),
+                if ( episode.isCompleted().not() ) {
+                    episode.durationPlayed.inWholeMilliseconds
+                } else {
+                    C.TIME_UNSET
+                }
+            )
             if ( !isPrepared ) it.prepare()
             it.play()
         }
@@ -136,6 +182,7 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
             super.onMediaItemTransition( mediaItem, reason )
             Log.d(  TAG, "MEDIA ITEM TRANSITION: ${mediaItem?.mediaMetadata?.title}" )
         }
+
     }
 
 }
@@ -148,15 +195,30 @@ data class PlayerState(
 
 data class PlaybackPosition(
     val played: Long,
+    val buffered: Long,
     val total: Long,
 ) {
     val ratio: Float
         get() = ( played.toFloat() / total ).takeIf { it.isFinite() } ?: 0f
 
+    val bufferedRatio: Float
+        get() = ( buffered.toFloat() / total ).takeIf { it.isFinite() } ?: 0f
+
     companion object {
-        val zero = PlaybackPosition( 0L, 0L )
+        val zero = PlaybackPosition( 0L, 0L, 0L )
     }
 }
 
-private const val TAG = "EPISODEPLAYERSERVICE"
+fun Episode.isCompleted() = ( durationPlayed.inWholeMilliseconds + DEFAULT_PLAYBACK_POSITION_UPDATE_INTERVAL ) >= duration.inWholeMilliseconds
+
+interface EpisodeToMediaItemConverter {
+    fun convert( episode: Episode ): MediaItem
+}
+
+
+class DefaultEpisodeToMediaItemConverter @Inject constructor() : EpisodeToMediaItemConverter {
+    override fun convert( episode: Episode ) = episode.toMediaItem()
+}
+
+private const val TAG = "EPISODEPLAYERSERVCONN"
 

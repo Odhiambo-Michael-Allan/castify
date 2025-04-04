@@ -14,6 +14,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @OptIn( ExperimentalCoroutinesApi::class )
 class CastifyPreferencesDataSourceTest {
@@ -168,5 +171,137 @@ class CastifyPreferencesDataSourceTest {
                 subject.userData.map { it.darkThemeConfig }.first()
             )
         }
+    }
+
+    @Test
+    fun castifyPreferencesDataSource_playback_pitch_is_set_correctly() = testScope.runTest {
+        assertEquals(
+            DEFAULT_PLAYBACK_PITCH,
+            subject.userData
+                .map { it.playbackPitch }
+                .first()
+        )
+        setOf( 0.5f, 1.0f, 1.5f, 2.0f ).forEach { pitch ->
+            subject.setPlaybackPitch( pitch )
+            assertEquals(
+                pitch,
+                subject.userData
+                    .map { it.playbackPitch }
+                    .first()
+            )
+        }
+    }
+
+    @Test
+    fun testPlaybackSpeedIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            DEFAULT_PLAYBACK_SPEED,
+            subject.userData
+                .map { it.playbackSpeed }
+                .first()
+        )
+        setOf( 0.5f, 1.0f, 1.5f, 2.0f ).forEach { speed ->
+            subject.setPlaybackSpeed( speed )
+            assertEquals(
+                speed,
+                subject.userData
+                    .map { it.playbackSpeed }
+                    .first()
+            )
+        }
+    }
+
+    @Test
+    fun testSeekBackDurationIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            DEFAULT_SEEK_BACK_DURATION,
+            subject.userData
+                .map { it.seekbackDuration }
+                .first()
+        )
+        setOf( 10, 30 ).forEach { duration ->
+            subject.setSeekBackDuration( duration )
+            assertEquals(
+                duration,
+                subject.userData
+                    .map { it.seekbackDuration }
+                    .first()
+            )
+        }
+    }
+
+    @Test
+    fun testSeekForwardDurationIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            DEFAULT_SEEK_FORWARD_DURATION,
+            subject.userData
+                .map { it.seekForwardDuration }
+                .first()
+        )
+        setOf( 10, 30 ).forEach { duration ->
+            subject.setSeekForwardDuration( duration )
+            assertEquals(
+                duration,
+                subject.userData
+                    .map { it.seekForwardDuration }
+                    .first()
+            )
+        }
+    }
+
+    @Test
+    fun testCurrentlyPlayingEpisodeUriIsSetCorrectly() = testScope.runTest {
+        assertTrue(
+            subject.userData
+                .map { it.currentlyPlayingEpisodeUri }
+                .first()
+                .isEmpty()
+        )
+        val testEpisodeUri = "test/episode/uri"
+        subject.setCurrentlyPlayingEpisodeUri( testEpisodeUri )
+        assertEquals(
+            testEpisodeUri,
+            subject.userData
+                .map { it.currentlyPlayingEpisodeUri }
+                .first()
+        )
+    }
+
+    @Test
+    fun testCurrentlyPlayingEpisodeDurationPlayedIsSetCorrectly() = testScope.runTest {
+        assertEquals(
+            Duration.ZERO,
+            subject.userData
+                .map { it.currentlyPlayingEpisodeDurationPlayed }
+                .first()
+        )
+
+        val testDuration = (50000L).toDuration( DurationUnit.MILLISECONDS )
+        subject.setCurrentlyPlayingEpisodeDurationPlayed( testDuration )
+
+        assertEquals(
+            testDuration,
+            subject.userData
+                .map { it.currentlyPlayingEpisodeDurationPlayed }
+                .first()
+        )
+    }
+
+    @Test
+    fun testUrisOfEpisodesInQueueAreSetCorrectly() = testScope.runTest {
+        assertTrue(
+            subject.userData
+                .map { it.urisOfEpisodesInQueue }
+                .first()
+                .isEmpty()
+        )
+        val testUris = setOf( "test/episode/uri-1", "test/episode/uri-2" )
+        subject.setUrisOfEpisodesInQueue( testUris )
+        assertEquals(
+            testUris,
+            subject.userData
+                .map { it.urisOfEpisodesInQueue }
+                .first()
+        )
     }
 }

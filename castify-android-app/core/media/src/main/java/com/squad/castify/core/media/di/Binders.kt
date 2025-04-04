@@ -4,10 +4,12 @@ import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import com.squad.castify.core.media.download.CastifyDownloadTracker
 import com.squad.castify.core.media.download.DownloadTracker
+import com.squad.castify.core.media.player.DefaultEpisodeToMediaItemConverter
 import com.squad.castify.core.media.player.DurationPlayedUpdater
-import com.squad.castify.core.media.player.DurationPlayedPlayedUpdaterImpl
+import com.squad.castify.core.media.player.DurationPlayedUpdaterImpl
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnectionImpl
+import com.squad.castify.core.media.player.EpisodeToMediaItemConverter
 import com.squad.castify.core.media.player.PlaybackPositionUpdater
 import com.squad.castify.core.media.player.PlaybackPositionUpdaterImpl
 import dagger.Binds
@@ -42,7 +44,12 @@ abstract class MediaDiModuleBinders {
     @Binds
     @Singleton
     abstract fun bindsDurationPlayedUpdater(
-        durationUpdater: DurationPlayedPlayedUpdaterImpl
+        durationUpdater: DurationPlayedUpdaterImpl
     ): DurationPlayedUpdater
+
+    @Binds
+    abstract fun bindsEpisodeToMediaItemConverter(
+        converter: DefaultEpisodeToMediaItemConverter
+    ): EpisodeToMediaItemConverter
 
 }

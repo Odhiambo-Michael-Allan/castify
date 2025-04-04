@@ -1,4 +1,4 @@
-package com.squad.castify.feature.nowplaying
+package com.squad.castify.feature.nowplaying.bottombar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -45,10 +45,13 @@ import com.squad.castify.core.model.Episode
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
 import com.squad.castify.core.ui.PreviewData
+import com.squad.castify.feature.nowplaying.NowPlayingScreenUiState
+import com.squad.castify.feature.nowplaying.NowPlayingScreenViewModel
 
 @Composable
 fun NowPlayingBottomBar(
-    viewModel: NowPlayingBottomBarViewModel = hiltViewModel()
+    viewModel: NowPlayingScreenViewModel = hiltViewModel(),
+    onShowNowPlayingScreen: () -> Unit,
 ) {
     val nowPlayingBottomBarUiState by viewModel.uiState.collectAsStateWithLifecycle()
     val playbackPosition by viewModel.playbackPosition.collectAsStateWithLifecycle()
@@ -56,7 +59,8 @@ fun NowPlayingBottomBar(
     NowPlayingBottomBarContent(
         uiState = nowPlayingBottomBarUiState,
         playbackPosition = playbackPosition,
-        onTogglePlay = viewModel::togglePlay
+        onTogglePlay = viewModel::togglePlay,
+        onShowNowPlayingScreen = onShowNowPlayingScreen
     )
 
 }
@@ -64,13 +68,14 @@ fun NowPlayingBottomBar(
 @Composable
 private fun NowPlayingBottomBarContent(
     modifier: Modifier = Modifier,
-    uiState: NowPlayingBottomBarUiState,
+    uiState: NowPlayingScreenUiState,
     playbackPosition: PlaybackPosition,
     onTogglePlay: ( Episode ) -> Unit,
+    onShowNowPlayingScreen: () -> Unit,
 ) {
     when ( uiState ) {
-        NowPlayingBottomBarUiState.Loading -> Unit
-        is NowPlayingBottomBarUiState.Success -> {
+        NowPlayingScreenUiState.Loading -> Unit
+        is NowPlayingScreenUiState.Success -> {
             AnimatedVisibility(
                 visible = uiState.currentlyPlayingEpisode != null
             ) {
@@ -84,7 +89,7 @@ private fun NowPlayingBottomBarContent(
                                 .fillMaxWidth()
                                 .wrapContentHeight(),
                             shape = RectangleShape,
-                            onClick = { /*TODO*/ }
+                            onClick = onShowNowPlayingScreen
                         ) {
                             Row (
                                 modifier = Modifier.padding( 0.dp, 8.dp ),
@@ -109,10 +114,10 @@ private fun NowPlayingBottomBarContent(
                                         text = playingEpisode.title,
                                         style = MaterialTheme.typography.bodyMedium
                                     )
-                                    if ( playingEpisode.author.isNotEmpty() ) {
+                                    if ( playingEpisode.author.isNotEmpty() || playingEpisode.podcast.author.isNotEmpty() ) {
                                         Spacer( modifier = Modifier.height( 4.dp ) )
                                         NowPlayingBottomBarContentText(
-                                            text = playingEpisode.author,
+                                            text = playingEpisode.author.ifEmpty { playingEpisode.podcast.author },
                                             style = MaterialTheme.typography.bodySmall
                                         )
                                     }
@@ -136,15 +141,15 @@ private fun NowPlayingBottomBarContent(
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.primary.copy(0.3f))
-                                    .fillMaxWidth()
+                                    .background( MaterialTheme.colorScheme.primary.copy( 0.5f ) )
+                                    .fillMaxWidth( playbackPosition.bufferedRatio )
                                     .fillMaxHeight()
                             )
                             Box(
                                 modifier = Modifier
-                                    .align(Alignment.CenterStart)
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .fillMaxWidth(playbackPosition.ratio)
+                                    .align( Alignment.CenterStart )
+                                    .background( MaterialTheme.colorScheme.primary )
+                                    .fillMaxWidth( playbackPosition.ratio )
                                     .fillMaxHeight()
                             )
                         }
@@ -183,14 +188,15 @@ private fun NowPlayingBottomBarContentPreview(
 ) {
     CastifyTheme {
         NowPlayingBottomBarContent(
-            uiState = NowPlayingBottomBarUiState.Success(
+            uiState = NowPlayingScreenUiState.Success(
                 currentlyPlayingEpisode = previewData.episodes.first().toEpisode(),
                 playerState = PlayerState(
                     isPlaying = false
                 )
             ),
-            playbackPosition = PlaybackPosition( 3, 5 ),
-            onTogglePlay = {}
+            playbackPosition = PlaybackPosition( 3, 4, 5 ),
+            onTogglePlay = {},
+            onShowNowPlayingScreen = {}
         )
     }
 }

@@ -15,6 +15,7 @@ import kotlinx.datetime.Clock
 
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.Duration
 
 class CompositeUserEpisodesRepositoryTest {
 
@@ -117,7 +118,9 @@ private val sampleEpisodes = listOf(
         published = Clock.System.now(),
         podcast = samplePodcast1,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     ),
     Episode(
         uri = "episode-uri-2",
@@ -126,7 +129,9 @@ private val sampleEpisodes = listOf(
         published = Clock.System.now(),
         podcast = samplePodcast2,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     ),
     Episode(
         uri = "episode-uri-3",
@@ -135,6 +140,8 @@ private val sampleEpisodes = listOf(
         published = Clock.System.now(),
         podcast = samplePodcast1,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     )
 )

@@ -79,9 +79,10 @@ class PlaybackPositionUpdaterImpl @Inject constructor(
     }
 
     override fun cleanUp() {
+        stopPeriodicUpdates()
         coroutineScope.cancel()
     }
 }
 
 private const val TAG = "PLAYBACKPOSITIONUPDATER"
-private const val DEFAULT_PLAYBACK_POSITION_UPDATE_INTERVAL = 500L
+const val DEFAULT_PLAYBACK_POSITION_UPDATE_INTERVAL = 500L

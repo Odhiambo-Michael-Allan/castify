@@ -30,6 +30,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @OptIn( ExperimentalCoroutinesApi::class )
 class OfflineFirstEpisodesRepositoryTest {
@@ -311,6 +313,38 @@ class OfflineFirstEpisodesRepositoryTest {
 
             // Notifier should not have been called because all episodes existed previously.
             assertTrue( notifier.newEpisodes.isEmpty() )
+        }
+
+    @Test
+    fun testDurationPlayedIsMaintainedWhenExistingEpisodesAreUpdatedFromTheNetwork() =
+        testScope.runTest {
+
+            subject.syncWith( synchronizer )
+
+            val networkEpisodes = networkDataSource.getEpisodes()
+            val durationPlayed = (30000L).toDuration( DurationUnit.MILLISECONDS )
+
+            val testEpisode = subject.fetchEpisodeWithUri( networkEpisodes.first().uri ).first()
+
+            assertNotNull( testEpisode )
+
+            subject.upsertEpisode(
+                testEpisode!!.copy(
+                    durationPlayed = durationPlayed
+                )
+            )
+
+            subject.syncWith( synchronizer )
+
+            val updatedEpisode = subject.fetchEpisodeWithUri( testEpisode.uri ).first()
+
+            assertNotNull( updatedEpisode )
+
+            assertEquals(
+                durationPlayed,
+                updatedEpisode!!.durationPlayed
+            )
+
         }
 }
 

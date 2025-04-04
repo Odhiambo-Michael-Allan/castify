@@ -70,7 +70,9 @@ import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.core.designsystem.theme.CastifyTheme
 import com.squad.castify.core.domain.model.FilterableCategoriesModel
 import com.squad.castify.core.domain.model.PodcastCategoryFilterResult
+import com.squad.castify.core.media.extensions.toEpisode
 import com.squad.castify.core.media.player.PlayerState
+import com.squad.castify.core.media.player.isCompleted
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.FollowablePodcast
 import com.squad.castify.core.model.UserEpisode
@@ -432,6 +434,7 @@ fun LazyGridScope.episodesFeed(
                     onDownloadEpisode = { onDownloadEpisode( it ) },
                     isPlaying = podcastFeedUiState.playerState.isPlaying && podcastFeedUiState.playerState.currentlyPlayingEpisodeUri == it.uri,
                     isBuffering = podcastFeedUiState.playerState.isBuffering && podcastFeedUiState.playerState.currentlyPlayingEpisodeUri == it.uri,
+                    isCompleted = it.toEpisode().isCompleted(),
                     downloadState = podcastFeedUiState.downloads[ it.audioUri ],
                     downloadingEpisodes = podcastFeedUiState.downloadingEpisodes,
                     onRetryDownload = { onRetryDownload( it ) },

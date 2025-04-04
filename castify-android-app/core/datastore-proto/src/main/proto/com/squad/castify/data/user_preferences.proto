@@ -23,5 +23,17 @@ message UserPreferences {
   bool should_hide_onboarding = 8;
   bool use_dynamic_color = 9;
 
-  // NEXT AVAILABLE ID = 10
+  float playback_pitch = 10;
+  float playback_speed = 11;
+
+  int32 seek_back_duration = 12;
+  int32 seek_forward_duration = 13;
+
+  string currently_playing_episode_uri = 14;
+  string currently_playing_episode_duration_played = 15;
+
+  map<string, bool> uris_of_episodes_in_queue = 16;
+
+
+  // NEXT AVAILABLE ID = 17
 }

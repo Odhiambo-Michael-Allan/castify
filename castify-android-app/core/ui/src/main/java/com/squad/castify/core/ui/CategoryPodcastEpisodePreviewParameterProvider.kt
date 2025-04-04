@@ -12,6 +12,7 @@ import com.squad.castify.core.model.UserEpisode
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
+import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
@@ -40,7 +41,14 @@ object PreviewParameterData {
         useDynamicColor = false,
         shouldHideOnboarding = false,
         followedPodcasts = emptySet(),
-        listenedEpisodes = emptySet()
+        listenedEpisodes = emptySet(),
+        playbackSpeed = 1f,
+        playbackPitch = 1f,
+        seekbackDuration = 10,
+        seekForwardDuration = 30,
+        currentlyPlayingEpisodeUri = "",
+        currentlyPlayingEpisodeDurationPlayed = Duration.ZERO,
+        urisOfEpisodesInQueue = emptySet()
     )
 
     val categories = listOf(

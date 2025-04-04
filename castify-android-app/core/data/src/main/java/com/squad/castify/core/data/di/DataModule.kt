@@ -39,6 +39,7 @@ abstract class DataModule {
     ): EpisodesRepository
 
     @Binds
+    @Singleton
     internal abstract fun bindsUserDataRepository(
         userDataRepository: OfflineFirstUserDataRepository
     ): UserDataRepository
