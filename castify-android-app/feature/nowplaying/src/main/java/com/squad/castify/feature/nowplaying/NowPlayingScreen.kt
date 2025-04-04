@@ -1,6 +1,8 @@
 package com.squad.castify.feature.nowplaying
 
 import android.net.Uri
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,7 +27,9 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.android.material.slider.Slider
 import com.squad.castify.core.designsystem.component.DynamicAsyncImage
 import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.core.designsystem.theme.CastifyTheme
@@ -81,6 +86,7 @@ fun NowPlayingScreen(
         onSetPlaybackPitch = viewModel::setPlaybackPitch,
         onSetFastForwardDuration = viewModel::setFastForwardDuration,
         onSetFastRewindDuration = viewModel::setFastRewindDuration,
+        onSeekTo = viewModel::seekTo,
         onLaunchEqualizerActivity = onLaunchEqualizerActivity,
         onShareEpisode = onShareEpisode,
     )
@@ -98,6 +104,7 @@ private fun NowPlayingScreenContent(
     onSetPlaybackPitch: ( Float ) -> Unit,
     onSetFastForwardDuration: ( Int ) -> Unit,
     onSetFastRewindDuration: ( Int ) -> Unit,
+    onSeekTo: ( Long ) -> Unit,
     onShareEpisode: ( String ) -> Unit,
     onLaunchEqualizerActivity: () -> Unit,
 ) {
@@ -107,6 +114,7 @@ private fun NowPlayingScreenContent(
     var showMoreOptionsDialog by remember { mutableStateOf( false ) }
     var showFastRewindDialog by remember { mutableStateOf( false ) }
     var showFastForwardDuration by remember { mutableStateOf( false ) }
+
 
     when ( uiState ) {
         NowPlayingScreenUiState.Loading -> Unit
@@ -148,11 +156,11 @@ private fun NowPlayingScreenContent(
                     )
                 }
 
-                Slider(
-                    value = playbackPosition.ratio,
-                    onValueChange = {},
+                CastifySlider(
+                    playbackPosition = playbackPosition,
+                    onSeekTo = onSeekTo
                 )
-                
+
                 Box(
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -489,6 +497,47 @@ private fun NowPlayingScreenContent(
     }
 }
 
+@Composable
+private fun CastifySlider(
+    playbackPosition: PlaybackPosition,
+    onSeekTo: ( Long ) -> Unit,
+) {
+
+    var sliderPosition by remember { mutableFloatStateOf( playbackPosition.ratio ) }
+    var isUserInteracting by remember { mutableStateOf( false ) }
+    val interactionSource = remember { MutableInteractionSource() }
+
+    // Observe user interactions
+    LaunchedEffect ( interactionSource ) {
+        interactionSource.interactions.collect { interaction ->
+            when ( interaction ) {
+                is PressInteraction.Press -> isUserInteracting = true
+                is PressInteraction.Release, is PressInteraction.Cancel -> isUserInteracting = false
+            }
+        }
+    }
+
+    LaunchedEffect ( playbackPosition ) {
+        if ( isUserInteracting.not() ) {
+            sliderPosition = playbackPosition.ratio
+        }
+    }
+
+    Slider(
+        value = sliderPosition,
+        onValueChange = { newValue ->
+            isUserInteracting = true
+            sliderPosition = newValue
+        },
+        onValueChangeFinished = {
+            isUserInteracting = false
+            onSeekTo( sliderPosition.times( playbackPosition.total ).toLong() )
+        },
+        interactionSource = interactionSource
+    )
+
+}
+
 
 
 @Composable
@@ -533,7 +582,8 @@ private fun NowPlayingScreenPreview(
             onSetFastRewindDuration = {},
             onSetFastForwardDuration = {},
             onLaunchEqualizerActivity = {},
-            onShareEpisode = {}
+            onShareEpisode = {},
+            onSeekTo = {}
         )
     }
 }

@@ -44,6 +44,7 @@ interface EpisodePlayerServiceConnection {
     fun addOnDisconnectListener( listener: () -> Unit )
     fun seekBack()
     fun seekForward()
+    fun seekTo( pos: Long )
 }
 
 @OptIn( UnstableApi::class )
@@ -176,6 +177,10 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
             println( "INCREMENT: ${seekForwardIncrement.value}" )
             it.seekTo( it.currentPosition + seekForwardIncrement.value )
         }
+    }
+
+    override fun seekTo( pos: Long ) {
+        player?.seekTo( pos )
     }
 
     private fun play( episode: Episode ) {

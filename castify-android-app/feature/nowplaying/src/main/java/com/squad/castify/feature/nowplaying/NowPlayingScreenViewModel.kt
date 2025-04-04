@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NowPlayingScreenViewModel @Inject constructor(
     private val playbackPositionUpdater: PlaybackPositionUpdater,
-    private val episodePlayerServiceConnection: EpisodePlayerServiceConnection,
+    private val episodePlayer: EpisodePlayerServiceConnection,
     private val episodesRepository: EpisodesRepository,
     private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
@@ -29,10 +29,10 @@ class NowPlayingScreenViewModel @Inject constructor(
 
     val uiState: StateFlow<NowPlayingScreenUiState> =
         combine(
-            episodePlayerServiceConnection.playerState.flatMapLatest { playerState ->
+            episodePlayer.playerState.flatMapLatest { playerState ->
                 episodesRepository.fetchEpisodeWithUri( playerState.currentlyPlayingEpisodeUri ?: "" )
             },
-            episodePlayerServiceConnection.playerState,
+            episodePlayer.playerState,
             userDataRepository.userData
         ) { episode, playerState, userData ->
             NowPlayingScreenUiState.Success(
@@ -58,11 +58,11 @@ class NowPlayingScreenViewModel @Inject constructor(
                 initialValue = PlaybackPosition.zero
             )
 
-    fun togglePlay( episode: Episode ) = episodePlayerServiceConnection.togglePlay( episode )
+    fun togglePlay( episode: Episode ) = episodePlayer.togglePlay( episode )
 
-    fun seekBack() = episodePlayerServiceConnection.seekBack()
+    fun seekBack() = episodePlayer.seekBack()
 
-    fun seekForward() = episodePlayerServiceConnection.seekForward()
+    fun seekForward() = episodePlayer.seekForward()
 
     fun setPlaybackPitch(pitch: Float ) {
         viewModelScope.launch { userDataRepository.setPlaybackPitch( pitch ) }
@@ -78,6 +78,10 @@ class NowPlayingScreenViewModel @Inject constructor(
 
     fun setFastRewindDuration( duration: Int ) {
         viewModelScope.launch { userDataRepository.setSeekBackDuration( duration ) }
+    }
+
+    fun seekTo( pos: Long ) {
+        episodePlayer.seekTo( pos )
     }
 
     override fun onCleared() {

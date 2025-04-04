@@ -41,7 +41,7 @@ class NowPlayingScreenViewModelTest {
         viewModel = NowPlayingScreenViewModel(
             playbackPositionUpdater = playbackPositionUpdater,
             episodesRepository = episodesRepository,
-            episodePlayerServiceConnection = episodePlayerServiceConnection,
+            episodePlayer = episodePlayerServiceConnection,
             userDataRepository = userDataRepository
         )
     }
