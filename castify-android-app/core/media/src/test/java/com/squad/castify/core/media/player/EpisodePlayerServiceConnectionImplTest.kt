@@ -95,6 +95,44 @@ class EpisodePlayerServiceConnectionImplTest {
         )
     }
 
+    @Test
+    fun testSeekBackIncrementIsCorrectlyUpdated() = runTest {
+        assertEquals( 10, subject.seekBackIncrement.value )
+        userDataRepository.setSeekBackDuration( 30 )
+        assertEquals( 30, subject.seekBackIncrement.value )
+    }
+
+    @Test
+    fun testSeekForwardIncrementIsCorrectlyUpdated() = runTest {
+        assertEquals( 30, subject.seekForwardIncrement.value )
+        userDataRepository.setSeekForwardDuration( 10 )
+        assertEquals( 10, subject.seekForwardIncrement.value )
+    }
+
+    @Test
+    fun testSeekBackUsesSeekBackIncrementValue() = runTest {
+        serviceConnector.player!!.seekTo( 35L )
+        var currentPlaybackPosition = serviceConnector.player!!.currentPosition
+        subject.seekBack()
+        currentPlaybackPosition -= 10
+        assertEquals(
+            currentPlaybackPosition,
+            serviceConnector.player!!.currentPosition
+        )
+        userDataRepository.setSeekBackDuration( 30 )
+        subject.seekBack()
+        assertEquals( 0, serviceConnector.player!!.currentPosition )
+    }
+
+    @Test
+    fun testSeekForwardUsesSeekForwardIncrementValue() = runTest {
+        subject.seekForward()
+        assertEquals( 30, serviceConnector.player!!.currentPosition )
+        userDataRepository.setSeekForwardDuration( 10 )
+        subject.seekForward()
+        assertEquals( 40, serviceConnector.player!!.currentPosition )
+    }
+
 }
 
 private class TestEpisodeToMediaItemConverter : EpisodeToMediaItemConverter {

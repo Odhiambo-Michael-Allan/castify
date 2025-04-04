@@ -192,7 +192,11 @@ private fun NowPlayingBottomBarContentPreview(
                 currentlyPlayingEpisode = previewData.episodes.first().toEpisode(),
                 playerState = PlayerState(
                     isPlaying = false
-                )
+                ),
+                playbackPitch = 1.0f,
+                playbackSpeed = 1.0f,
+                seekBackDuration = 10,
+                seekForwardDuration = 30
             ),
             playbackPosition = PlaybackPosition( 3, 4, 5 ),
             onTogglePlay = {},

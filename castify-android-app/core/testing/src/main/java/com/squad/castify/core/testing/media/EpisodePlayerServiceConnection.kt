@@ -5,6 +5,7 @@ import com.squad.castify.core.media.player.PlaybackPosition
 import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.Episode
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class TestEpisodePlayerServiceConnection : EpisodePlayerServiceConnection {
@@ -17,6 +18,12 @@ class TestEpisodePlayerServiceConnection : EpisodePlayerServiceConnection {
     private val _playbackErrorOccurred = MutableStateFlow( false )
 
     override val playbackErrorOccurred = _playbackErrorOccurred.asStateFlow()
+
+    private val _seekBackIncrement = MutableStateFlow( 10 )
+    override val seekBackIncrement = _seekBackIncrement.asStateFlow()
+
+    private val _seekForwardIncrement = MutableStateFlow( 30 )
+    override val seekForwardIncrement = _seekForwardIncrement.asStateFlow()
 
     private val onDisconnectListeners = mutableListOf<() -> Unit>()
 
@@ -32,6 +39,14 @@ class TestEpisodePlayerServiceConnection : EpisodePlayerServiceConnection {
 
     override fun addOnDisconnectListener( listener: () -> Unit ) {
         onDisconnectListeners.add( listener )
+    }
+
+    override fun seekBack() {
+        TODO("Not yet implemented")
+    }
+
+    override fun seekForward() {
+        TODO("Not yet implemented")
     }
 
     fun setPlayerState( playerState: PlayerState ) {

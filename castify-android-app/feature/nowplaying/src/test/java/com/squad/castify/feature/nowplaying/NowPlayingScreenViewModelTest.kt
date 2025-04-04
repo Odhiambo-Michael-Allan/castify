@@ -7,6 +7,8 @@ import com.squad.castify.core.model.Episode
 import com.squad.castify.core.model.Podcast
 import com.squad.castify.core.testing.media.TestEpisodePlayerServiceConnection
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
+import com.squad.castify.core.testing.repository.TestUserDataRepository
+import com.squad.castify.core.testing.repository.emptyUserData
 import com.squad.castify.core.testing.rules.MainDispatcherRule
 import com.squad.castify.feature.nowplaying.testDoubles.TestPlaybackPositionUpdater
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,6 +21,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import kotlin.time.Duration
 
 @OptIn( ExperimentalCoroutinesApi::class )
 class NowPlayingScreenViewModelTest {
@@ -29,6 +32,7 @@ class NowPlayingScreenViewModelTest {
     private val playbackPositionUpdater = TestPlaybackPositionUpdater()
     private val episodePlayerServiceConnection = TestEpisodePlayerServiceConnection()
     private val episodesRepository = TestEpisodesRepository()
+    private val userDataRepository = TestUserDataRepository()
 
     private lateinit var viewModel: NowPlayingScreenViewModel
 
@@ -37,7 +41,8 @@ class NowPlayingScreenViewModelTest {
         viewModel = NowPlayingScreenViewModel(
             playbackPositionUpdater = playbackPositionUpdater,
             episodesRepository = episodesRepository,
-            episodePlayerServiceConnection = episodePlayerServiceConnection
+            episodePlayerServiceConnection = episodePlayerServiceConnection,
+            userDataRepository = userDataRepository
         )
     }
 
@@ -50,7 +55,7 @@ class NowPlayingScreenViewModelTest {
             viewModel.playbackPosition.value
         )
 
-        val newPlaybackPosition = PlaybackPosition( 3, 5 )
+        val newPlaybackPosition = PlaybackPosition( 3, 4, 5 )
 
         playbackPositionUpdater.setPlaybackPosition( newPlaybackPosition )
 
@@ -82,11 +87,16 @@ class NowPlayingScreenViewModelTest {
         )
         episodePlayerServiceConnection.setPlayerState( playerState )
         episodesRepository.sendEpisodes( sampleEpisodes )
+        userDataRepository.setUserData( emptyUserData )
 
         assertEquals(
             NowPlayingScreenUiState.Success(
                 playerState = playerState,
-                currentlyPlayingEpisode = null
+                currentlyPlayingEpisode = null,
+                playbackPitch = 1.0f,
+                playbackSpeed = 1.0f,
+                seekBackDuration = 10,
+                seekForwardDuration = 30
             ),
             viewModel.uiState.value
         )
@@ -104,11 +114,16 @@ class NowPlayingScreenViewModelTest {
         )
         episodePlayerServiceConnection.setPlayerState( playerState )
         episodesRepository.sendEpisodes( sampleEpisodes )
+        userDataRepository.setUserData( emptyUserData )
 
         assertEquals(
             NowPlayingScreenUiState.Success(
                 currentlyPlayingEpisode = sampleEpisodes.first(),
-                playerState = playerState
+                playerState = playerState,
+                playbackPitch = 1.0f,
+                playbackSpeed = 1.0f,
+                seekBackDuration = 10,
+                seekForwardDuration = 30
             ),
             viewModel.uiState.value
         )
@@ -118,7 +133,9 @@ class NowPlayingScreenViewModelTest {
             published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
             podcast = samplePodcast,
             audioUri = "episode-0-audio-uri",
-            audioMimeType = ""
+            audioMimeType = "",
+            duration = Duration.ZERO,
+            durationPlayed = Duration.ZERO
         )
 
         episodesRepository.sendEpisodes( listOf( episode ) )
@@ -126,11 +143,58 @@ class NowPlayingScreenViewModelTest {
         assertEquals(
             NowPlayingScreenUiState.Success(
                 currentlyPlayingEpisode = episode,
-                playerState = playerState
+                playerState = playerState,
+                playbackPitch = 1.0f,
+                playbackSpeed = 1.0f,
+                seekBackDuration = 10,
+                seekForwardDuration = 30
             ),
             viewModel.uiState.value
         )
 
+    }
+
+    @Test
+    fun whenPlaybackPlaybackParametersChange_uiStateIsUpdated() = runTest {
+        backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.uiState.collect() }
+
+        val playerState = PlayerState(
+            currentlyPlayingEpisodeUri = "episode-0-uri",
+            isPlaying = true,
+            isBuffering = false,
+        )
+        episodePlayerServiceConnection.setPlayerState( playerState )
+        episodesRepository.sendEpisodes( sampleEpisodes )
+        userDataRepository.setUserData( emptyUserData )
+
+        assertEquals(
+            NowPlayingScreenUiState.Success(
+                currentlyPlayingEpisode = sampleEpisodes.first(),
+                playerState = playerState,
+                playbackPitch = 1.0f,
+                playbackSpeed = 1.0f,
+                seekBackDuration = 10,
+                seekForwardDuration = 30
+            ),
+            viewModel.uiState.value
+        )
+
+        userDataRepository.setPlaybackPitch( 1.5f )
+        userDataRepository.setPlaybackSpeed( 2f )
+        userDataRepository.setSeekBackDuration( 30 )
+        userDataRepository.setSeekForwardDuration( 10 )
+
+        assertEquals(
+            NowPlayingScreenUiState.Success(
+                currentlyPlayingEpisode = sampleEpisodes.first(),
+                playerState = playerState,
+                playbackPitch = 1.5f,
+                playbackSpeed = 2f,
+                seekBackDuration = 30,
+                seekForwardDuration = 10
+            ),
+            viewModel.uiState.value
+        )
     }
 }
 
@@ -154,20 +218,26 @@ private val sampleEpisodes = listOf(
         published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
         podcast = samplePodcast,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     ),
     Episode(
         uri = "episode-1-uri",
         published = Instant.parse( "2021-11-01T00:00:00.000Z" ),
         podcast = samplePodcast,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     ),
     Episode(
         uri = "episode-2-uri",
         published = Instant.parse( "2021-11-08T00:00:00.000Z" ),
         podcast = samplePodcast,
         audioUri = "",
-        audioMimeType = ""
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
     )
 )

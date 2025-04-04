@@ -211,8 +211,8 @@ private fun UserPreferencesKt.Dsl.updateShouldHideOnboardingIfNecessary() {
     if ( followedPodcastIds.isEmpty() ) shouldHideOnboarding = false
 }
 
-internal const val DEFAULT_PLAYBACK_PITCH = 1f
-internal const val DEFAULT_PLAYBACK_SPEED = 1f
-internal const val DEFAULT_SEEK_BACK_DURATION = 10
-internal const val DEFAULT_SEEK_FORWARD_DURATION = 30
-internal val DEFAULT_CURRENTLY_PLAYING_EPISODE_DURATION_PLAYED = Duration.ZERO
+const val DEFAULT_PLAYBACK_PITCH = 1f
+const val DEFAULT_PLAYBACK_SPEED = 1f
+const val DEFAULT_SEEK_BACK_DURATION = 10000
+const val DEFAULT_SEEK_FORWARD_DURATION = 30000
+val DEFAULT_CURRENTLY_PLAYING_EPISODE_DURATION_PLAYED = Duration.ZERO

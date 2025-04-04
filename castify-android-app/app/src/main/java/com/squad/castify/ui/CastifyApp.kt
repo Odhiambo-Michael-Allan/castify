@@ -1,5 +1,14 @@
 package com.squad.castify.ui
 
+import android.content.Context
+import android.content.Intent
+import android.media.audiofx.AudioEffect
+import android.net.Uri
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.launch
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -61,26 +71,46 @@ import kotlin.reflect.KClass
 fun CastifyApp(
     appState: CastifyAppState,
     modifier: Modifier = Modifier,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
 ) {
     val snackBarHostState = remember { SnackbarHostState() }
+    val packageName = LocalContext.current.packageName
+    val context = LocalContext.current
 
-//    LaunchedEffect(
-//        key1 = isOffline
-//    ) {
-//        if ( isOffline ) {
-//            snackBarHostState.showSnackbar(
-//                message = notConnectedMessage,
-//                duration = SnackbarDuration.Indefinite
-//            )
-//        }
-//    }
+    val equalizerActivity = rememberLauncherForActivityResult(
+        object : ActivityResultContract<Unit, Unit>() {
+            override fun createIntent(context: Context, input: Unit): Intent = Intent(
+                AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL
+            ).apply {
+                putExtra( AudioEffect.EXTRA_PACKAGE_NAME, packageName )
+                putExtra( AudioEffect.EXTRA_AUDIO_SESSION, 0 )
+                putExtra( AudioEffect.EXTRA_CONTENT_TYPE, AudioEffect.CONTENT_TYPE_VOICE )
+            }
+
+            override fun parseResult( resultCode: Int, intent: Intent? ) {}
+        }
+    ) {}
 
     CastifyApp(
         modifier = modifier,
         appState = appState,
         snackBarHostState = snackBarHostState,
-        windowAdaptiveInfo = windowAdaptiveInfo
+        windowAdaptiveInfo = windowAdaptiveInfo,
+        onLaunchEqualizerActivity = {
+            try {
+                equalizerActivity.launch()
+            } catch ( exception: Exception ) {
+                Log.d(
+                    "CASTIFY APP",
+                    "Error while launching equalizer: ${exception.message}"
+                )
+                Toast.makeText(
+                    context,
+                    "Error While launching equalizer",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        },
     )
 }
 
@@ -93,7 +123,8 @@ internal fun CastifyApp(
     modifier: Modifier = Modifier,
     appState: CastifyAppState,
     snackBarHostState: SnackbarHostState,
-    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo()
+    windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
+    onLaunchEqualizerActivity: () -> Unit,
 ) {
 
     val currentDestination = appState.currentDestination
@@ -114,8 +145,8 @@ internal fun CastifyApp(
                         .isRouteInHierarchy( destination.route )
                     item(
                         modifier = Modifier
-                            .padding( bottom = if ( isOffline ) 4.dp else 0.dp )
-                            .testTag( "CastifyNavItem" ),
+                            .padding(bottom = if (isOffline) 4.dp else 0.dp)
+                            .testTag("CastifyNavItem"),
                         selected = selected,
                         onClick = { appState.navigateToTopLevelDestination( destination ) },
                         icon = {
@@ -144,7 +175,7 @@ internal fun CastifyApp(
         ) {
             Scaffold(
                 modifier = modifier
-                    .nestedScroll( topAppBarScrollBehavior.nestedScrollConnection )
+                    .nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
                     .semantics { testTagsAsResourceId = true },
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onBackground,
@@ -204,7 +235,8 @@ internal fun CastifyApp(
                                     actionLabel = action,
                                     duration = SnackbarDuration.Short
                                 ) == SnackbarResult.ActionPerformed
-                            }
+                            },
+                            onLaunchEqualizerActivity = onLaunchEqualizerActivity,
                         )
                     }
                 }
@@ -214,8 +246,8 @@ internal fun CastifyApp(
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align( Alignment.BottomCenter )
-                    .padding( bottom = 6.dp ),
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 6.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Surface (

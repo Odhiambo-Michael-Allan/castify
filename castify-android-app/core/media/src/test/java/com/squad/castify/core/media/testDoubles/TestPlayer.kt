@@ -24,7 +24,7 @@ class TestPlayer : Player {
     private var playbackParameters = PlaybackParameters( 1f, 1f )
     private var seekBackDuration = 0L
     private var currentlyPlayingMediaItem: MediaItem? = null
-    private val playerListeners = mutableListOf<Player.Listener>()
+    private var currentPlaybackPosition = 0L
 
     override fun getApplicationLooper(): Looper {
         TODO("Not yet implemented")
@@ -186,8 +186,8 @@ class TestPlayer : Player {
         TODO("Not yet implemented")
     }
 
-    override fun seekTo(positionMs: Long) {
-        TODO("Not yet implemented")
+    override fun seekTo( positionMs: Long ) {
+        this.currentPlaybackPosition = positionMs
     }
 
     override fun seekTo(mediaItemIndex: Int, positionMs: Long) {
@@ -360,9 +360,7 @@ class TestPlayer : Player {
         TODO("Not yet implemented")
     }
 
-    override fun getCurrentPosition(): Long {
-        TODO("Not yet implemented")
-    }
+    override fun getCurrentPosition(): Long = this.currentPlaybackPosition
 
     override fun getBufferedPosition(): Long {
         TODO("Not yet implemented")

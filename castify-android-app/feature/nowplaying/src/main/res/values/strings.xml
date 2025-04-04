@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="equalizer">Equalizer</string>
+    <string name="pitch">Pitch</string>
+    <string name="share">Share</string>
+    <string name="playing_from_podcast">PLAYING FROM PODCAST</string>
+    <string name="seconds">%d seconds</string>
+    <string name="fast_rewind_increment">Rewind Increment</string>
+    <string name="fast_forward_increment">Forward Increment</string>
+
+</resources>

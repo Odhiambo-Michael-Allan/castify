@@ -3,6 +3,7 @@ package com.squad.castify.feature.nowplaying
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.media.player.PlaybackPosition
 import com.squad.castify.core.media.player.PlaybackPositionUpdater
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,6 +23,7 @@ class NowPlayingScreenViewModel @Inject constructor(
     private val playbackPositionUpdater: PlaybackPositionUpdater,
     private val episodePlayerServiceConnection: EpisodePlayerServiceConnection,
     private val episodesRepository: EpisodesRepository,
+    private val userDataRepository: UserDataRepository,
 ) : ViewModel() {
 
 
@@ -29,11 +32,16 @@ class NowPlayingScreenViewModel @Inject constructor(
             episodePlayerServiceConnection.playerState.flatMapLatest { playerState ->
                 episodesRepository.fetchEpisodeWithUri( playerState.currentlyPlayingEpisodeUri ?: "" )
             },
-            episodePlayerServiceConnection.playerState
-        ) { episode, playerState ->
+            episodePlayerServiceConnection.playerState,
+            userDataRepository.userData
+        ) { episode, playerState, userData ->
             NowPlayingScreenUiState.Success(
                 currentlyPlayingEpisode = episode,
-                playerState = playerState
+                playerState = playerState,
+                playbackPitch = userData.playbackPitch,
+                playbackSpeed = userData.playbackSpeed,
+                seekBackDuration = userData.seekbackDuration,
+                seekForwardDuration = userData.seekForwardDuration
             )
         }
             .stateIn(
@@ -52,6 +60,26 @@ class NowPlayingScreenViewModel @Inject constructor(
 
     fun togglePlay( episode: Episode ) = episodePlayerServiceConnection.togglePlay( episode )
 
+    fun seekBack() = episodePlayerServiceConnection.seekBack()
+
+    fun seekForward() = episodePlayerServiceConnection.seekForward()
+
+    fun setPlaybackPitch(pitch: Float ) {
+        viewModelScope.launch { userDataRepository.setPlaybackPitch( pitch ) }
+    }
+
+    fun setPlaybackSpeed(speed: Float ) {
+        viewModelScope.launch { userDataRepository.setPlaybackSpeed( speed ) }
+    }
+
+    fun setFastForwardDuration( duration: Int ) {
+        viewModelScope.launch { userDataRepository.setSeekForwardDuration( duration ) }
+    }
+
+    fun setFastRewindDuration( duration: Int ) {
+        viewModelScope.launch { userDataRepository.setSeekBackDuration( duration ) }
+    }
+
     override fun onCleared() {
         super.onCleared()
         playbackPositionUpdater.cleanUp()
@@ -62,6 +90,10 @@ sealed interface NowPlayingScreenUiState {
     data object Loading : NowPlayingScreenUiState
     data class Success(
         val playerState: PlayerState,
-        val currentlyPlayingEpisode: Episode?
+        val currentlyPlayingEpisode: Episode?,
+        val playbackPitch: Float,
+        val playbackSpeed: Float,
+        val seekBackDuration: Int,
+        val seekForwardDuration: Int
     ): NowPlayingScreenUiState
 }

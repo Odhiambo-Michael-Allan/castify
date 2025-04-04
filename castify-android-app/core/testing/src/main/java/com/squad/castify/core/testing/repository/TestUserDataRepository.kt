@@ -106,12 +106,24 @@ class TestUserDataRepository : UserDataRepository {
         }
     }
 
-    override suspend fun setSeekBackDuration(duration: Int) {
-        TODO("Not yet implemented")
+    override suspend fun setSeekBackDuration( duration: Int ) {
+        currentUserData.let { current ->
+            _userData.tryEmit(
+                current.copy(
+                    seekbackDuration = duration
+                )
+            )
+        }
     }
 
-    override suspend fun setSeekForwardDuration(duration: Int) {
-        TODO("Not yet implemented")
+    override suspend fun setSeekForwardDuration( duration: Int ) {
+        currentUserData.let { current ->
+            _userData.tryEmit(
+                current.copy(
+                    seekForwardDuration = duration
+                )
+            )
+        }
     }
 
     override suspend fun setCurrentlyPlayingEpisodeUri( uri: String ) {

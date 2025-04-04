@@ -37,14 +37,11 @@ class DurationPlayedUpdaterImpl @Inject constructor(
                 println( "DURATION PLAYED UPDATER: DURATION PLAYED: $durationPlayed" )
                 playerState.currentlyPlayingEpisodeUri?.let { uri ->
                     episodesRepository.fetchEpisodeWithUri( uri ).first()?.let { episode ->
-                        /** Only recognize the longest duration an episode has been played */
-                        if ( durationPlayed >= episode.durationPlayed.inWholeMilliseconds ) {
-                            episodesRepository.upsertEpisode(
-                                episode.copy(
-                                    durationPlayed = durationPlayed.toDuration( DurationUnit.MILLISECONDS )
-                                )
+                        episodesRepository.upsertEpisode(
+                            episode.copy(
+                                durationPlayed = durationPlayed.toDuration( DurationUnit.MILLISECONDS )
                             )
-                        }
+                        )
                     }
                 }
             }.collect()

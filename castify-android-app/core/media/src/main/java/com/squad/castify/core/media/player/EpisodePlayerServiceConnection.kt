@@ -28,15 +28,22 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+const val DEFAULT_SEEK_BACK_INCREMENT = 10000
+const val DEFAULT_SEEK_FORWARD_INCREMENT = 30000
+
 @OptIn(UnstableApi::class)
 interface EpisodePlayerServiceConnection {
     val playerState: StateFlow<PlayerState>
     val playbackErrorOccurred: StateFlow<Boolean>
+    val seekBackIncrement: StateFlow<Int>
+    val seekForwardIncrement: StateFlow<Int>
 
     fun playEpisode( episode: Episode )
     fun getCurrentPlaybackPosition(): PlaybackPosition
     fun togglePlay( episode: Episode )
     fun addOnDisconnectListener( listener: () -> Unit )
+    fun seekBack()
+    fun seekForward()
 }
 
 @OptIn( UnstableApi::class )
@@ -55,6 +62,12 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
     private val _playbackErrorOccurred = MutableStateFlow( false )
     override val playbackErrorOccurred = _playbackErrorOccurred.asStateFlow()
 
+    private val _seekBackIncrement = MutableStateFlow( DEFAULT_SEEK_BACK_INCREMENT )
+    override val seekBackIncrement = _seekBackIncrement.asStateFlow()
+
+    private val _seekForwardIncrement = MutableStateFlow( DEFAULT_SEEK_FORWARD_INCREMENT )
+    override val seekForwardIncrement = _seekForwardIncrement.asStateFlow()
+
     private val playerListener = PlayerListener()
 
     private var player: Player? = null
@@ -72,25 +85,34 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
                 coroutineScope.cancel()
             }
             player = serviceConnector.player?.apply {
-                addListener( playerListener )
-                val previouslyPlayingEpisodeUri = userDataRepository.userData
-                    .map { it.currentlyPlayingEpisodeUri }
-                    .first()
-                println( "EPISODE-PLAYER-SERVICE-CONNECTION: PREVIOUSLY PLAYING EPISODE URI: $previouslyPlayingEpisodeUri" )
-                val previouslyPlayingEpisode = episodesRepository.fetchEpisodeWithUri(
-                    previouslyPlayingEpisodeUri
-                ).first()
-                println( "EPISODE-PLAYER-SERVICE-CONNECTION: PREVIOUSLY PLAYING EPISODE: $previouslyPlayingEpisode" )
-                previouslyPlayingEpisode?.let {
-                    setMediaItem(
-                        episodeToMediaItemConverter.convert( previouslyPlayingEpisode ),
-                        previouslyPlayingEpisode.durationPlayed.inWholeMilliseconds
-                    )
-                    prepare()
-                }
+                initializePlayer( this )
+            }
+            observePlaybackParameters()
+        }
+
+        coroutineScope.launch { observeSeekBackDuration()  }
+        coroutineScope.launch { observeSeekForwardDuration() }
+    }
+
+    private suspend fun initializePlayer( player: Player ) {
+        player.apply {
+            addListener( playerListener )
+            val previouslyPlayingEpisodeUri = userDataRepository.userData
+                .map { it.currentlyPlayingEpisodeUri }
+                .first()
+            println( "EPISODE-PLAYER-SERVICE-CONNECTION: PREVIOUSLY PLAYING EPISODE URI: $previouslyPlayingEpisodeUri" )
+            val previouslyPlayingEpisode = episodesRepository.fetchEpisodeWithUri(
+                previouslyPlayingEpisodeUri
+            ).first()
+            println( "EPISODE-PLAYER-SERVICE-CONNECTION: PREVIOUSLY PLAYING EPISODE: $previouslyPlayingEpisode" )
+            previouslyPlayingEpisode?.let {
+                setMediaItem(
+                    episodeToMediaItemConverter.convert( previouslyPlayingEpisode ),
+                    previouslyPlayingEpisode.durationPlayed.inWholeMilliseconds
+                )
+                prepare()
             }
         }
-        coroutineScope.launch { observePlaybackParameters() }
     }
 
     private suspend fun observePlaybackParameters() {
@@ -101,6 +123,18 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
                     userData.playbackPitch
                 )
             }
+        }
+    }
+
+    private suspend fun observeSeekBackDuration() {
+        userDataRepository.userData.collect { userData ->
+            _seekBackIncrement.value = userData.seekbackDuration
+        }
+    }
+
+    private suspend fun observeSeekForwardDuration() {
+        userDataRepository.userData.collect { userData ->
+            _seekForwardIncrement.value = userData.seekForwardDuration
         }
     }
 
@@ -125,6 +159,23 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
 
     override fun addOnDisconnectListener( listener: () -> Unit ) {
         onDisconnectListeners.add( listener )
+    }
+
+    override fun seekBack() {
+        player?.let { player ->
+            val seekBackPos = ( player.currentPosition - seekBackIncrement.value ).takeIf { value ->
+                value >= 0
+            } ?: 0
+            player.seekTo( seekBackPos )
+        }
+    }
+
+    override fun seekForward() {
+        player?.let {
+            println( "PLAYER CURRENT POS: ${it.currentPosition}" )
+            println( "INCREMENT: ${seekForwardIncrement.value}" )
+            it.seekTo( it.currentPosition + seekForwardIncrement.value )
+        }
     }
 
     private fun play( episode: Episode ) {

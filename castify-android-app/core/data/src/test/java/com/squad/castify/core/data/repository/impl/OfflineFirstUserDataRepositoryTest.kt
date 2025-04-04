@@ -2,6 +2,8 @@ package com.squad.castify.core.data.repository.impl
 
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.datastore.CastifyPreferencesDataSource
+import com.squad.castify.core.datastore.DEFAULT_SEEK_BACK_DURATION
+import com.squad.castify.core.datastore.DEFAULT_SEEK_FORWARD_DURATION
 import com.squad.castify.core.datastore_test.testUserPreferencesDataStore
 import com.squad.castify.core.model.DarkThemeConfig
 import com.squad.castify.core.model.ThemeBrand
@@ -57,8 +59,8 @@ class OfflineFirstUserDataRepositoryTest {
                     listenedEpisodes = emptySet(),
                     playbackPitch = 1f,
                     playbackSpeed = 1f,
-                    seekbackDuration = 10,
-                    seekForwardDuration = 30,
+                    seekbackDuration = DEFAULT_SEEK_BACK_DURATION,
+                    seekForwardDuration = DEFAULT_SEEK_FORWARD_DURATION,
                     currentlyPlayingEpisodeUri = "",
                     currentlyPlayingEpisodeDurationPlayed = Duration.ZERO,
                     urisOfEpisodesInQueue = emptySet()
@@ -254,14 +256,14 @@ class OfflineFirstUserDataRepositoryTest {
     @Test
     fun testSeekBackDurationIsSetCorrectly() = testScope.runTest {
         assertEquals(
-            10,
+            DEFAULT_SEEK_BACK_DURATION,
             subject.userData
                 .map { it.seekbackDuration }
                 .first()
         )
-        subject.setSeekBackDuration( 30 )
+        subject.setSeekBackDuration( 30000 )
         assertEquals(
-            30,
+            30000,
             subject.userData
                 .map { it.seekbackDuration }
                 .first()
@@ -271,14 +273,14 @@ class OfflineFirstUserDataRepositoryTest {
     @Test
     fun testSeekForwardDurationIsSetCorrectly() = testScope.runTest {
         assertEquals(
-            30,
+            DEFAULT_SEEK_FORWARD_DURATION,
             subject.userData
                 .map { it.seekForwardDuration }
                 .first()
         )
-        subject.setSeekForwardDuration( 10 )
+        subject.setSeekForwardDuration( 10000 )
         assertEquals(
-            10,
+            10000,
             subject.userData
                 .map { it.seekForwardDuration }
                 .first()
