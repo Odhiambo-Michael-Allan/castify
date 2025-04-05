@@ -174,11 +174,10 @@ private fun NowPlayingScreenContent(
                     )
                     Text(
                         modifier = Modifier.align( Alignment.CenterEnd ),
-                        text =
-                        formatPlayDuration(
+                        text = "-${formatPlayDuration(
                             duration = playbackPosition.total.toDuration( DurationUnit.MILLISECONDS )
                                 .minus( playbackPosition.played.toDuration( DurationUnit.MILLISECONDS ) )
-                        ),
+                        )}",
                         style = LocalTextStyle.current.copy(
                             fontSize = 13.sp
                         )

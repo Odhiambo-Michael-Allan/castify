@@ -145,7 +145,7 @@ internal fun CastifyApp(
                         .isRouteInHierarchy( destination.route )
                     item(
                         modifier = Modifier
-                            .padding(bottom = if (isOffline) 4.dp else 0.dp)
+                            .padding( bottom = if ( isOffline ) 4.dp else 0.dp )
                             .testTag("CastifyNavItem"),
                         selected = selected,
                         onClick = { appState.navigateToTopLevelDestination( destination ) },

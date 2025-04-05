@@ -49,6 +49,10 @@ class TestEpisodePlayerServiceConnection : EpisodePlayerServiceConnection {
         TODO("Not yet implemented")
     }
 
+    override fun seekTo(pos: Long) {
+        TODO("Not yet implemented")
+    }
+
     fun setPlayerState( playerState: PlayerState ) {
         _playerState.value = playerState
     }

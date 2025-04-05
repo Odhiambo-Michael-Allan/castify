@@ -11,7 +11,7 @@ import javax.inject.Inject
  * Use case for categories that can be used to filter podcasts.
  */
 class FilterableCategoriesUseCase @Inject constructor(
-    private val categoriesRepository: CategoryRepository
+    private val sortCategoriesAccordingToPodcastCountUseCase: SortCategoriesAccordingToPodcastCountUseCase
 ) {
     /**
      * Create a [FilterableCategoriesModel] from the list of categories in [CategoriesRepository].
@@ -20,7 +20,7 @@ class FilterableCategoriesUseCase @Inject constructor(
      *        FilterableCategoriesModel
      */
     operator fun invoke( selectedCategory: Category? ): Flow<FilterableCategoriesModel> =
-        categoriesRepository.getCategories()
+        sortCategoriesAccordingToPodcastCountUseCase.invoke()
             .map { categories ->
                 println( "CATEGORIES IN REPOSITORY: $categories" )
                 FilterableCategoriesModel(
