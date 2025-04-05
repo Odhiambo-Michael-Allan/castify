@@ -79,6 +79,7 @@ import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
 import com.squad.castify.core.ui.EpisodeCard
+import com.squad.castify.core.ui.ErrorScreen
 import com.squad.castify.core.ui.PreviewData
 import kotlinx.coroutines.launch
 import kotlin.time.DurationUnit
@@ -89,6 +90,7 @@ private val DEFAULT_START_END_PADDING = 16.dp
 internal fun ExploreScreen(
     modifier: Modifier = Modifier,
     viewModel: ExploreScreenViewModel = hiltViewModel(),
+    onShareEpisode: (String ) -> Unit,
 ) {
 
     val categoriesUiState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
@@ -108,6 +110,9 @@ internal fun ExploreScreen(
         onRemoveDownload = viewModel::removeDownload,
         onRetryDownload = viewModel::retryDownload,
         onPauseDownload = viewModel::pauseDownload,
+        onShareEpisode = onShareEpisode,
+        onMarkAsCompleted = viewModel::markAsCompleted,
+        onRequestSync = viewModel::requestSync
     )
 }
 
@@ -126,10 +131,16 @@ internal fun ExploreScreen(
     onRemoveDownload: ( UserEpisode ) -> Unit,
     onResumeDownload: ( UserEpisode ) -> Unit,
     onPauseDownload: ( UserEpisode ) -> Unit,
+    onShareEpisode: (String ) -> Unit,
+    onMarkAsCompleted: ( UserEpisode ) -> Unit,
+    onRequestSync: () -> Unit,
 ) {
 
     val isCategoriesLoading = categoriesUiState is CategoriesUiState.Loading
     val isFeedLoading = podcastFeedUiState is PodcastFeedUiState.Loading
+    val categoriesLoadFailed = categoriesUiState is CategoriesUiState.Shown && categoriesUiState.model.isEmpty
+    val podcastsLoadFailed = podcastFeedUiState is PodcastFeedUiState.Success && podcastFeedUiState.model.topPodcasts.isEmpty()
+    val showErrorScreen = categoriesLoadFailed && podcastsLoadFailed && isSyncing.not()
 
     // This code should be called when the UI is ready for use and relates to Time To Full Display.
     ReportDrawnWhen { !isSyncing && !isCategoriesLoading && !isFeedLoading }
@@ -137,45 +148,52 @@ internal fun ExploreScreen(
     Column (
         modifier = modifier.fillMaxSize()
     ) {
-        SearchBar {}
-        when ( categoriesUiState ) {
-            CategoriesUiState.Loading,
-            CategoriesUiState.LoadFailed -> Unit
-            is CategoriesUiState.Shown -> {
-                if ( !categoriesUiState.model.isEmpty ) {
-                    val pagerState = rememberPagerState(
-                        pageCount = { categoriesUiState.model.categories.size }
-                    )
-                    CategoriesTabRow(
-                        pagerState = pagerState,
-                        categoriesUiState = categoriesUiState,
-                        onCategoryChange = onCategoryChange
-                    )
-                    HorizontalPager(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-//                        beyondViewportPageCount = 1,
-                        state = pagerState
-                    ) {
-                        LazyVerticalGrid(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            columns = GridCells.Adaptive( 300.dp )
+        if ( showErrorScreen ) {
+            ErrorScreen { onRequestSync() }
+        }
+        else {
+            SearchBar {}
+            when ( categoriesUiState ) {
+                CategoriesUiState.Loading,
+                CategoriesUiState.LoadFailed -> Unit
+                is CategoriesUiState.Shown -> {
+                    if ( !categoriesUiState.model.isEmpty ) {
+                        val pagerState = rememberPagerState(
+                            pageCount = { categoriesUiState.model.categories.size }
+                        )
+                        CategoriesTabRow(
+                            pagerState = pagerState,
+                            categoriesUiState = categoriesUiState,
+                            onCategoryChange = onCategoryChange
+                        )
+                        HorizontalPager(
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+//                            beyondViewportPageCount = 1,
+                            state = pagerState
                         ) {
-                            podcastsFeed(
-                                podcastFeedUiState = podcastFeedUiState,
-                                onFollowPodcast = onFollowPodcast
-                            )
-                            episodesFeed(
-                                podcastFeedUiState = podcastFeedUiState,
-                                onPlayEpisode = onPlayEpisode,
-                                onDownloadEpisode = onDownloadEpisode,
-                                onResumeDownload = onResumeDownload,
-                                onRemoveDownload = onRemoveDownload,
-                                onRetryDownload = onRetryDownload,
-                                onPauseDownload = onPauseDownload,
-                            )
+                            LazyVerticalGrid(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                columns = GridCells.Adaptive( 300.dp )
+                            ) {
+                                podcastsFeed(
+                                    podcastFeedUiState = podcastFeedUiState,
+                                    onFollowPodcast = onFollowPodcast
+                                )
+                                episodesFeed(
+                                    podcastFeedUiState = podcastFeedUiState,
+                                    onPlayEpisode = onPlayEpisode,
+                                    onDownloadEpisode = onDownloadEpisode,
+                                    onResumeDownload = onResumeDownload,
+                                    onRemoveDownload = onRemoveDownload,
+                                    onRetryDownload = onRetryDownload,
+                                    onPauseDownload = onPauseDownload,
+                                    onShareEpisode = onShareEpisode,
+                                    onMarkAsCompleted = onMarkAsCompleted,
+                                )
+                            }
                         }
                     }
                 }
@@ -418,6 +436,8 @@ fun LazyGridScope.episodesFeed(
     onRemoveDownload: ( UserEpisode ) -> Unit,
     onResumeDownload: ( UserEpisode ) -> Unit,
     onPauseDownload: ( UserEpisode ) -> Unit,
+    onShareEpisode: ( String ) -> Unit,
+    onMarkAsCompleted: ( UserEpisode ) -> Unit
 ) {
     when ( podcastFeedUiState ) {
         PodcastFeedUiState.Loading -> Unit
@@ -441,6 +461,8 @@ fun LazyGridScope.episodesFeed(
                     onRemoveDownload = { onRemoveDownload( it ) },
                     onResumeDownload = { onResumeDownload( it ) },
                     onPauseDownload = { onPauseDownload( it ) },
+                    onShareEpisode = onShareEpisode,
+                    onMarkAsCompleted = onMarkAsCompleted,
                 )
 
             }
@@ -450,7 +472,7 @@ fun LazyGridScope.episodesFeed(
 
 @DevicePreviews
 @Composable
-fun ExploreScreenPopulated(
+private fun ExploreScreenPopulated(
     @PreviewParameter( CategoryPodcastEpisodePreviewParameterProvider::class )
     previewParameters: PreviewData
 ) {
@@ -484,13 +506,16 @@ fun ExploreScreenPopulated(
             onResumeDownload = {},
             onRemoveDownload = {},
             onPauseDownload = {},
+            onShareEpisode = {},
+            onMarkAsCompleted = {},
+            onRequestSync = {}
         )
     }
 }
 
 @DevicePreviews
 @Composable
-fun ExploreScreenLoading() {
+private fun ExploreScreenLoading() {
     CastifyTheme {
         ExploreScreen(
             isSyncing = false,
@@ -504,6 +529,9 @@ fun ExploreScreenLoading() {
             onResumeDownload = {},
             onRemoveDownload = {},
             onPauseDownload = {},
+            onShareEpisode = {},
+            onMarkAsCompleted = {},
+            onRequestSync = {}
         )
     }
 }
@@ -511,7 +539,7 @@ fun ExploreScreenLoading() {
 @androidx.annotation.OptIn( UnstableApi::class )
 @DevicePreviews
 @Composable
-fun ExploreScreenPopulatedAndLoading(
+private fun ExploreScreenPopulatedAndLoading(
     @PreviewParameter( CategoryPodcastEpisodePreviewParameterProvider::class )
     previewParameters: PreviewData
 ) {
@@ -550,5 +578,48 @@ fun ExploreScreenPopulatedAndLoading(
         onResumeDownload = {},
         onRemoveDownload = {},
         onPauseDownload = {},
+        onShareEpisode = {},
+        onMarkAsCompleted = {},
+        onRequestSync = {}
     )
+}
+
+@DevicePreviews
+@Composable
+private fun ExploreScreenError() {
+    CastifyTheme {
+        ExploreScreen(
+            isSyncing = false,
+            categoriesUiState = CategoriesUiState.Shown(
+                model = FilterableCategoriesModel(
+                    categories = emptyList(),
+                    selectedCategory = null
+                )
+            ),
+            podcastFeedUiState = PodcastFeedUiState.Success(
+                model = PodcastCategoryFilterResult(
+                    topPodcasts = emptyList(),
+                    episodes = emptyList()
+                ),
+                downloads = emptyMap(),
+                downloadingEpisodes = emptyMap(),
+                playerState = PlayerState(
+                    isPlaying = false,
+                    isBuffering = false,
+                    currentlyPlayingEpisodeUri = null
+                ),
+            ),
+            onCategoryChange = {},
+            onFollowPodcast = {},
+            onPlayEpisode = {},
+            onDownloadEpisode = {},
+            onRetryDownload = {},
+            onRemoveDownload = {},
+            onResumeDownload = {},
+            onPauseDownload = {},
+            onShareEpisode = {},
+            onMarkAsCompleted = {},
+            onRequestSync = {}
+        )
+    }
 }

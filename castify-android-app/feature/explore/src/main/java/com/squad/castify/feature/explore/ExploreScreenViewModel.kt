@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.data.util.SyncManager
 import com.squad.castify.core.domain.usecase.FilterableCategoriesUseCase
@@ -38,7 +39,8 @@ class ExploreScreenViewModel @Inject constructor(
     private val podcastCategoryFilterUseCase: PodcastCategoryFilterUseCase,
     private val episodePlayer: EpisodePlayerServiceConnection,
     private val downloadTracker: DownloadTracker,
-    syncManager: SyncManager,
+    private val episodesRepository: EpisodesRepository,
+    private val syncManager: SyncManager,
 ) : ViewModel() {
 
     private val selectedCategory = MutableStateFlow<Category?>( null )
@@ -85,6 +87,7 @@ class ExploreScreenViewModel @Inject constructor(
             initialValue = false
         )
 
+
     fun updateCategorySelection( currentlySelectedCategory: Category ) {
         selectedCategory.update {
             currentlySelectedCategory
@@ -114,38 +117,20 @@ class ExploreScreenViewModel @Inject constructor(
 
     fun pauseDownload( userEpisode: UserEpisode ) =
         downloadTracker.pauseDownload( userEpisode.toEpisode().toMediaItem() )
+
+    fun markAsCompleted( userEpisode: UserEpisode ) =
+        viewModelScope.launch {
+            episodesRepository.upsertEpisode(
+                userEpisode.toEpisode().copy(
+                    durationPlayed = userEpisode.duration
+                )
+            )
+        }
+
+    fun requestSync() {
+        syncManager.requestSync()
+    }
 }
 
-///**
-// * Combines six flows into a single flow by combining their latest values using the provided transform function.
-// *
-// * @param flow The first flow.
-// * @param flow2 The second flow.
-// * @param flow3 The third flow.
-// * @param flow4 The fourth flow.
-// * @param flow5 The fifth flow.
-// * @param flow6 The sixth flow.
-// * @param transform The transform function to combine the latest values of the six flows.
-// * @return A flow that emits the results of the transform function applied to the latest values of the six flows.
-// */
-//fun <T1, T2, T3, T4, T5, T6, R> combine(
-//    flow: Flow<T1>,
-//    flow2: Flow<T2>,
-//    flow3: Flow<T3>,
-//    flow4: Flow<T4>,
-//    flow5: Flow<T5>,
-//    flow6: Flow<T6>,
-//    transform: suspend (T1, T2, T3, T4, T5, T6) -> R
-//): Flow<R> =
-//    combine(flow, flow2, flow3, flow4, flow5, flow6) { args: Array<*> ->
-//        transform(
-//            args[0] as T1,
-//            args[1] as T2,
-//            args[2] as T3,
-//            args[3] as T4,
-//            args[4] as T5,
-//            args[5] as T6,
-//        )
-//    }
 
 private const val TAG = "EXPLORESCREENVIEWMODEL"

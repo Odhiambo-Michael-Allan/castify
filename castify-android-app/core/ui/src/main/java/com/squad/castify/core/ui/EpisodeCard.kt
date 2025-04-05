@@ -1,7 +1,9 @@
 package com.squad.castify.core.ui
 
 import androidx.annotation.OptIn
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,9 +17,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -30,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.offline.Download
 import com.squad.castify.core.designsystem.component.DynamicAsyncImage
@@ -58,7 +66,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.time.Duration
-import kotlin.time.DurationUnit
 
 @OptIn(UnstableApi::class)
 @kotlin.OptIn( ExperimentalMaterial3Api::class )
@@ -77,11 +84,13 @@ fun EpisodeCard(
     onRetryDownload: () -> Unit,
     onResumeDownload: () -> Unit,
     onPauseDownload: () -> Unit,
+    onShareEpisode: ( String ) -> Unit,
+    onMarkAsCompleted: ( UserEpisode ) -> Unit,
 ) {
-    var showModalBottomSheet by remember { mutableStateOf( false ) }
+    var showDownloadStateOptionsBottomSheet by remember { mutableStateOf( false ) }
+    var showEpisodeOptionsBottomSheet by remember { mutableStateOf( false ) }
 
     val durationPlayed = userEpisode.durationPlayed
-    val duration = userEpisode.duration
     val hasPreviouslyBeenPlayed = durationPlayed > Duration.ZERO
 
     Card(
@@ -232,7 +241,7 @@ fun EpisodeCard(
                                 // Do nothing in these two states..
                                 Download.STATE_REMOVING, Download.STATE_RESTARTING -> {}
                                 null -> { onDownloadEpisode() }
-                                else -> { showModalBottomSheet = !showModalBottomSheet }
+                                else -> { showDownloadStateOptionsBottomSheet = !showDownloadStateOptionsBottomSheet }
                             }
                         }
                     ) {
@@ -280,7 +289,9 @@ fun EpisodeCard(
                     }
                 }
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        showEpisodeOptionsBottomSheet = true
+                    }
                 ) {
                     Icon(
                         imageVector = CastifyIcons.MoreVert,
@@ -291,9 +302,9 @@ fun EpisodeCard(
         }
     }
 
-    if ( showModalBottomSheet ) {
+    if ( showDownloadStateOptionsBottomSheet ) {
         ModalBottomSheet(
-            onDismissRequest = { showModalBottomSheet = false }
+            onDismissRequest = { showDownloadStateOptionsBottomSheet = false }
         ) {
             when ( downloadState ) {
                 Download.STATE_COMPLETED, Download.STATE_QUEUED -> {
@@ -301,7 +312,7 @@ fun EpisodeCard(
                         modifier = Modifier.padding( 8.dp, 0.dp ),
                         onRemoveDownload = {
                             onRemoveDownload()
-                            showModalBottomSheet = false
+                            showDownloadStateOptionsBottomSheet = false
                         }
                     )
                 }
@@ -310,7 +321,7 @@ fun EpisodeCard(
                         modifier = Modifier.padding( 8.dp, 0.dp ),
                         onPauseDownload = {
                             onPauseDownload()
-                            showModalBottomSheet = false
+                            showDownloadStateOptionsBottomSheet = false
                         }
                     )
                 }
@@ -319,11 +330,11 @@ fun EpisodeCard(
                         modifier = Modifier.padding( 8.dp, 0.dp ),
                         onCancelDownload = {
                             onRemoveDownload()
-                            showModalBottomSheet = false
+                            showDownloadStateOptionsBottomSheet = false
                         },
                         onRetryDownload = {
                             onRetryDownload()
-                            showModalBottomSheet = false
+                            showDownloadStateOptionsBottomSheet = false
                         }
                     )
                 }
@@ -332,11 +343,37 @@ fun EpisodeCard(
                         modifier = Modifier.padding( 8.dp, 0.dp ),
                         onResumeDownload = {
                             onResumeDownload()
-                            showModalBottomSheet = false
+                            showDownloadStateOptionsBottomSheet = false
                         }
                     )
                 }
             }
+        }
+    }
+    
+    if ( showEpisodeOptionsBottomSheet ) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showEpisodeOptionsBottomSheet = false
+            }
+        ) {
+            EpisodeOptions(
+                userEpisode = userEpisode,
+                onShare = {
+                    showEpisodeOptionsBottomSheet = false
+                    onShareEpisode( userEpisode.uri )
+                },
+                onGoToEpisode = {
+                    showEpisodeOptionsBottomSheet = false
+                },
+                onGoToPodcast = {
+                    showEpisodeOptionsBottomSheet = false
+                },
+                onMarkAsCompleted = {
+                    showEpisodeOptionsBottomSheet = false
+                    onMarkAsCompleted( userEpisode )
+                }
+            )
         }
     }
 }
@@ -357,6 +394,116 @@ fun durationFormatted( duration: Duration ): String =
             else -> String.format( Locale.getDefault(), "%d sec", seconds )
         }
     }
+
+@Composable
+private fun EpisodeOptions(
+    userEpisode: UserEpisode,
+    onMarkAsCompleted: () -> Unit,
+    onGoToPodcast: () -> Unit,
+    onGoToEpisode: () -> Unit,
+    onShare: () -> Unit,
+) {
+    Column (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+    ) {
+        Row (
+            modifier = Modifier.padding( 24.dp, 4.dp ),
+            horizontalArrangement = Arrangement.spacedBy( 12.dp ),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            DynamicAsyncImage(
+                modifier = Modifier
+                    .size( 75.dp )
+                    .clip( MaterialTheme.shapes.small ),
+                imageUrl = userEpisode.followablePodcast.podcast.imageUrl,
+                contentDescription = null
+            )
+            Column {
+                Text(
+                    text = userEpisode.title,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.SemiBold,
+                    style = LocalTextStyle.current.copy(
+                        fontSize = 12.sp
+                    )
+                )
+                Text(
+                    text = userEpisode.author.ifEmpty {
+                        userEpisode.followablePodcast.podcast.author
+                    },
+                    style = LocalTextStyle.current.copy(
+                        fontSize = 12.sp
+                    )
+                )
+            }
+        }
+        HorizontalDivider(
+            modifier = Modifier.padding( 24.dp, 8.dp )
+        )
+        OptionCard(
+            titleResId = R.string.mark_as_completed,
+            imageVector = CastifyIcons.Check,
+            onClick = onMarkAsCompleted
+        )
+        OptionCard(
+            titleResId = R.string.go_to_podcast,
+            imageVector = CastifyIcons.Podcast,
+            onClick = onGoToPodcast
+        )
+        OptionCard(
+            titleResId = R.string.go_to_episode,
+            imageVector = CastifyIcons.Podcast,
+            onClick = onGoToEpisode
+        )
+        OptionCard(
+            titleResId = R.string.share,
+            imageVector = CastifyIcons.Share,
+            onClick = onShare
+        )
+    }
+}
+
+@Composable
+fun OptionCard(
+    modifier: Modifier = Modifier,
+    @StringRes titleResId: Int,
+    imageVector: ImageVector,
+    supportingContent: @Composable() ( () -> Unit )? = null,
+    onClick: () -> Unit
+) {
+    Card (
+        modifier = modifier,
+        onClick = onClick,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        )
+    ) {
+        ListItem(
+            headlineContent = {
+                Text(
+                    text = stringResource(
+                        id = titleResId
+                    )
+                )
+            },
+            leadingContent = {
+                IconButton( onClick = {} ) {
+                    Icon(
+                        imageVector = imageVector,
+                        contentDescription = null
+                    )
+                }
+            },
+            supportingContent = supportingContent,
+            colors = ListItemDefaults.colors(
+                containerColor = Color.Transparent
+            )
+        )
+    }
+}
 
 @OptIn(UnstableApi::class )
 @Preview
@@ -381,7 +528,26 @@ fun EpisodeCardPreview(
             onResumeDownload = {},
             onRetryDownload = {},
             onRemoveDownload = {},
-            onPauseDownload = {}
+            onPauseDownload = {},
+            onShareEpisode = {},
+            onMarkAsCompleted = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EpisodeOptionsPreview(
+    @PreviewParameter( CategoryPodcastEpisodePreviewParameterProvider::class )
+    previewData: PreviewData
+) {
+    CastifyTheme {
+        EpisodeOptions(
+            userEpisode = previewData.episodes.first(),
+            onGoToEpisode = {},
+            onShare = {},
+            onGoToPodcast = {},
+            onMarkAsCompleted = {}
         )
     }
 }

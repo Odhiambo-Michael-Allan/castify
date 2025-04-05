@@ -12,8 +12,12 @@ import kotlinx.serialization.Serializable
 fun NavController.navigateToExplore( navOptions: NavOptions ) =
     navigate( route = ExploreRoute, navOptions )
 
-fun NavGraphBuilder.exploreScreen() {
+fun NavGraphBuilder.exploreScreen(
+    onShareEpisode: ( String ) -> Unit,
+) {
     composable<ExploreRoute> {
-        ExploreScreen()
+        ExploreScreen(
+            onShareEpisode = onShareEpisode,
+        )
     }
 }

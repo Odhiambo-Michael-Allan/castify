@@ -10,5 +10,10 @@
     <string name="loading">loading..</string>
     <string name="completed">Completed</string>
     <string name="left">left</string>
+    <string name="mark_as_completed">Mark as completed</string>
+    <string name="go_to_podcast">Go to podcast</string>
+    <string name="go_to_episode">Go to episode</string>
+    <string name="share">Share</string>
+    <string name="something_went_wrong">Something went wrong</string>
 
 </resources>

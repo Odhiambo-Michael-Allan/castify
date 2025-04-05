@@ -26,6 +26,7 @@ import androidx.compose.material.icons.rounded.PauseCircle
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.PlayCircle
 import androidx.compose.material.icons.rounded.PlayCircleOutline
+import androidx.compose.material.icons.rounded.Podcasts
 import androidx.compose.material.icons.rounded.Replay10
 import androidx.compose.material.icons.rounded.Replay30
 import androidx.compose.material.icons.rounded.Search
@@ -64,4 +65,5 @@ object CastifyIcons {
     val Equalizer = Icons.Rounded.Equalizer
     val FastRewind = Icons.Rounded.FastRewind
     val FastForward = Icons.Rounded.FastForward
+    val Podcast = Icons.Rounded.Podcasts
 }

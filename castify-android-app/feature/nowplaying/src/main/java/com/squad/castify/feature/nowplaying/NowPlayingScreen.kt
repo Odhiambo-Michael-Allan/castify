@@ -57,6 +57,7 @@ import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.Episode
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
+import com.squad.castify.core.ui.OptionCard
 import com.squad.castify.core.ui.PreviewData
 import java.util.Locale
 import kotlin.time.Duration
@@ -374,122 +375,55 @@ private fun NowPlayingScreenContent(
             Column (
                 modifier = Modifier.padding( 16.dp, 0.dp )
             ) {
-                Card (
-                    onClick = {
-                        showMoreOptionsDialog = false
-                        onLaunchEqualizerActivity()
-                    }
+                OptionCard(
+                    titleResId = R.string.equalizer,
+                    imageVector = CastifyIcons.Equalizer
                 ) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource( id = R.string.equalizer )
-                            )
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = CastifyIcons.Equalizer,
-                                contentDescription = null
-                            )
-                        }
-                    )
+                    showMoreOptionsDialog = false
+                    onLaunchEqualizerActivity()
                 }
-                Card (
-                    onClick = {
-                        showMoreOptionsDialog = false
-                        showPlaybackPitchDialog = true
-                    }
-                ) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource( id = R.string.pitch )
-                            )
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = CastifyIcons.Pitch,
-                                contentDescription = null
-                            )
-                        },
-                        supportingContent = {
-                            when ( uiState ) {
-                                is NowPlayingScreenUiState.Success -> {
-                                    Text(
-                                        text = "x${uiState.playbackPitch}"
-                                    )
-                                }
-                                else -> {}
-                            }
-                        }
-                    )
-                }
-                Card (
-                    onClick = {
-                        showMoreOptionsDialog = false
-                        showFastRewindDialog = true
-                    }
-                ) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource( id = R.string.fast_rewind_increment )
-                            )
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = CastifyIcons.FastRewind,
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
-                Card (
-                    onClick = {
-                        showMoreOptionsDialog = false
-                        showFastForwardDuration = true
-                    }
-                ) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource( id = R.string.fast_forward_increment )
-                            )
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = CastifyIcons.FastForward,
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
-                Card (
-                    onClick = {
-                        showMoreOptionsDialog = false
+                OptionCard(
+                    titleResId = R.string.pitch,
+                    imageVector = CastifyIcons.Pitch,
+                    supportingContent = {
                         when ( uiState ) {
                             is NowPlayingScreenUiState.Success -> {
-                                uiState.currentlyPlayingEpisode?.let {
-                                    onShareEpisode( it.uri )
-                                }
+                                Text( text = "x${uiState.playbackPitch}" )
                             }
                             else -> {}
                         }
                     }
                 ) {
-                    ListItem(
-                        headlineContent = {
-                            Text(
-                                text = stringResource( id = R.string.share )
-                            )
-                        },
-                        leadingContent = {
-                            Icon(
-                                imageVector = CastifyIcons.Share,
-                                contentDescription = null
-                            )
+                    showMoreOptionsDialog = false
+                    showPlaybackPitchDialog = true
+                }
+                OptionCard(
+                    titleResId = R.string.fast_rewind_increment,
+                    imageVector = CastifyIcons.FastRewind
+                ) {
+                    showMoreOptionsDialog = false
+                    showFastRewindDialog = true
+                }
+                OptionCard(
+                    titleResId = R.string.fast_forward_increment,
+                    imageVector = CastifyIcons.FastForward
+                ) {
+                    showMoreOptionsDialog = false
+                    showFastForwardDuration = true
+                }
+                OptionCard(
+                    titleResId = R.string.share,
+                    imageVector = CastifyIcons.Share
+                ) {
+                    showMoreOptionsDialog = false
+                    when ( uiState ) {
+                        is NowPlayingScreenUiState.Success -> {
+                            uiState.currentlyPlayingEpisode?.let {
+                                onShareEpisode( it.uri )
+                            }
                         }
-                    )
+                        else -> {}
+                    }
                 }
             }
         }
@@ -543,7 +477,7 @@ private fun CastifySlider(
 fun formatPlayDuration( duration: Duration ): String =
     duration.toComponents { hours, minutes, seconds, _ ->
         when {
-            hours > 0 -> String.format( Locale.getDefault(), "%d:%02d:%d", hours, minutes, seconds )
+            hours > 0 -> String.format( Locale.getDefault(), "%d:%02d:%02d", hours, minutes, seconds )
             else -> String.format( Locale.getDefault(), "%d:%02d", minutes, seconds )
         }
     }

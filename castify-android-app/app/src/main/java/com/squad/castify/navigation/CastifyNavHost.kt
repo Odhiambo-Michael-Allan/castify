@@ -49,7 +49,9 @@ fun CastifyNavHost(
             navController = navHostController,
             startDestination = ExploreRoute
         ) {
-            exploreScreen()
+            exploreScreen(
+                onShareEpisode = { context.shareEpisode( it ) }
+            )
         }
         NowPlayingBottomBar {
             shouldShowNowPlayingScreen = true

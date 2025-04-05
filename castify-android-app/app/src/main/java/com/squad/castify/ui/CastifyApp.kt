@@ -144,9 +144,6 @@ internal fun CastifyApp(
                     val selected = currentDestination
                         .isRouteInHierarchy( destination.route )
                     item(
-                        modifier = Modifier
-                            .padding( bottom = if ( isOffline ) 4.dp else 0.dp )
-                            .testTag("CastifyNavItem"),
                         selected = selected,
                         onClick = { appState.navigateToTopLevelDestination( destination ) },
                         icon = {
@@ -246,8 +243,8 @@ internal fun CastifyApp(
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 6.dp),
+                    .align( Alignment.BottomCenter )
+                    .padding( bottom = 8.dp ),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Surface (
