@@ -1,6 +1,4 @@
 
-![core_notifications_ic_castify_notification](https://github.com/user-attachments/assets/28bdb956-3e94-44eb-b035-e48af6cc5508)
-
 <h1 align="center">
     <img src="https://github.com/user-attachments/assets/28bdb956-3e94-44eb-b035-e48af6cc5508" 
        alt="Castify Logo" 
