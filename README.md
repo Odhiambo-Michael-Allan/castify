@@ -38,3 +38,20 @@ I was really sad when *Google* killed the *Google Podcasts* app. I really loved 
 - [androidx.datastore](https://developer.android.com/jetpack/androidx/releases/datastore) for persisting user preferences.
 - [androidx.media3](https://developer.android.com/jetpack/androidx/releases/media3) for audio playback.
 - [androidx.work](https://developer.android.com/jetpack/androidx/releases/work) for background work.
+
+# License
+```xml
+Designed and developed by 2025 squad (Michael Odhiambo)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
