@@ -1,5 +1,6 @@
 <h1 align="center">
-  <img src="![core_notifications_ic_castify_notification](https://github.com/user-attachments/assets/a9ff1cab-bc22-434d-afb3-01187d130357)" alt="Podcast Logo" width="40" height="40" style="vertical-align: middle; margin-right: 10px;"> 
+  <img src="" alt="Podcast Logo" width="40" height="40" style="vertical-align: middle; margin-right: 10px;"> 
+  ![core_notifications_ic_castify_notification](https://github.com/user-attachments/assets/a9ff1cab-bc22-434d-afb3-01187d130357)
 
 Castify
 </h1>
