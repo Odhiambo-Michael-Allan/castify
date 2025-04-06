@@ -1,5 +1,8 @@
-<h1 align="center">![core_notifications_ic_castify_notification](https://github.com/user-attachments/assets/a9ff1cab-bc22-434d-afb3-01187d130357)
-Castify</h1>
+<h1 align="center">
+  <img src="![core_notifications_ic_castify_notification](https://github.com/user-attachments/assets/a9ff1cab-bc22-434d-afb3-01187d130357)" alt="Podcast Logo" width="40" height="40" style="vertical-align: middle; margin-right: 10px;"> 
+
+Castify
+</h1>
 
 <p align="center">
   <a href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/></a>
