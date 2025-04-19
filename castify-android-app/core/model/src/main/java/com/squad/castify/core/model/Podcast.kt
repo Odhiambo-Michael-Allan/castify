@@ -12,4 +12,5 @@ data class Podcast(
     val imageUrl: String = "",
     val description: String = "",
     val categories: List<Category>,
+    val latestEpisodePublishData: Instant? = null
 )

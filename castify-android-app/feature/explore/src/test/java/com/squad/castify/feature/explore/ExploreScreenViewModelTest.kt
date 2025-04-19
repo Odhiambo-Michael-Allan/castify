@@ -6,6 +6,7 @@ import com.squad.castify.core.domain.model.FilterableCategoriesModel
 import com.squad.castify.core.domain.model.PodcastCategoryFilterResult
 import com.squad.castify.core.domain.usecase.FilterableCategoriesUseCase
 import com.squad.castify.core.domain.usecase.PodcastCategoryFilterUseCase
+import com.squad.castify.core.domain.usecase.SortCategoriesAccordingToPodcastCountUseCase
 import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.Episode
@@ -53,13 +54,18 @@ class ExploreScreenViewModelTest {
 
     private lateinit var filterableCategoriesUseCase: FilterableCategoriesUseCase
     private lateinit var podcastCategoryFilterUseCase: PodcastCategoryFilterUseCase
+    private lateinit var sortCategoriesAccordingToPodcastCountUseCase: SortCategoriesAccordingToPodcastCountUseCase
 
     private lateinit var viewModel: ExploreScreenViewModel
 
     @Before
     fun setUp() {
+        sortCategoriesAccordingToPodcastCountUseCase = SortCategoriesAccordingToPodcastCountUseCase(
+            categoriesRepository = categoriesRepository,
+            podcastsRepository = podcastsRepository,
+        )
         filterableCategoriesUseCase = FilterableCategoriesUseCase(
-            categoriesRepository = categoriesRepository
+            sortCategoriesAccordingToPodcastCountUseCase = sortCategoriesAccordingToPodcastCountUseCase
         )
         podcastCategoryFilterUseCase = PodcastCategoryFilterUseCase(
             podcastsRepository = podcastsRepository,
@@ -73,7 +79,8 @@ class ExploreScreenViewModelTest {
             podcastCategoryFilterUseCase = podcastCategoryFilterUseCase,
             syncManager = syncManager,
             episodePlayer = episodePlayerServiceConnection,
-            downloadTracker = downloadTracker
+            downloadTracker = downloadTracker,
+            episodesRepository = episodesRepository
         )
     }
 

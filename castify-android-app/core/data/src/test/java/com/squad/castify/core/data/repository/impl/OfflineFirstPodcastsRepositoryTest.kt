@@ -71,7 +71,7 @@ class OfflineFirstPodcastsRepositoryTest {
                 podcastDao.getPodcastsSortedByLastEpisode()
                     .first()
                     .map( PopulatedPodcastEntity::asExternalModel ),
-                subject.getPodcasts().first()
+                subject.getPodcastsSortedByLastEpisodePublishDate().first()
             )
         }
 
@@ -82,7 +82,7 @@ class OfflineFirstPodcastsRepositoryTest {
                 podcastDao.getPodcastsInCategorySortedByLastEpisode( testCategoryId )
                     .first()
                     .map( PopulatedPodcastEntity::asExternalModel ),
-                subject.getPodcastsInCategory( testCategoryId ).first()
+                subject.getPodcastsInCategorySortedByLastEpisodePublishDate( testCategoryId ).first()
             )
         }
 

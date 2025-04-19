@@ -15,7 +15,7 @@ class SortCategoriesAccordingToPodcastCountUseCase @Inject constructor(
     operator fun invoke(): Flow<List<Category>> =
         combine(
             categoriesRepository.getCategories(),
-            podcastsRepository.getPodcasts()
+            podcastsRepository.getPodcastsSortedByLastEpisodePublishDate()
         ) { categories, podcasts ->
             categories.associateWith { category ->
                 val count = podcasts.map { it.categories }.flatten().count { it == category }

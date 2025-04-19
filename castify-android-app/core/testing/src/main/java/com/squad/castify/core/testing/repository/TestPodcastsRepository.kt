@@ -17,14 +17,14 @@ class TestPodcastsRepository : PodcastsRepository {
     private val podcastsFlow: MutableSharedFlow<List<Podcast>> =
         MutableSharedFlow( replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST )
 
-    override fun getPodcasts(): Flow<List<Podcast>> = podcastsFlow
+    override fun getPodcastsSortedByLastEpisodePublishDate(): Flow<List<Podcast>> = podcastsFlow
 
     override fun getPodcastWithUri( uri: String ): Flow<Podcast> =
         podcastsFlow.map { podcasts ->
             podcasts.find { it.uri == uri }!!
         }
 
-    override fun getPodcastsInCategory( categoryId: String ): Flow<List<Podcast>> =
+    override fun getPodcastsInCategorySortedByLastEpisodePublishDate(categoryId: String ): Flow<List<Podcast>> =
         podcastsFlow.map { podcasts ->
             podcasts.filter { podcast ->
                 podcast.categories.map( Category::id ).contains( categoryId )

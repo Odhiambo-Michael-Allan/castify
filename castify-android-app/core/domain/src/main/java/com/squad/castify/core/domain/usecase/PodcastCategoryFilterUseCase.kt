@@ -12,7 +12,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
@@ -31,7 +30,7 @@ class PodcastCategoryFilterUseCase @Inject constructor(
             return flowOf( PodcastCategoryFilterResult() )
         }
 
-        val podcastsFlow = podcastsRepository.getPodcastsInCategory( category.id )
+        val podcastsFlow = podcastsRepository.getPodcastsInCategorySortedByLastEpisodePublishDate( category.id )
 
         return combine(
             userDataRepository.userData,

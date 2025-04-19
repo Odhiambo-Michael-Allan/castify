@@ -46,6 +46,7 @@ androidxWork = "2.9.0"
 androidTools = "31.6.1"
 media3Version = "1.4.0"
 androidxMediaVersion = "1.5.0"
+robolectric = "4.12.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -160,6 +161,8 @@ androidx-media3-datasource-cronet = { module = "androidx.media3:media3-datasourc
 androidx-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "media3Version" }
 # For loading data using librtmp
 androidx-media3-datasource-rtmp = { module = "androidx.media3:media3-datasource-rtmp", version.ref = "media3Version" }
+
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

@@ -79,7 +79,7 @@ fun CastifyApp(
 
     val equalizerActivity = rememberLauncherForActivityResult(
         object : ActivityResultContract<Unit, Unit>() {
-            override fun createIntent(context: Context, input: Unit): Intent = Intent(
+            override fun createIntent( context: Context, input: Unit ): Intent = Intent(
                 AudioEffect.ACTION_DISPLAY_AUDIO_EFFECT_CONTROL_PANEL
             ).apply {
                 putExtra( AudioEffect.EXTRA_PACKAGE_NAME, packageName )

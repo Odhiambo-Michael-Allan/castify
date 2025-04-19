@@ -79,6 +79,8 @@ internal class OfflineFirstEpisodesRepository @Inject constructor(
                 val hasOnboarded = userData.shouldHideOnboarding
                 val followedPodcastUris = userData.followedPodcasts
 
+                println( "NUMBER OF FOLLOWED PODCASTS: ${followedPodcastUris.size}" )
+
                 val urisOfExistingEpisodesForFollowedPodcastsThatHaveChanged = when {
                     hasOnboarded -> episodeDao
                         .fetchEpisodesSortedByPublishDate(
@@ -94,7 +96,7 @@ internal class OfflineFirstEpisodesRepository @Inject constructor(
                 }
 
                 if ( isFirstSync ) {
-                    // When we first retrieve episodes, mark all of the as listened-to, so that we
+                    // When we first retrieve episodes, mark all of them as listened-to, so that we
                     // aren't overwhelmed with all historical episodes.
                     preferencesDataSource.addListenedEpisodeUris( urisOfEpisodesToBeUpdated )
                 }
@@ -141,6 +143,7 @@ internal class OfflineFirstEpisodesRepository @Inject constructor(
                         .map( PopulatedEpisodeEntity::asExternalModel )
                         .filterNot { it.uri in urisOfExistingEpisodesForFollowedPodcastsThatHaveChanged }
 
+                    println( "NUMBER OF EXISTING EPISODES: ${urisOfExistingEpisodesForFollowedPodcastsThatHaveChanged.size}" )
                     println( "NUMBER OF NEW EPISODES: ${newEpisodesFromFollowedPodcasts.size}" )
                     if ( newEpisodesFromFollowedPodcasts.isNotEmpty() )
                         notifier.postEpisodeNotifications(

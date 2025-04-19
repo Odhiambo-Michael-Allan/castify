@@ -351,7 +351,12 @@ private fun NowPlayingScreenContent(
                         ) {
                             ListItem(
                                 headlineContent = {
-                                    Text( text = stringResource( id = R.string.seconds, it.div( 1000 ) ) )
+                                    Text(
+                                        text = stringResource(
+                                            id = R.string.seconds,
+                                            it.div( 1000 )
+                                        )
+                                    )
                                 },
                                 leadingContent = {
                                     Icon(

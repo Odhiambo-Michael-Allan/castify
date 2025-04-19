@@ -16,11 +16,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import com.squad.castify.feature.explore.navigation.ExploreRoute
 import com.squad.castify.feature.explore.navigation.exploreScreen
 import com.squad.castify.feature.nowplaying.NowPlayingScreen
 import com.squad.castify.feature.nowplaying.bottombar.NowPlayingBottomBar
+import com.squad.castify.feature.podcast.navigation.navigateToPodcast
+import com.squad.castify.feature.podcast.navigation.podcastScreen
 import com.squad.castify.ui.CastifyAppState
 
 /**
@@ -50,7 +53,24 @@ fun CastifyNavHost(
             startDestination = ExploreRoute
         ) {
             exploreScreen(
-                onShareEpisode = { context.shareEpisode( it ) }
+                onShareEpisode = { context.shareEpisode( it ) },
+                onPodcastClick = {
+                    navHostController.navigateToPodcast( it.podcast.uri ) {
+                        // Pop up to the start destination of the graph to avoid building up a large stack
+                        // of destinations on the back stack as users select items.
+                        popUpTo( navHostController.graph.findStartDestination().id ) {
+                            saveState = true
+                        }
+                        // Avoid multiple copies of the same destination when re-selecting the same item.
+                        launchSingleTop = true
+                        // Restore state when re-selecting a previously selected item.
+                        restoreState = true
+                    }
+                }
+            )
+            podcastScreen(
+                onShareEpisode = { context.shareEpisode( it ) },
+                onNavigateBack = { navHostController.navigateUp() }
             )
         }
         NowPlayingBottomBar {

@@ -24,17 +24,17 @@ class OfflineFirstPodcastsRepository @Inject constructor(
     private val networkDataSource: CastifyNetworkDataSource,
 ) : PodcastsRepository {
 
-    override fun getPodcasts(): Flow<List<Podcast>> =
+    override fun getPodcastsSortedByLastEpisodePublishDate(): Flow<List<Podcast>> =
         podcastDao.getPodcastsSortedByLastEpisode()
             .map { it.map( PopulatedPodcastEntity::asExternalModel ) }
 
-    override fun getPodcastsInCategory( categoryId: String ): Flow<List<Podcast>> =
+    override fun getPodcastsInCategorySortedByLastEpisodePublishDate( categoryId: String ): Flow<List<Podcast>> =
         podcastDao.getPodcastsInCategorySortedByLastEpisode( categoryId = categoryId )
             .map { it.map( PopulatedPodcastEntity::asExternalModel ) }
 
-    override fun getPodcastWithUri(uri: String): Flow<Podcast> {
-        TODO("Not yet implemented")
-    }
+    override fun getPodcastWithUri( uri: String ): Flow<Podcast> =
+        podcastDao.getPodcastWithUri( uri )
+            .map { it.asExternalModel() }
 
     override suspend fun syncWith( synchronizer: Synchronizer ): Boolean =
         synchronizer.changeListSync(

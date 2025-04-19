@@ -35,5 +35,6 @@ fun PopulatedPodcastEntity.asExternalModel() = Podcast(
     description = entity.description ?: "",
     imageUrl = entity.imageUrl ?: "",
     author = entity.author ?: "",
+    latestEpisodePublishData = lastEpisodeDate,
     categories = categories.map( CategoryEntity::asExternalModel )
 )

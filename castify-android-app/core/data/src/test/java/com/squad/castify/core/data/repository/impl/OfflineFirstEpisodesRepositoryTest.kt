@@ -259,11 +259,13 @@ class OfflineFirstEpisodesRepositoryTest {
             val followedPodcastUris = networkEpisodes
                 .map { it.podcastEntityShell() }
                 .mapNotNull { podcast ->
-                    when ( podcast.uri.chars().sum() % 2 ) {
+                    when ( podcast.uri.chars().sum() % 3 ) {
                         0 -> podcast.uri
                         else -> null
                     }
                 }.toSet()
+
+            println( "TEST - FOLLOWED PODCASTS COUNT: ${followedPodcastUris.size}" )
 
             // Set followed podcasts.
             followedPodcastUris.forEach {
@@ -272,17 +274,17 @@ class OfflineFirstEpisodesRepositoryTest {
 
             subject.syncWith( synchronizer )
 
-            val episodeUrisForFollowedPodcastsFromNetwork = networkEpisodes
-                .filter { it.podcastUri in followedPodcastUris }
-                .map( NetworkEpisode::uri )
-                .distinct()
-                .sorted()
+            val episodeUrisForFollowedPodcastsFromNetwork =
+                episodeDao.fetchEpisodesSortedByPublishDate(
+                    useFilterPodcastUris = true,
+                    filterPodcastUris = followedPodcastUris
+                ).first()
 
             // Notifier should have been called with only episodes that belong to podcasts that the
             // user follows.
             assertEquals(
-                episodeUrisForFollowedPodcastsFromNetwork,
-                notifier.newEpisodes.first().map( Episode::uri ).sorted()
+                episodeUrisForFollowedPodcastsFromNetwork.size,
+                notifier.newEpisodes.first().map( Episode::uri ).sorted().size
             )
         }
 

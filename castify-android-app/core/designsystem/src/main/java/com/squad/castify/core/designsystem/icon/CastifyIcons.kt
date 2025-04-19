@@ -1,8 +1,10 @@
 package com.squad.castify.core.designsystem.icon
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.automirrored.rounded.PlaylistPlay
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.rounded.Add
@@ -66,4 +68,6 @@ object CastifyIcons {
     val FastRewind = Icons.Rounded.FastRewind
     val FastForward = Icons.Rounded.FastForward
     val Podcast = Icons.Rounded.Podcasts
+    val Web = Icons.Default.Public
+    val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
 }

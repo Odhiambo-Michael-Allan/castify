@@ -48,6 +48,16 @@ interface PodcastDao {
         categoryId: String
     ): Flow<List<PopulatedPodcastEntity>>
 
+    @Transaction
+    @Query(
+        value = """
+            SELECT podcasts.*
+            FROM podcasts
+            WHERE uri = :uri
+        """
+    )
+    fun getPodcastWithUri( uri: String ): Flow<PodcastEntity>
+
     @Upsert
     suspend fun upsertPodcasts( podcastEntities: List<PodcastEntity> )
 

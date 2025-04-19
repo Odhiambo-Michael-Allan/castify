@@ -44,7 +44,7 @@ class TestCastifyNetworkDataSource : CastifyNetworkDataSource {
             idGetter = NetworkPodcast::uri
         )
 
-    override suspend fun getEpisodes(uris: List<String>? ): List<NetworkEpisode> =
+    override suspend fun getEpisodes( uris: List<String>? ): List<NetworkEpisode> =
         allEpisodes.matchIds(
             ids = uris,
             idGetter = NetworkEpisode::uri

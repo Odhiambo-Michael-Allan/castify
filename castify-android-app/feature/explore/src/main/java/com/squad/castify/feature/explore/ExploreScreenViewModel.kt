@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.data.util.SyncManager
+import com.squad.castify.core.domain.model.PodcastCategoryFilterResult
 import com.squad.castify.core.domain.usecase.FilterableCategoriesUseCase
 import com.squad.castify.core.domain.usecase.PodcastCategoryFilterUseCase
 import com.squad.castify.core.media.download.DownloadTracker
@@ -130,6 +131,19 @@ class ExploreScreenViewModel @Inject constructor(
     fun requestSync() {
         syncManager.requestSync()
     }
+}
+
+/**
+ * A sealed hierarchy describing the state of the feed of podcasts.
+ */
+sealed interface PodcastFeedUiState {
+    data object Loading : PodcastFeedUiState
+    data class Success(
+        val model: PodcastCategoryFilterResult,
+        val downloads: Map<String, Int>,
+        val downloadingEpisodes: Map<String, Float>,
+        val playerState: PlayerState
+    ) : PodcastFeedUiState
 }
 
 

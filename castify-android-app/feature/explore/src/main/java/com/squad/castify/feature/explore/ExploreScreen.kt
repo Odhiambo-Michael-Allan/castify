@@ -76,11 +76,13 @@ import com.squad.castify.core.media.player.isCompleted
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.FollowablePodcast
 import com.squad.castify.core.model.UserEpisode
+import com.squad.castify.core.ui.CastifyAnimatedLoadingWheel
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
 import com.squad.castify.core.ui.EpisodeCard
 import com.squad.castify.core.ui.ErrorScreen
 import com.squad.castify.core.ui.PreviewData
+import com.squad.castify.core.ui.episodesFeed
 import kotlinx.coroutines.launch
 import kotlin.time.DurationUnit
 
@@ -90,7 +92,8 @@ private val DEFAULT_START_END_PADDING = 16.dp
 internal fun ExploreScreen(
     modifier: Modifier = Modifier,
     viewModel: ExploreScreenViewModel = hiltViewModel(),
-    onShareEpisode: (String ) -> Unit,
+    onShareEpisode: ( String ) -> Unit,
+    onPodcastClick: ( FollowablePodcast ) -> Unit,
 ) {
 
     val categoriesUiState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
@@ -112,7 +115,8 @@ internal fun ExploreScreen(
         onPauseDownload = viewModel::pauseDownload,
         onShareEpisode = onShareEpisode,
         onMarkAsCompleted = viewModel::markAsCompleted,
-        onRequestSync = viewModel::requestSync
+        onRequestSync = viewModel::requestSync,
+        onPodcastClick = onPodcastClick,
     )
 }
 
@@ -134,6 +138,7 @@ internal fun ExploreScreen(
     onShareEpisode: (String ) -> Unit,
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onRequestSync: () -> Unit,
+    onPodcastClick: ( FollowablePodcast ) -> Unit,
 ) {
 
     val isCategoriesLoading = categoriesUiState is CategoriesUiState.Loading
@@ -180,19 +185,31 @@ internal fun ExploreScreen(
                             ) {
                                 podcastsFeed(
                                     podcastFeedUiState = podcastFeedUiState,
-                                    onFollowPodcast = onFollowPodcast
+                                    onFollowPodcast = onFollowPodcast,
+                                    onPodcastClick = onPodcastClick,
                                 )
-                                episodesFeed(
-                                    podcastFeedUiState = podcastFeedUiState,
-                                    onPlayEpisode = onPlayEpisode,
-                                    onDownloadEpisode = onDownloadEpisode,
-                                    onResumeDownload = onResumeDownload,
-                                    onRemoveDownload = onRemoveDownload,
-                                    onRetryDownload = onRetryDownload,
-                                    onPauseDownload = onPauseDownload,
-                                    onShareEpisode = onShareEpisode,
-                                    onMarkAsCompleted = onMarkAsCompleted,
-                                )
+                                when ( podcastFeedUiState ) {
+                                    is PodcastFeedUiState.Success -> {
+                                        episodesFeed(
+                                            episodes = podcastFeedUiState.model.episodes,
+                                            playInProgress = podcastFeedUiState.playerState.isPlaying,
+                                            bufferingInProgress = podcastFeedUiState.playerState.isBuffering,
+                                            currentlyPlayingEpisodeUri = podcastFeedUiState.playerState.currentlyPlayingEpisodeUri,
+                                            downloadingEpisodes = podcastFeedUiState.downloadingEpisodes,
+                                            onPlayEpisode = onPlayEpisode,
+                                            onDownloadEpisode = onDownloadEpisode,
+                                            onRetryDownload = onRetryDownload,
+                                            onRemoveDownload = onRemoveDownload,
+                                            onResumeDownload = onResumeDownload,
+                                            onPauseDownload = onPauseDownload,
+                                            onShareEpisode = onShareEpisode,
+                                            onMarkAsCompleted = onMarkAsCompleted,
+                                            episodeIsCompleted = { it.toEpisode().isCompleted() },
+                                            getDownloadStateFor = { podcastFeedUiState.downloads[ it.audioUri ] }
+                                        )
+                                    }
+                                    else -> {}
+                                }
                             }
                         }
                     }
@@ -201,26 +218,9 @@ internal fun ExploreScreen(
         }
     }
 
-    AnimatedVisibility(
-        visible = isSyncing || isCategoriesLoading || isFeedLoading,
-        enter = slideInVertically(
-            initialOffsetY = { fullHeight -> -fullHeight }
-        ) + fadeIn(),
-        exit = slideOutVertically(
-            targetOffsetY = { fullHeight -> -fullHeight }
-        ) + fadeOut()
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            CastifyLoadingWheel(
-                modifier = Modifier
-                    .align( Alignment.Center )
-            )
-        }
-    }
+    CastifyAnimatedLoadingWheel(
+        isVisible = isSyncing || isCategoriesLoading || isFeedLoading
+    )
 
 }
 
@@ -335,14 +335,15 @@ private fun CategoryTabIndicator(
         modifier = modifier
             .padding(horizontal = 24.dp)
             .height(4.dp)
-            .background(color, RoundedCornerShape(topStartPercent = 100, topEndPercent = 100))
+            .background( color, RoundedCornerShape( topStartPercent = 100, topEndPercent = 100 ) )
     )
 }
 
 fun LazyGridScope.podcastsFeed(
     modifier: Modifier = Modifier,
     podcastFeedUiState: PodcastFeedUiState,
-    onFollowPodcast: ( FollowablePodcast ) -> Unit
+    onFollowPodcast: ( FollowablePodcast ) -> Unit,
+    onPodcastClick: ( FollowablePodcast ) -> Unit
 ) {
     when ( podcastFeedUiState ) {
         PodcastFeedUiState.Loading -> Unit
@@ -365,7 +366,8 @@ fun LazyGridScope.podcastsFeed(
                             modifier = Modifier
                                 .width( 100.dp ),
                             followablePodcast = it,
-                            onTogglePodcastFollowed = { onFollowPodcast( it ) }
+                            onTogglePodcastFollowed = { onFollowPodcast( it ) },
+                            onPodcastClick = { onPodcastClick( it ) }
                         )
                     }
                 }
@@ -378,7 +380,8 @@ fun LazyGridScope.podcastsFeed(
 fun FollowablePodcastCard(
     modifier: Modifier = Modifier,
     followablePodcast: FollowablePodcast,
-    onTogglePodcastFollowed: () -> Unit
+    onTogglePodcastFollowed: () -> Unit,
+    onPodcastClick: () -> Unit,
 ) {
     Card (
         modifier = modifier,
@@ -386,7 +389,7 @@ fun FollowablePodcastCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-        onClick = {}
+        onClick = onPodcastClick
     ) {
         Column {
             Box(
@@ -424,48 +427,6 @@ fun FollowablePodcastCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-        }
-    }
-}
-
-fun LazyGridScope.episodesFeed(
-    podcastFeedUiState: PodcastFeedUiState,
-    onPlayEpisode: ( UserEpisode ) -> Unit,
-    onDownloadEpisode: ( UserEpisode ) -> Unit,
-    onRetryDownload: ( UserEpisode ) -> Unit,
-    onRemoveDownload: ( UserEpisode ) -> Unit,
-    onResumeDownload: ( UserEpisode ) -> Unit,
-    onPauseDownload: ( UserEpisode ) -> Unit,
-    onShareEpisode: ( String ) -> Unit,
-    onMarkAsCompleted: ( UserEpisode ) -> Unit
-) {
-    when ( podcastFeedUiState ) {
-        PodcastFeedUiState.Loading -> Unit
-        is PodcastFeedUiState.Success -> {
-            items(
-                podcastFeedUiState.model.episodes,
-                key = { it.uri }
-            ) {
-
-                EpisodeCard(
-                    modifier = Modifier.padding( DEFAULT_START_END_PADDING ),
-                    userEpisode = it,
-                    onPlayEpisode = { onPlayEpisode( it ) },
-                    onDownloadEpisode = { onDownloadEpisode( it ) },
-                    isPlaying = podcastFeedUiState.playerState.isPlaying && podcastFeedUiState.playerState.currentlyPlayingEpisodeUri == it.uri,
-                    isBuffering = podcastFeedUiState.playerState.isBuffering && podcastFeedUiState.playerState.currentlyPlayingEpisodeUri == it.uri,
-                    isCompleted = it.toEpisode().isCompleted(),
-                    downloadState = podcastFeedUiState.downloads[ it.audioUri ],
-                    downloadingEpisodes = podcastFeedUiState.downloadingEpisodes,
-                    onRetryDownload = { onRetryDownload( it ) },
-                    onRemoveDownload = { onRemoveDownload( it ) },
-                    onResumeDownload = { onResumeDownload( it ) },
-                    onPauseDownload = { onPauseDownload( it ) },
-                    onShareEpisode = onShareEpisode,
-                    onMarkAsCompleted = onMarkAsCompleted,
-                )
-
-            }
         }
     }
 }
@@ -508,7 +469,8 @@ private fun ExploreScreenPopulated(
             onPauseDownload = {},
             onShareEpisode = {},
             onMarkAsCompleted = {},
-            onRequestSync = {}
+            onRequestSync = {},
+            onPodcastClick = {},
         )
     }
 }
@@ -531,7 +493,8 @@ private fun ExploreScreenLoading() {
             onPauseDownload = {},
             onShareEpisode = {},
             onMarkAsCompleted = {},
-            onRequestSync = {}
+            onRequestSync = {},
+            onPodcastClick = {},
         )
     }
 }
@@ -580,7 +543,8 @@ private fun ExploreScreenPopulatedAndLoading(
         onPauseDownload = {},
         onShareEpisode = {},
         onMarkAsCompleted = {},
-        onRequestSync = {}
+        onRequestSync = {},
+        onPodcastClick = {},
     )
 }
 
@@ -619,7 +583,8 @@ private fun ExploreScreenError() {
             onPauseDownload = {},
             onShareEpisode = {},
             onMarkAsCompleted = {},
-            onRequestSync = {}
+            onRequestSync = {},
+            onPodcastClick = {},
         )
     }
 }

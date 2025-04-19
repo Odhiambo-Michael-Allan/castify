@@ -23,6 +23,7 @@ dependencies {
     implementation( libs.androidx.core.ktx )
     implementation( libs.androidx.appcompat )
     implementation( libs.material )
+    implementation( libs.androidx.browser )
 
     implementation( libs.androidx.media3.exoplayer )
 
