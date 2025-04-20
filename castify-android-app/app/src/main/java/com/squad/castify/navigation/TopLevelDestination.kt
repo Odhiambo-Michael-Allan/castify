@@ -5,8 +5,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.squad.castify.R
 import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.feature.explore.navigation.ExploreRoute
+import com.squad.castify.feature.home.navigation.HomeRoute
 import kotlin.reflect.KClass
 import com.squad.castify.feature.explore.R as exploreR
+import com.squad.castify.feature.home.R as homeR
 
 /**
  * Type for the top level destinations in the application. Each of these destinations can contain
@@ -20,11 +22,18 @@ enum class TopLevelDestination(
     @StringRes val titleTextId: Int,
     val route: KClass<*>
 ) {
+    HOME(
+        selectedIcon = CastifyIcons.Home,
+        unselectedIcon = CastifyIcons.Home,
+        iconTextId = homeR.string.feature_home_title,
+        titleTextId = R.string.app_name,
+        route = HomeRoute::class
+    ),
     EXPLORE(
         selectedIcon = CastifyIcons.Search,
         unselectedIcon = CastifyIcons.Search,
         iconTextId = exploreR.string.feature_explore_title,
-        titleTextId = R.string.app_name,
+        titleTextId = exploreR.string.feature_explore_title,
         route = ExploreRoute::class
     )
 }

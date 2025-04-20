@@ -137,7 +137,9 @@ fun EpisodeCard(
             Spacer( modifier = Modifier.height( 4.dp ) )
             Text(
                 text = AnnotatedString.fromHtml( userEpisode.summary ).text,
-                style = MaterialTheme.typography.labelLarge,
+                style = LocalTextStyle.current.copy(
+                    fontSize = 15.sp
+                ),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )

@@ -199,7 +199,7 @@ private fun EpisodeScreenContent(
 
 @DevicePreviews
 @Composable
-fun EpisodeScreenContentPopulatedLoading(
+private fun EpisodeScreenContentPopulatedLoading(
     @PreviewParameter( CategoryPodcastEpisodePreviewParameterProvider::class )
     previewData: PreviewData
 ) {
@@ -227,5 +227,27 @@ fun EpisodeScreenContentPopulatedLoading(
                 onNavigateToEpisode = {},
             )
         }
+    }
+}
+
+@DevicePreviews
+@Composable
+private fun EpisodeScreenError() {
+    CastifyTheme {
+        EpisodeScreenContent(
+            uiState = EpisodeUiState.Error,
+            isSyncing = false,
+            onNavigateBack = {},
+            onRequestSync = {},
+            onPlayEpisode = {},
+            onShareEpisode = {},
+            onDownloadEpisode = {},
+            onPauseDownload = {},
+            onRetryDownload = {},
+            onResumeDownload = {},
+            onRemoveDownload = {},
+            onMarkAsCompleted = {},
+            onNavigateToEpisode = {},
+        )
     }
 }

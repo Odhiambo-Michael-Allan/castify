@@ -15,6 +15,7 @@ import androidx.tracing.trace
 import com.squad.castify.core.data.util.NetworkMonitor
 import com.squad.castify.core.data.util.TimeZoneMonitor
 import com.squad.castify.feature.explore.navigation.navigateToExplore
+import com.squad.castify.feature.home.navigation.navigateToHome
 import com.squad.castify.navigation.TopLevelDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -98,7 +99,8 @@ class CastifyAppState(
                 restoreState = true
             }
             when ( topLevelDestination ) {
-                TopLevelDestination.EXPLORE -> navHostController.navigateToExplore( topLevelNavOptions )
+                TopLevelDestination.HOME -> navHostController.navigateToHome( topLevelNavOptions )
+                TopLevelDestination.EXPLORE -> navHostController.navigateToExplore()
             }
         }
     }

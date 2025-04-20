@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="feature_home_title">Home</string>
+    <string name="add_your_favorites">Add your favorites</string>
+    <string name="tap_to_subscribe">Tap Subscribe on podcasts to add them here. You\'ll see the
+        latest episodes for all your favorite shows in one place</string>
+    <string name="explore">Explore</string>
+    <string name="subscriptions">Subscriptions</string>
+    <string name="more">More</string>
+</resources>

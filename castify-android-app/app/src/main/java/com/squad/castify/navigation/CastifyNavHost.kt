@@ -22,6 +22,9 @@ import com.squad.castify.feature.episode.navigation.episodeScreen
 import com.squad.castify.feature.episode.navigation.navigateToEpisode
 import com.squad.castify.feature.explore.navigation.ExploreRoute
 import com.squad.castify.feature.explore.navigation.exploreScreen
+import com.squad.castify.feature.explore.navigation.navigateToExplore
+import com.squad.castify.feature.home.navigation.HomeRoute
+import com.squad.castify.feature.home.navigation.homeScreen
 import com.squad.castify.feature.nowplaying.NowPlayingScreen
 import com.squad.castify.feature.nowplaying.bottombar.NowPlayingBottomBar
 import com.squad.castify.feature.podcast.navigation.navigateToPodcast
@@ -51,9 +54,24 @@ fun CastifyNavHost(
         NavHost(
             modifier = modifier.weight( 1f ),
             navController = navHostController,
-            startDestination = ExploreRoute
+            startDestination = HomeRoute
         ) {
 
+            homeScreen(
+                onShareEpisode = { context.shareEpisode( it ) },
+                onNavigateToPodcast = {
+                    navHostController.navigateToPodcast( it )
+                },
+                onNavigateToEpisode = {
+                    navHostController.navigateToEpisode(
+                        episodeUri = it.uri,
+                        podcastUri = it.followablePodcast.podcast.uri
+                    )
+                },
+                onNavigateToExplore = {
+                    navHostController.navigateToExplore()
+                }
+            )
             exploreScreen(
                 onShareEpisode = { context.shareEpisode( it ) },
                 onPodcastClick = {

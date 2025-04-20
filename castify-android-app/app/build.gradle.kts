@@ -52,6 +52,7 @@ android {
 
 dependencies {
 
+    implementation( projects.feature.home )
     implementation( projects.feature.explore )
     implementation( projects.feature.nowplaying )
     implementation( projects.feature.podcast )

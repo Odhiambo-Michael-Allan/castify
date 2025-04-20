@@ -143,7 +143,7 @@ class ExploreScreenViewModelTest {
                         )
                     )
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -189,7 +189,7 @@ class ExploreScreenViewModelTest {
                         )
                     )
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -214,7 +214,7 @@ class ExploreScreenViewModelTest {
                         )
                     )
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -245,7 +245,7 @@ class ExploreScreenViewModelTest {
                         UserEpisode( it, emptyUserData )
                     }
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -268,7 +268,7 @@ class ExploreScreenViewModelTest {
                         UserEpisode( it, userDataRepository.userData.first() )
                     }
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -306,7 +306,7 @@ class ExploreScreenViewModelTest {
                         UserEpisode( it, emptyUserData )
                     }
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -332,7 +332,7 @@ class ExploreScreenViewModelTest {
                         UserEpisode( it, emptyUserData )
                     }
                 ),
-                downloads = testDownloads,
+                downloadedEpisodes = testDownloads,
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -363,7 +363,7 @@ class ExploreScreenViewModelTest {
                         UserEpisode( it, emptyUserData )
                     }
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -389,7 +389,7 @@ class ExploreScreenViewModelTest {
                         UserEpisode( it, emptyUserData )
                     }
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = downloadingEpisodes,
                 playerState = PlayerState()
             ),
@@ -420,7 +420,7 @@ class ExploreScreenViewModelTest {
                         UserEpisode( it, emptyUserData )
                     }
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState()
             ),
@@ -447,7 +447,7 @@ class ExploreScreenViewModelTest {
                         UserEpisode( it, emptyUserData )
                     }
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = playerState
             ),

@@ -18,6 +18,8 @@ dependencies {
     implementation( projects.core.designsystem )
     implementation( projects.core.model )
     implementation( projects.core.domain )
+    implementation( projects.core.data )
+    implementation( projects.core.media )
 
     implementation( libs.kotlinx.datetime )
     implementation( libs.androidx.core.ktx )

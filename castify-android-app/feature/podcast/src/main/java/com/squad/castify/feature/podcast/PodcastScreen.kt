@@ -387,3 +387,27 @@ private fun PodcastScreenContentSuccessSyncingPreview(
         )
     }
 }
+
+@DevicePreviews
+@Composable
+private fun PodcastScreenError() {
+    CastifyTheme {
+        PodcastScreenContent(
+            podcastUiState = PodcastUiState.Error,
+            episodesUiState = EpisodesUiState.Error,
+            isSyncing = false,
+            onRetryDownload = {},
+            onResumeDownload = {},
+            onMarkAsCompleted = {},
+            onRequestSync = {},
+            onShareEpisode = {},
+            onRemoveDownload = {},
+            onPlayEpisode = {},
+            onDownloadEpisode = {},
+            onPauseDownload = {},
+            onToggleFollowPodcast = {},
+            onNavigateBack = {},
+            onNavigateToEpisode = {}
+        )
+    }
+}

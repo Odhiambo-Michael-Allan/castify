@@ -1,6 +1,5 @@
 package com.squad.castify.feature.explore
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,9 +16,9 @@ import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.UserEpisode
+import com.squad.castify.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -38,11 +37,16 @@ class ExploreScreenViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val filterableCategoriesUseCase: FilterableCategoriesUseCase,
     private val podcastCategoryFilterUseCase: PodcastCategoryFilterUseCase,
-    private val episodePlayer: EpisodePlayerServiceConnection,
-    private val downloadTracker: DownloadTracker,
+    episodePlayer: EpisodePlayerServiceConnection,
+    downloadTracker: DownloadTracker,
     private val episodesRepository: EpisodesRepository,
-    private val syncManager: SyncManager,
-) : ViewModel() {
+    syncManager: SyncManager,
+) : BaseViewModel(
+    downloadTracker = downloadTracker,
+    episodesRepository = episodesRepository,
+    syncManager = syncManager,
+    episodePlayer = episodePlayer
+) {
 
     private val selectedCategory = MutableStateFlow<Category?>( null )
 
@@ -71,7 +75,7 @@ class ExploreScreenViewModel @Inject constructor(
         ) { podcastFilterCategoryResult, downloadedEpisodes, downloadingEpisodes, playerState ->
             PodcastFeedUiState.Success(
                 model = podcastFilterCategoryResult,
-                downloads = downloadedEpisodes,
+                downloadedEpisodes = downloadedEpisodes,
                 downloadingEpisodes = downloadingEpisodes,
                 playerState = playerState
             )
@@ -101,36 +105,6 @@ class ExploreScreenViewModel @Inject constructor(
         }
     }
 
-    fun playEpisode( userEpisode: UserEpisode ) =
-        episodePlayer.playEpisode( userEpisode.toEpisode() )
-
-    fun downloadEpisode( userEpisode: UserEpisode ) =
-        downloadTracker.downloadEpisode( userEpisode )
-
-    fun resumeDownload( userEpisode: UserEpisode ) =
-        downloadTracker.resumeDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun removeDownload( userEpisode: UserEpisode ) =
-        downloadTracker.removeDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun retryDownload( userEpisode: UserEpisode ) =
-        downloadTracker.retryDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun pauseDownload( userEpisode: UserEpisode ) =
-        downloadTracker.pauseDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun markAsCompleted( userEpisode: UserEpisode ) =
-        viewModelScope.launch {
-            episodesRepository.upsertEpisode(
-                userEpisode.toEpisode().copy(
-                    durationPlayed = userEpisode.duration
-                )
-            )
-        }
-
-    fun requestSync() {
-        syncManager.requestSync()
-    }
 }
 
 /**
@@ -140,7 +114,7 @@ sealed interface PodcastFeedUiState {
     data object Loading : PodcastFeedUiState
     data class Success(
         val model: PodcastCategoryFilterResult,
-        val downloads: Map<String, Int>,
+        val downloadedEpisodes: Map<String, Int>,
         val downloadingEpisodes: Map<String, Float>,
         val playerState: PlayerState
     ) : PodcastFeedUiState

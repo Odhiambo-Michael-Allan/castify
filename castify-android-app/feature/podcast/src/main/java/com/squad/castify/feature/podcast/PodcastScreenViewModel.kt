@@ -20,6 +20,7 @@ import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.FollowablePodcast
 import com.squad.castify.core.model.Podcast
 import com.squad.castify.core.model.UserEpisode
+import com.squad.castify.core.ui.BaseViewModel
 import com.squad.castify.feature.podcast.navigation.PodcastRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -34,15 +35,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PodcastScreenViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val userDataRepository: UserDataRepository,
-    private val podcastsRepository: PodcastsRepository,
-    private val episodesRepository: EpisodesRepository,
-    private val userEpisodesRepository: UserEpisodesRepository,
-    private val syncManager: SyncManager,
-    private val episodePlayer: EpisodePlayerServiceConnection,
-    private val downloadTracker: DownloadTracker,
-) : ViewModel() {
+    podcastsRepository: PodcastsRepository,
+    episodesRepository: EpisodesRepository,
+    userEpisodesRepository: UserEpisodesRepository,
+    syncManager: SyncManager,
+    episodePlayer: EpisodePlayerServiceConnection,
+    downloadTracker: DownloadTracker,
+) : BaseViewModel(
+    downloadTracker = downloadTracker,
+    episodesRepository = episodesRepository,
+    syncManager = syncManager,
+    episodePlayer = episodePlayer
+) {
 
     val podcastUri = savedStateHandle.toRoute<PodcastRoute>().podcastUri
 
@@ -79,37 +85,6 @@ class PodcastScreenViewModel @Inject constructor(
             userDataRepository.setPodcastWithUriFollowed( podcastUri, followed )
         }
     }
-
-    fun requestSync() {
-        syncManager.requestSync()
-    }
-
-    fun playEpisode( userEpisode: UserEpisode ) =
-        episodePlayer.playEpisode( userEpisode.toEpisode() )
-
-    fun downloadEpisode( userEpisode: UserEpisode ) =
-        downloadTracker.downloadEpisode( userEpisode )
-
-    fun retryDownload( userEpisode: UserEpisode ) =
-        downloadTracker.retryDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun removeDownload( userEpisode: UserEpisode ) =
-        downloadTracker.removeDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun resumeDownload( userEpisode: UserEpisode ) =
-        downloadTracker.resumeDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun pauseDownload( userEpisode: UserEpisode ) =
-        downloadTracker.pauseDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun markAsCompleted( userEpisode: UserEpisode ) =
-        viewModelScope.launch {
-            episodesRepository.upsertEpisode(
-                userEpisode.toEpisode().copy(
-                    durationPlayed = userEpisode.duration
-                )
-            )
-        }
 }
 
 private fun podcastUiState(

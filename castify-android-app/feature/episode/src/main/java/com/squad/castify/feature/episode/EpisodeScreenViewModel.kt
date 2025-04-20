@@ -14,6 +14,7 @@ import com.squad.castify.core.media.extensions.toMediaItem
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.UserEpisode
+import com.squad.castify.core.ui.BaseViewModel
 import com.squad.castify.feature.episode.navigation.EpisodeRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -28,13 +29,18 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EpisodeScreenViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
-    private val userEpisodesRepository: UserEpisodesRepository,
-    private val episodesRepository: EpisodesRepository,
-    private val syncManager: SyncManager,
-    private val episodePlayer: EpisodePlayerServiceConnection,
-    private val downloadTracker: DownloadTracker,
-) : ViewModel() {
+    savedStateHandle: SavedStateHandle,
+    userEpisodesRepository: UserEpisodesRepository,
+    episodesRepository: EpisodesRepository,
+    syncManager: SyncManager,
+    episodePlayer: EpisodePlayerServiceConnection,
+    downloadTracker: DownloadTracker,
+) : BaseViewModel(
+    downloadTracker = downloadTracker,
+    episodesRepository = episodesRepository,
+    syncManager = syncManager,
+    episodePlayer = episodePlayer
+) {
 
     val episodeUri = savedStateHandle.toRoute<EpisodeRoute>().episodeUri
     val podcastUri = savedStateHandle.toRoute<EpisodeRoute>().podcastUri
@@ -65,8 +71,8 @@ class EpisodeScreenViewModel @Inject constructor(
                 downloadedEpisodes = downloadedEpisodes
             )
         }.catch {
-                EpisodeUiState.Error
-            }.stateIn(
+            EpisodeUiState.Error
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed( 5_000 ),
             initialValue = EpisodeUiState.Loading
@@ -78,37 +84,6 @@ class EpisodeScreenViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed( 5_000 ),
             initialValue = false,
         )
-
-    fun requestSync() {
-        syncManager.requestSync()
-    }
-
-    fun playEpisode( userEpisode: UserEpisode ) =
-        episodePlayer.playEpisode( userEpisode.toEpisode() )
-
-    fun downloadEpisode( userEpisode: UserEpisode ) =
-        downloadTracker.downloadEpisode( userEpisode )
-
-    fun retryDownload( userEpisode: UserEpisode ) =
-        downloadTracker.retryDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun removeDownload( userEpisode: UserEpisode ) =
-        downloadTracker.removeDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun resumeDownload( userEpisode: UserEpisode ) =
-        downloadTracker.resumeDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun pauseDownload( userEpisode: UserEpisode ) =
-        downloadTracker.pauseDownload( userEpisode.toEpisode().toMediaItem() )
-
-    fun markAsCompleted( userEpisode: UserEpisode ) =
-        viewModelScope.launch {
-            episodesRepository.upsertEpisode(
-                userEpisode.toEpisode().copy(
-                    durationPlayed = userEpisode.duration
-                )
-            )
-        }
 
 }
 

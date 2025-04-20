@@ -1,11 +1,6 @@
 package com.squad.castify.feature.explore
 
 import androidx.activity.compose.ReportDrawnWhen
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +20,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -63,7 +57,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.offline.Download
-import com.squad.castify.core.designsystem.component.CastifyLoadingWheel
 import com.squad.castify.core.designsystem.component.DynamicAsyncImage
 import com.squad.castify.core.designsystem.component.ToggleFollowPodcastIconButton
 import com.squad.castify.core.designsystem.icon.CastifyIcons
@@ -79,12 +72,10 @@ import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.CastifyAnimatedLoadingWheel
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
-import com.squad.castify.core.ui.EpisodeCard
 import com.squad.castify.core.ui.ErrorScreen
 import com.squad.castify.core.ui.PreviewData
 import com.squad.castify.core.ui.episodesFeed
 import kotlinx.coroutines.launch
-import kotlin.time.DurationUnit
 
 private val DEFAULT_START_END_PADDING = 16.dp
 
@@ -208,7 +199,7 @@ internal fun ExploreScreen(
                                             onShareEpisode = onShareEpisode,
                                             onMarkAsCompleted = onMarkAsCompleted,
                                             episodeIsCompleted = { it.toEpisode().isCompleted() },
-                                            getDownloadStateFor = { podcastFeedUiState.downloads[ it.audioUri ] },
+                                            getDownloadStateFor = { podcastFeedUiState.downloadedEpisodes[ it.audioUri ] },
                                             onNavigateToEpisode = onNavigateToEpisode,
                                         )
                                     }
@@ -455,7 +446,7 @@ private fun ExploreScreenPopulated(
                     topPodcasts = previewParameters.podcasts,
                     episodes = previewParameters.episodes
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState(
                     isPlaying = true,
@@ -525,7 +516,7 @@ private fun ExploreScreenPopulatedAndLoading(
                 topPodcasts = previewParameters.podcasts,
                 episodes = previewParameters.episodes
             ),
-            downloads = mapOf(
+            downloadedEpisodes = mapOf(
                 previewParameters.episodes.first().audioUri to Download.STATE_DOWNLOADING,
                 previewParameters.episodes[1].audioUri to Download.STATE_STOPPED,
                 previewParameters.episodes[2].audioUri to Download.STATE_RESTARTING,
@@ -572,7 +563,7 @@ private fun ExploreScreenError() {
                     topPodcasts = emptyList(),
                     episodes = emptyList()
                 ),
-                downloads = emptyMap(),
+                downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState(
                     isPlaying = false,
