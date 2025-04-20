@@ -1,28 +1,33 @@
-package com.squad.castify.feature.podcast.navigation
+package com.squad.castify.feature.episode.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import com.squad.castify.core.model.UserEpisode
-import com.squad.castify.core.ui.FadeTransition
 import com.squad.castify.core.ui.SlideTransition
-import com.squad.castify.feature.podcast.PodcastScreen
+import com.squad.castify.feature.episode.EpisodeScreen
 import kotlinx.serialization.Serializable
 
-
 @Serializable
-data class PodcastRoute(
-    // The uri of the podcast to be displayed at this destination.
-    val podcastUri: String
+data class EpisodeRoute(
+    // The uri of the episode to be displayed at this destination
+    val episodeUri: String,
+    // The uri of the podcast the selected episode belongs to.
+    val podcastUri: String,
 )
 
-fun NavController.navigateToPodcast(
+fun NavController.navigateToEpisode(
+    episodeUri: String,
     podcastUri: String,
 ) {
-    navigate( route = PodcastRoute( podcastUri = podcastUri ) ) {
+    navigate(
+        route = EpisodeRoute(
+            episodeUri = episodeUri,
+            podcastUri = podcastUri
+        )
+    ) {
         // Pop up to the start destination of the graph to avoid building up a large stack
         // of destinations on the back stack as users select items.
         popUpTo( graph.findStartDestination().id ) {
@@ -35,16 +40,15 @@ fun NavController.navigateToPodcast(
     }
 }
 
-fun NavGraphBuilder.podcastScreen(
+fun NavGraphBuilder.episodeScreen(
     onShareEpisode: ( String ) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
-    composable<PodcastRoute>(
-        enterTransition = { SlideTransition.slideUp.enterTransition() },
-//        exitTransition = { FadeTransition.exitTransition() }
+    composable<EpisodeRoute>(
+        enterTransition = { SlideTransition.slideUp.enterTransition() }
     ) {
-        PodcastScreen(
+        EpisodeScreen(
             onShareEpisode = onShareEpisode,
             onNavigateBack = onNavigateBack,
             onNavigateToEpisode = onNavigateToEpisode,

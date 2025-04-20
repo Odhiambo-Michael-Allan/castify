@@ -41,7 +41,9 @@
             <option value="$PROJECT_DIR$/core/testing" />
             <option value="$PROJECT_DIR$/core/ui" />
             <option value="$PROJECT_DIR$/feature" />
+            <option value="$PROJECT_DIR$/feature/episode" />
             <option value="$PROJECT_DIR$/feature/explore" />
+            <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/nowplaying" />
             <option value="$PROJECT_DIR$/feature/podcast" />
             <option value="$PROJECT_DIR$/sync" />

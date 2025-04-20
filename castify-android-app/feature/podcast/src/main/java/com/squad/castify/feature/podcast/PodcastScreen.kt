@@ -1,8 +1,11 @@
 package com.squad.castify.feature.podcast
 
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +30,9 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +44,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,12 +67,14 @@ import com.squad.castify.core.ui.ErrorScreen
 import com.squad.castify.core.ui.PreviewData
 import com.squad.castify.core.ui.episodesFeed
 import com.squad.castify.core.ui.launchCustomChromeTab
+import androidx.core.net.toUri
 
 @Composable
 internal fun PodcastScreen(
     viewModel: PodcastScreenViewModel = hiltViewModel(),
     onShareEpisode: ( String ) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
 
     val podcastUiState by viewModel.podcastUiState.collectAsStateWithLifecycle()
@@ -87,13 +96,14 @@ internal fun PodcastScreen(
         onMarkAsCompleted = viewModel::markAsCompleted,
         onToggleFollowPodcast = viewModel::followPodcastToggle,
         onNavigateBack = onNavigateBack,
+        onNavigateToEpisode = onNavigateToEpisode,
     )
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun PodcastScreenContent(
+private fun PodcastScreenContent(
     podcastUiState: PodcastUiState,
     episodesUiState: EpisodesUiState,
     isSyncing: Boolean,
@@ -108,6 +118,7 @@ fun PodcastScreenContent(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onToggleFollowPodcast: ( Boolean ) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -118,6 +129,8 @@ fun PodcastScreenContent(
 
     val errorOccurred = podcastUiState is PodcastUiState.Error ||
             episodesUiState is EpisodesUiState.Error
+
+    var podcastDescriptionExpanded by remember { mutableStateOf( false ) }
 
     Column (
         modifier = Modifier.fillMaxSize()
@@ -222,7 +235,7 @@ fun PodcastScreenContent(
                                         onClick = {
                                             launchCustomChromeTab(
                                                 context,
-                                                Uri.parse( podcastUiState.followablePodcast.podcast.uri ),
+                                                podcastUiState.followablePodcast.podcast.uri.toUri(),
                                                 backgroundColor
                                             )
                                         }
@@ -248,12 +261,36 @@ fun PodcastScreenContent(
                                     }
                                 }
 
-                                Text(
-                                    modifier = Modifier.padding( top = 16.dp ),
-                                    text = AnnotatedString.fromHtml(
-                                        podcastUiState.followablePodcast.podcast.description
-                                    ).text.trim()
-                                )
+                                FlowRow (
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        modifier = Modifier.padding( top = 16.dp ),
+                                        text = AnnotatedString.fromHtml(
+                                            podcastUiState.followablePodcast.podcast.description
+                                        ).text.trim(),
+                                        maxLines = if ( podcastDescriptionExpanded ) {
+                                            Int.MAX_VALUE
+                                        } else { 4 },
+                                        overflow = if ( podcastDescriptionExpanded ) {
+                                            TextOverflow.Clip
+                                        } else { TextOverflow.Ellipsis }
+                                    )
+                                    IconButton(
+                                        onClick = { podcastDescriptionExpanded = !podcastDescriptionExpanded }
+                                    ) {
+                                        Text(
+                                            text = stringResource(
+                                                id = if ( podcastDescriptionExpanded ) {
+                                                    R.string.less
+                                                } else { R.string.more }
+                                            ),
+                                            style = LocalTextStyle.current.copy(
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                        )
+                                    }
+                                }
 
                                 Spacer( modifier = Modifier.height( 8.dp ) )
 
@@ -298,7 +335,8 @@ fun PodcastScreenContent(
                             onShareEpisode = onShareEpisode,
                             onMarkAsCompleted = onMarkAsCompleted,
                             episodeIsCompleted = { it.toEpisode().isCompleted() },
-                            getDownloadStateFor = { episodesUiState.downloadedEpisodes[ it.audioUri ] }
+                            getDownloadStateFor = { episodesUiState.downloadedEpisodes[ it.audioUri ] },
+                            onNavigateToEpisode = onNavigateToEpisode,
                         )
                     }
                     else -> {}
@@ -345,6 +383,7 @@ private fun PodcastScreenContentSuccessSyncingPreview(
             onPauseDownload = {},
             onToggleFollowPodcast = {},
             onNavigateBack = {},
+            onNavigateToEpisode = {}
         )
     }
 }

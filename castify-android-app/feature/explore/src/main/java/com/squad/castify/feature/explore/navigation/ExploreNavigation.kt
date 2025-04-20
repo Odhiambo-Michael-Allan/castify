@@ -5,6 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.squad.castify.core.model.FollowablePodcast
+import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.FadeTransition
 import com.squad.castify.core.ui.SlideTransition
 import com.squad.castify.feature.explore.ExploreScreen
@@ -18,6 +19,7 @@ fun NavController.navigateToExplore( navOptions: NavOptions ) =
 fun NavGraphBuilder.exploreScreen(
     onShareEpisode: ( String ) -> Unit,
     onPodcastClick: ( FollowablePodcast ) -> Unit,
+    onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
     composable<ExploreRoute>(
         enterTransition = { SlideTransition.slideUp.enterTransition() },
@@ -25,7 +27,8 @@ fun NavGraphBuilder.exploreScreen(
     ) {
         ExploreScreen(
             onShareEpisode = onShareEpisode,
-            onPodcastClick = onPodcastClick
+            onPodcastClick = onPodcastClick,
+            onNavigateToEpisode = onNavigateToEpisode,
         )
     }
 }

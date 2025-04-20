@@ -23,6 +23,7 @@ fun LazyGridScope.episodesFeed(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     episodeIsCompleted: ( UserEpisode ) -> Boolean,
     getDownloadStateFor: ( UserEpisode ) -> Int?,
+    onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
     items(
         items = episodes,
@@ -43,7 +44,8 @@ fun LazyGridScope.episodesFeed(
             onResumeDownload = { onResumeDownload( it ) },
             onPauseDownload = { onPauseDownload( it ) },
             onShareEpisode = onShareEpisode,
-            onMarkAsCompleted = onMarkAsCompleted
+            onMarkAsCompleted = onMarkAsCompleted,
+            onNavigateToEpisode = onNavigateToEpisode,
         )
     }
 }

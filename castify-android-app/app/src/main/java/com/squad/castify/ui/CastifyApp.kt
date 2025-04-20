@@ -226,13 +226,13 @@ internal fun CastifyApp(
                     ) {
                         CastifyNavHost(
                             appState = appState,
-                            onShowSnackBar = { message, action ->
-                                snackBarHostState.showSnackbar(
-                                    message = message,
-                                    actionLabel = action,
-                                    duration = SnackbarDuration.Short
-                                ) == SnackbarResult.ActionPerformed
-                            },
+//                            onShowSnackBar = { message, action ->
+//                                snackBarHostState.showSnackbar(
+//                                    message = message,
+//                                    actionLabel = action,
+//                                    duration = SnackbarDuration.Short
+//                                ) == SnackbarResult.ActionPerformed
+//                            },
                             onLaunchEqualizerActivity = onLaunchEqualizerActivity,
                         )
                     }

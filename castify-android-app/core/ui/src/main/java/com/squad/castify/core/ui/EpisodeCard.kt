@@ -86,6 +86,7 @@ fun EpisodeCard(
     onPauseDownload: () -> Unit,
     onShareEpisode: ( String ) -> Unit,
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
+    onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
     var showDownloadStateOptionsBottomSheet by remember { mutableStateOf( false ) }
     var showEpisodeOptionsBottomSheet by remember { mutableStateOf( false ) }
@@ -97,7 +98,7 @@ fun EpisodeCard(
         colors = CardDefaults.cardColors(
             containerColor = Color.Transparent
         ),
-        onClick = {}
+        onClick = { onNavigateToEpisode( userEpisode ) }
     ) {
         Column (
             modifier = modifier
@@ -415,8 +416,8 @@ private fun EpisodeOptions(
         ) {
             DynamicAsyncImage(
                 modifier = Modifier
-                    .size( 75.dp )
-                    .clip( MaterialTheme.shapes.small ),
+                    .size(75.dp)
+                    .clip(MaterialTheme.shapes.small),
                 imageUrl = userEpisode.followablePodcast.podcast.imageUrl,
                 contentDescription = null
             )
@@ -530,7 +531,8 @@ fun EpisodeCardPreview(
             onRemoveDownload = {},
             onPauseDownload = {},
             onShareEpisode = {},
-            onMarkAsCompleted = {}
+            onMarkAsCompleted = {},
+            onNavigateToEpisode = {}
         )
     }
 }

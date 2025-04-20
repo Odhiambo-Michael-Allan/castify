@@ -94,6 +94,7 @@ internal fun ExploreScreen(
     viewModel: ExploreScreenViewModel = hiltViewModel(),
     onShareEpisode: ( String ) -> Unit,
     onPodcastClick: ( FollowablePodcast ) -> Unit,
+    onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
 
     val categoriesUiState by viewModel.categoriesUiState.collectAsStateWithLifecycle()
@@ -117,6 +118,7 @@ internal fun ExploreScreen(
         onMarkAsCompleted = viewModel::markAsCompleted,
         onRequestSync = viewModel::requestSync,
         onPodcastClick = onPodcastClick,
+        onNavigateToEpisode = onNavigateToEpisode,
     )
 }
 
@@ -139,6 +141,7 @@ internal fun ExploreScreen(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onRequestSync: () -> Unit,
     onPodcastClick: ( FollowablePodcast ) -> Unit,
+    onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
 
     val isCategoriesLoading = categoriesUiState is CategoriesUiState.Loading
@@ -205,7 +208,8 @@ internal fun ExploreScreen(
                                             onShareEpisode = onShareEpisode,
                                             onMarkAsCompleted = onMarkAsCompleted,
                                             episodeIsCompleted = { it.toEpisode().isCompleted() },
-                                            getDownloadStateFor = { podcastFeedUiState.downloads[ it.audioUri ] }
+                                            getDownloadStateFor = { podcastFeedUiState.downloads[ it.audioUri ] },
+                                            onNavigateToEpisode = onNavigateToEpisode,
                                         )
                                     }
                                     else -> {}
@@ -471,6 +475,7 @@ private fun ExploreScreenPopulated(
             onMarkAsCompleted = {},
             onRequestSync = {},
             onPodcastClick = {},
+            onNavigateToEpisode = {}
         )
     }
 }
@@ -495,6 +500,7 @@ private fun ExploreScreenLoading() {
             onMarkAsCompleted = {},
             onRequestSync = {},
             onPodcastClick = {},
+            onNavigateToEpisode = {},
         )
     }
 }
@@ -545,6 +551,7 @@ private fun ExploreScreenPopulatedAndLoading(
         onMarkAsCompleted = {},
         onRequestSync = {},
         onPodcastClick = {},
+        onNavigateToEpisode = {},
     )
 }
 
@@ -585,6 +592,7 @@ private fun ExploreScreenError() {
             onMarkAsCompleted = {},
             onRequestSync = {},
             onPodcastClick = {},
+            onNavigateToEpisode = {},
         )
     }
 }

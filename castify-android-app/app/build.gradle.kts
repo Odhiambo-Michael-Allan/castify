@@ -55,6 +55,7 @@ dependencies {
     implementation( projects.feature.explore )
     implementation( projects.feature.nowplaying )
     implementation( projects.feature.podcast )
+    implementation( projects.feature.episode )
 
     implementation( projects.core.common )
     implementation( projects.core.ui )
