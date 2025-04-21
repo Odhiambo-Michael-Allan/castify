@@ -151,7 +151,6 @@ internal fun ExploreScreen(
             ErrorScreen { onRequestSync() }
         }
         else {
-            SearchBar {}
             when ( categoriesUiState ) {
                 CategoriesUiState.Loading,
                 CategoriesUiState.LoadFailed -> Unit

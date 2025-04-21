@@ -187,7 +187,7 @@ internal fun CastifyApp(
                         shouldShowTopAppBar = true
                         CastifyTopAppBar(
                             titleRes = destination.titleTextId,
-                            navigationIcon = CastifyIcons.Cast,
+                            navigationIcon = CastifyIcons.Search,
                             navigationIconContentDescription = "",
                             actionIcon = CastifyIcons.Settings,
                             actionIconContentDescription = "",
