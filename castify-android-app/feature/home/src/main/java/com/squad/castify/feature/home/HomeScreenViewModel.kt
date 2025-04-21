@@ -75,14 +75,6 @@ class HomeScreenViewModel @Inject constructor(
                 started = SharingStarted.WhileSubscribed( 5_000 ),
                 initialValue = HomeFeedUiState.Loading
             )
-
-    val isSyncing: StateFlow<Boolean> =
-        syncManager.isSyncing
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed( 5_000 ),
-                initialValue = false
-            )
 }
 
 /**

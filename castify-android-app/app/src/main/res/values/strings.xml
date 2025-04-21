@@ -1,4 +1,8 @@
 <resources>
+
     <string name="app_name">Castify</string>
     <string name="not_connected">You are offline!</string>
+    <string name="library">Library</string>
+
+
 </resources>

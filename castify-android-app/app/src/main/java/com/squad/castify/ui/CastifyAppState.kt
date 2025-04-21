@@ -16,6 +16,8 @@ import com.squad.castify.core.data.util.NetworkMonitor
 import com.squad.castify.core.data.util.TimeZoneMonitor
 import com.squad.castify.feature.explore.navigation.navigateToExplore
 import com.squad.castify.feature.home.navigation.navigateToHome
+import com.squad.castify.feature.subscriptions.navigation.navigateToSubscriptions
+import com.squad.castify.navigation.LibraryDestination
 import com.squad.castify.navigation.TopLevelDestination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -87,21 +89,31 @@ class CastifyAppState(
      */
     fun navigateToTopLevelDestination( topLevelDestination: TopLevelDestination ) {
         trace( "Navigation: ${topLevelDestination.name}" ) {
-            val topLevelNavOptions = navOptions {
-                // Pop up to the start destination of the graph to avoid building up a large stack
-                // of destinations on the back stack as users select items.
-                popUpTo( navHostController.graph.findStartDestination().id ) {
-                    saveState = true
-                }
-                // Avoid multiple copies of the same destination when re-selecting the same item.
-                launchSingleTop = true
-                // Restore state when re-selecting a previously selected item.
-                restoreState = true
-            }
             when ( topLevelDestination ) {
-                TopLevelDestination.HOME -> navHostController.navigateToHome( topLevelNavOptions )
+                TopLevelDestination.HOME -> navHostController.navigateToHome( navHostController.castifyTopLevelNavOptions() )
                 TopLevelDestination.EXPLORE -> navHostController.navigateToExplore()
+                TopLevelDestination.LIBRARY -> {}
             }
         }
     }
+
+    fun navigateToLibraryDestination( libraryDestination: LibraryDestination ) {
+        trace( "Navigation: ${libraryDestination.name}" ) {
+            when ( libraryDestination ) {
+                LibraryDestination.SUBSCRIPTIONS -> navHostController.navigateToSubscriptions()
+            }
+        }
+    }
+}
+
+fun NavHostController.castifyTopLevelNavOptions() = navOptions {
+    // Pop up to the start destination of the graph to avoid building up a large stack
+    // of destinations on the back stack as users select items.
+    popUpTo( graph.findStartDestination().id ) {
+        saveState = true
+    }
+    // Avoid multiple copies of the same destination when re-selecting the same item.
+    launchSingleTop = true
+    // Restore state when re-selecting a previously selected item.
+    restoreState = true
 }

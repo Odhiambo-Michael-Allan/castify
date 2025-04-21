@@ -46,6 +46,7 @@
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/nowplaying" />
             <option value="$PROJECT_DIR$/feature/podcast" />
+            <option value="$PROJECT_DIR$/feature/subscriptions" />
             <option value="$PROJECT_DIR$/sync" />
           </set>
         </option>

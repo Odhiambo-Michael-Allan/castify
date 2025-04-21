@@ -85,13 +85,6 @@ class ExploreScreenViewModel @Inject constructor(
             initialValue = PodcastFeedUiState.Loading
         )
 
-    val isSyncing = syncManager.isSyncing
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed( 5_000 ),
-            initialValue = false
-        )
-
 
     fun updateCategorySelection( currentlySelectedCategory: Category ) {
         selectedCategory.update {

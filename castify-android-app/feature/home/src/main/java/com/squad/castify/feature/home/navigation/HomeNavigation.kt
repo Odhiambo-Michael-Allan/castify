@@ -21,6 +21,7 @@ fun NavGraphBuilder.homeScreen(
     onNavigateToPodcast: ( String ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onNavigateToExplore: () -> Unit,
+    onNavigateToSubscriptions: () -> Unit,
 ) {
     composable<HomeRoute>(
         enterTransition = { SlideTransition.slideUp.enterTransition() },
@@ -31,6 +32,7 @@ fun NavGraphBuilder.homeScreen(
             onNavigateToEpisode = onNavigateToEpisode,
             onNavigateToExplore = onNavigateToExplore,
             onNavigateToPodcast = onNavigateToPodcast,
+            onNavigateToSubscriptions = onNavigateToSubscriptions,
         )
     }
 }

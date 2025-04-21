@@ -30,6 +30,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -73,9 +74,10 @@ import com.squad.castify.core.ui.episodesFeed
 internal fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel(),
     onNavigateToExplore: () -> Unit,
-    onNavigateToPodcast: (String ) -> Unit,
-    onNavigateToEpisode: (UserEpisode ) -> Unit,
-    onShareEpisode: (String ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
+    onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onShareEpisode: ( String ) -> Unit,
+    onNavigateToSubscriptions: () -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -88,6 +90,7 @@ internal fun HomeScreen(
         onNavigateToPodcast = onNavigateToPodcast,
         onNavigateToExplore = onNavigateToExplore,
         onNavigateToEpisode = onNavigateToEpisode,
+        onNavigateToSubscriptions = onNavigateToSubscriptions,
         onRetryDownload = viewModel::retryDownload,
         onPlayEpisode = viewModel::playEpisode,
         onPauseDownload = viewModel::pauseDownload,
@@ -115,6 +118,7 @@ private fun HomeScreenContent(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onNavigateToPodcast: ( String ) -> Unit,
+    onNavigateToSubscriptions: () -> Unit,
 ) {
 
     val showErrorScreen = uiState is HomeFeedUiState.Error
@@ -141,20 +145,20 @@ private fun HomeScreenContent(
                                 painter = painterResource( id = R.drawable.folks_listening_on_castify ),
                                 contentDescription = null
                             )
-                            Text(
-                                text = stringResource( id = R.string.add_your_favorites ),
-                                fontWeight = FontWeight.SemiBold,
-                                style = LocalTextStyle.current.copy(
+                            ProvideTextStyle(
+                                value = LocalTextStyle.current.copy(
                                     fontSize = 15.sp
                                 )
-                            )
-                            Text(
-                                text = stringResource( id = R.string.tap_to_subscribe ),
-                                textAlign = TextAlign.Center,
-                                style = LocalTextStyle.current.copy(
-                                    fontSize = 15.sp
+                            ) {
+                                Text(
+                                    text = stringResource( id = R.string.add_your_favorites ),
+                                    fontWeight = FontWeight.SemiBold,
                                 )
-                            )
+                                Text(
+                                    text = stringResource( id = R.string.tap_to_subscribe ),
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
                             Button(
                                 onClick = onNavigateToExplore
                             ) {
@@ -191,7 +195,7 @@ private fun HomeScreenContent(
                                             )
                                         )
                                         IconButton(
-                                            onClick = {}
+                                            onClick = onNavigateToSubscriptions
                                         ) {
                                             Text(
                                                 text = stringResource( R.string.more ),
@@ -351,6 +355,7 @@ private fun HomeScreenEmptyPreview() {
             onMarkAsCompleted = {},
             onNavigateToEpisode = {},
             onNavigateToPodcast = {},
+            onNavigateToSubscriptions = {},
         )
     }
 }
@@ -383,6 +388,7 @@ private fun HomeScreenPopulatedLoadingPreview(
             onMarkAsCompleted = {},
             onNavigateToEpisode = {},
             onNavigateToPodcast = {},
+            onNavigateToSubscriptions = {},
         )
     }
 }

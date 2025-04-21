@@ -6,9 +6,12 @@ import com.squad.castify.R
 import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.feature.explore.navigation.ExploreRoute
 import com.squad.castify.feature.home.navigation.HomeRoute
+import com.squad.castify.feature.subscriptions.navigation.SubscriptionsRoute
+import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 import com.squad.castify.feature.explore.R as exploreR
 import com.squad.castify.feature.home.R as homeR
+import com.squad.castify.feature.subscriptions.R as subscriptionsR
 
 /**
  * Type for the top level destinations in the application. Each of these destinations can contain
@@ -35,5 +38,28 @@ enum class TopLevelDestination(
         iconTextId = exploreR.string.feature_explore_title,
         titleTextId = exploreR.string.feature_explore_title,
         route = ExploreRoute::class
+    ),
+    LIBRARY(
+        selectedIcon = CastifyIcons.Library,
+        unselectedIcon = CastifyIcons.LibraryUnselected,
+        iconTextId = R.string.library,
+        titleTextId = R.string.library,
+        route = LibraryRoute::class
+    )
+}
+
+@Serializable data object LibraryRoute
+
+enum class LibraryDestination(
+    val icon: ImageVector,
+    @StringRes val iconTextId: Int,
+    @StringRes val titleTextId: Int,
+    val route: KClass<*>
+) {
+    SUBSCRIPTIONS(
+        icon = CastifyIcons.Subscriptions,
+        iconTextId = subscriptionsR.string.title,
+        titleTextId = subscriptionsR.string.title,
+        route = SubscriptionsRoute::class
     )
 }

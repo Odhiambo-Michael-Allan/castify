@@ -73,13 +73,6 @@ class PodcastScreenViewModel @Inject constructor(
         initialValue = EpisodesUiState.Loading
     )
 
-    val isSyncing = syncManager.isSyncing
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed( 5_000 ),
-            initialValue = false,
-        )
-
     fun followPodcastToggle( followed: Boolean ) {
         viewModelScope.launch {
             userDataRepository.setPodcastWithUriFollowed( podcastUri, followed )

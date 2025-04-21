@@ -4,9 +4,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.automirrored.rounded.PlaylistPlay
+import androidx.compose.material.icons.filled.AddLink
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowCircleDown
 import androidx.compose.material.icons.rounded.Cast
@@ -35,11 +38,13 @@ import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Speed
+import androidx.compose.material.icons.rounded.Subscriptions
+import androidx.compose.material.icons.rounded.VideoLibrary
 
 object CastifyIcons {
     val Home = Icons.Rounded.Home
     val Search = Icons.Rounded.Search
-    val Settings = Icons.Rounded.Settings
+    val Settings = Icons.Outlined.Settings
     val Cast = Icons.Rounded.Cast
     val Add = Icons.Rounded.Add
     val Check = Icons.Rounded.Check
@@ -70,4 +75,8 @@ object CastifyIcons {
     val Podcast = Icons.Rounded.Podcasts
     val Web = Icons.Default.Public
     val ArrowBack = Icons.AutoMirrored.Rounded.ArrowBack
+    val AddLink = Icons.Default.AddLink
+    val Subscriptions = Icons.Rounded.Subscriptions
+    val Library = Icons.Rounded.VideoLibrary
+    val LibraryUnselected = Icons.Outlined.VideoLibrary
 }

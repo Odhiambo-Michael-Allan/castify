@@ -9,6 +9,10 @@ import com.squad.castify.core.media.extensions.toEpisode
 import com.squad.castify.core.media.extensions.toMediaItem
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.model.UserEpisode
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel(
@@ -17,6 +21,13 @@ abstract class BaseViewModel(
     private val syncManager: SyncManager,
     private val episodePlayer: EpisodePlayerServiceConnection
 ) : ViewModel() {
+
+    val isSyncing: StateFlow<Boolean> = syncManager.isSyncing
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed( 5_000 ),
+            initialValue = false
+        )
 
     fun playEpisode( userEpisode: UserEpisode) =
         episodePlayer.playEpisode( userEpisode.toEpisode() )

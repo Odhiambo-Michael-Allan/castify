@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title">Subscriptions</string>
+    <string name="no_subscriptions">No subscriptions</string>
+    <string name="no_subscriptions_desc">Tap Subscribe on any podcast
+        to see new episodes at a glance</string>
+
+</resources>

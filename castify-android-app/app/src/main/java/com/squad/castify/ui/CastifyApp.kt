@@ -22,11 +22,15 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBarDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -39,9 +43,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
@@ -64,7 +72,10 @@ import com.squad.castify.R
 import com.squad.castify.core.designsystem.component.CastifyNavigationSuiteScaffold
 import com.squad.castify.core.designsystem.component.CastifyTopAppBar
 import com.squad.castify.core.designsystem.icon.CastifyIcons
+import com.squad.castify.feature.home.navigation.HomeRoute
 import com.squad.castify.navigation.CastifyNavHost
+import com.squad.castify.navigation.LibraryDestination
+import com.squad.castify.navigation.TopLevelDestination
 import kotlin.reflect.KClass
 
 @Composable
@@ -137,15 +148,32 @@ internal fun CastifyApp(
     var shouldShowTopAppBar = false
     val topAppBarScrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    var showLibraryDestinations by remember { mutableStateOf( false ) }
+
     Box {
         CastifyNavigationSuiteScaffold(
             navigationSuiteItems = {
                 appState.topLevelDestinations.forEach { destination ->
-                    val selected = currentDestination
-                        .isRouteInHierarchy( destination.route )
+                    val selected = if ( currentDestination?.route in
+                        LibraryDestination.entries.map {
+                            it.route.qualifiedName
+                        } && destination == TopLevelDestination.LIBRARY )
+                    {
+                        true
+                    }
+                    else {
+                        currentDestination.isRouteInHierarchy( destination.route )
+                    }
+
                     item(
                         selected = selected,
-                        onClick = { appState.navigateToTopLevelDestination( destination ) },
+                        onClick = {
+                            if ( destination == TopLevelDestination.LIBRARY ) {
+                                showLibraryDestinations = true
+                            } else {
+                                appState.navigateToTopLevelDestination( destination )
+                            }
+                        },
                         icon = {
                             Icon(
                                 imageVector = destination.unselectedIcon,
@@ -232,12 +260,53 @@ internal fun CastifyApp(
                 }
             }
         }
+
+        if ( showLibraryDestinations ) {
+            ModalBottomSheet(
+                sheetState = rememberModalBottomSheetState( skipPartiallyExpanded = true ),
+                onDismissRequest = { showLibraryDestinations = false }
+            ) {
+                LibraryDestination.entries.forEach {
+                    val isSelected = currentDestination.isRouteInHierarchy( it.route )
+                    Card (
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if ( isSelected ) {
+                                MaterialTheme.colorScheme.secondaryContainer
+                            } else {
+                                Color.Transparent
+                            }
+                        ),
+                        shape = RoundedCornerShape( 32.dp ),
+                        onClick = {
+                            showLibraryDestinations = false
+                            appState.navigateToLibraryDestination( it )
+                        }
+                    ) {
+                        Row (
+                            modifier = Modifier.padding( 16.dp ),
+                            horizontalArrangement = Arrangement.spacedBy( 24.dp ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = it.icon,
+                                contentDescription = null,
+                            )
+                            Text( text = stringResource( id = it.titleTextId ) )
+                        }
+                    }
+                }
+            }
+        }
+
         if ( isOffline ) {
             Row (
                 modifier = Modifier
                     .fillMaxWidth()
-                    .align( Alignment.BottomCenter )
-                    .padding( bottom = 8.dp ),
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
                 Surface (

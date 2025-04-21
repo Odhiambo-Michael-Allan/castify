@@ -4,6 +4,7 @@ plugins {
     alias( libs.plugins.compose )
     alias( libs.plugins.hilt )
     alias( libs.plugins.ksp )
+    alias( libs.plugins.kotlin.serialization )
 }
 
 android {
@@ -57,6 +58,7 @@ dependencies {
     implementation( projects.feature.nowplaying )
     implementation( projects.feature.podcast )
     implementation( projects.feature.episode )
+    implementation( projects.feature.subscriptions )
 
     implementation( projects.core.common )
     implementation( projects.core.ui )

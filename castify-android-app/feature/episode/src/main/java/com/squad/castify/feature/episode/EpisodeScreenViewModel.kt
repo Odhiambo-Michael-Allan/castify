@@ -78,13 +78,6 @@ class EpisodeScreenViewModel @Inject constructor(
             initialValue = EpisodeUiState.Loading
         )
 
-    val isSyncing = syncManager.isSyncing
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed( 5_000 ),
-            initialValue = false,
-        )
-
 }
 
 sealed interface EpisodeUiState {

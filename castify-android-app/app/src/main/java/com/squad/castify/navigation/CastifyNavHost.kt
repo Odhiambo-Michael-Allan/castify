@@ -29,6 +29,8 @@ import com.squad.castify.feature.nowplaying.NowPlayingScreen
 import com.squad.castify.feature.nowplaying.bottombar.NowPlayingBottomBar
 import com.squad.castify.feature.podcast.navigation.navigateToPodcast
 import com.squad.castify.feature.podcast.navigation.podcastScreen
+import com.squad.castify.feature.subscriptions.navigation.navigateToSubscriptions
+import com.squad.castify.feature.subscriptions.navigation.subscriptionsScreen
 import com.squad.castify.ui.CastifyAppState
 
 /**
@@ -70,7 +72,8 @@ fun CastifyNavHost(
                 },
                 onNavigateToExplore = {
                     navHostController.navigateToExplore()
-                }
+                },
+                onNavigateToSubscriptions = { navHostController.navigateToSubscriptions() }
             )
             exploreScreen(
                 onShareEpisode = { context.shareEpisode( it ) },
@@ -103,6 +106,10 @@ fun CastifyNavHost(
                         podcastUri = it.followablePodcast.podcast.uri
                     )
                 }
+            )
+            subscriptionsScreen(
+                onNavigateBack = { navHostController.navigateUp() },
+                onNavigateToPodcast = { navHostController.navigateToPodcast( it ) }
             )
 
         }
