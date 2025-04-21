@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.squad.castify.R
 import com.squad.castify.core.designsystem.icon.CastifyIcons
+import com.squad.castify.feature.downloads.navigation.DownloadsRoute
 import com.squad.castify.feature.explore.navigation.ExploreRoute
 import com.squad.castify.feature.home.navigation.HomeRoute
 import com.squad.castify.feature.subscriptions.navigation.SubscriptionsRoute
@@ -12,6 +13,7 @@ import kotlin.reflect.KClass
 import com.squad.castify.feature.explore.R as exploreR
 import com.squad.castify.feature.home.R as homeR
 import com.squad.castify.feature.subscriptions.R as subscriptionsR
+import com.squad.castify.feature.downloads.R as downloadsR
 
 /**
  * Type for the top level destinations in the application. Each of these destinations can contain
@@ -61,5 +63,11 @@ enum class LibraryDestination(
         iconTextId = subscriptionsR.string.title,
         titleTextId = subscriptionsR.string.title,
         route = SubscriptionsRoute::class
+    ),
+    DOWNLOADS(
+        icon = CastifyIcons.DownloadDefault,
+        iconTextId = downloadsR.string.downloads,
+        titleTextId = downloadsR.string.downloads,
+        route = DownloadsRoute::class
     )
 }

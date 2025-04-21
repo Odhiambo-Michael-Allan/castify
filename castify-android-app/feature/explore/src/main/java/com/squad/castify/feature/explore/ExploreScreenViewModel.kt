@@ -33,7 +33,6 @@ import javax.inject.Inject
 @HiltViewModel
 @OptIn( ExperimentalCoroutinesApi::class )
 class ExploreScreenViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
     private val userDataRepository: UserDataRepository,
     private val filterableCategoriesUseCase: FilterableCategoriesUseCase,
     private val podcastCategoryFilterUseCase: PodcastCategoryFilterUseCase,

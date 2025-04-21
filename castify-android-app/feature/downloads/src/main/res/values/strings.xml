@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="downloads">Downloads</string>
+    <string name="no_downloads">No downloaded episodes</string>
+    <string name="no_downloads_subtitle">Tap this button on any episode to download
+        and listen offline</string>
+
+</resources>

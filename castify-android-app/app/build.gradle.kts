@@ -59,6 +59,7 @@ dependencies {
     implementation( projects.feature.podcast )
     implementation( projects.feature.episode )
     implementation( projects.feature.subscriptions )
+    implementation( projects.feature.downloads )
 
     implementation( projects.core.common )
     implementation( projects.core.ui )

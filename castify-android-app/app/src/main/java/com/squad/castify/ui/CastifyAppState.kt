@@ -14,6 +14,7 @@ import androidx.navigation.navOptions
 import androidx.tracing.trace
 import com.squad.castify.core.data.util.NetworkMonitor
 import com.squad.castify.core.data.util.TimeZoneMonitor
+import com.squad.castify.feature.downloads.navigation.navigateToDownloads
 import com.squad.castify.feature.explore.navigation.navigateToExplore
 import com.squad.castify.feature.home.navigation.navigateToHome
 import com.squad.castify.feature.subscriptions.navigation.navigateToSubscriptions
@@ -101,6 +102,7 @@ class CastifyAppState(
         trace( "Navigation: ${libraryDestination.name}" ) {
             when ( libraryDestination ) {
                 LibraryDestination.SUBSCRIPTIONS -> navHostController.navigateToSubscriptions()
+                LibraryDestination.DOWNLOADS -> navHostController.navigateToDownloads()
             }
         }
     }

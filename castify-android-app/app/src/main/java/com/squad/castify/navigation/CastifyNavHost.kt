@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
+import com.squad.castify.feature.downloads.navigation.downloadsScreen
 import com.squad.castify.feature.episode.navigation.episodeScreen
 import com.squad.castify.feature.episode.navigation.navigateToEpisode
 import com.squad.castify.feature.explore.navigation.ExploreRoute
@@ -110,6 +111,16 @@ fun CastifyNavHost(
             subscriptionsScreen(
                 onNavigateBack = { navHostController.navigateUp() },
                 onNavigateToPodcast = { navHostController.navigateToPodcast( it ) }
+            )
+            downloadsScreen(
+                onShareEpisode = { context.shareEpisode( it ) },
+                onNavigateBack = { navHostController.navigateUp() },
+                onNavigateToEpisode = {
+                    navHostController.navigateToEpisode(
+                        episodeUri = it.uri,
+                        podcastUri = it.followablePodcast.podcast.uri
+                    )
+                }
             )
 
         }

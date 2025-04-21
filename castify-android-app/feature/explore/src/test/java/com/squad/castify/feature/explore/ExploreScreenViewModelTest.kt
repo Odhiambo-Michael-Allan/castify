@@ -48,7 +48,6 @@ class ExploreScreenViewModelTest {
     private val userDataRepository = TestUserDataRepository()
     private val categoriesRepository = TestCategoriesRepository()
     private val syncManager = TestSyncManager()
-    private val savedStateHandle = SavedStateHandle()
     private val episodePlayerServiceConnection = TestEpisodePlayerServiceConnection()
     private val downloadTracker = TestDownloadTracker()
 
@@ -73,7 +72,6 @@ class ExploreScreenViewModelTest {
             userDataRepository = userDataRepository
         )
         viewModel = ExploreScreenViewModel(
-            savedStateHandle = savedStateHandle,
             userDataRepository = userDataRepository,
             filterableCategoriesUseCase = filterableCategoriesUseCase,
             podcastCategoryFilterUseCase = podcastCategoryFilterUseCase,

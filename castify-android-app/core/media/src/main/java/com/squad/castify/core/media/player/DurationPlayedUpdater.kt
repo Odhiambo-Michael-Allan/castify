@@ -31,15 +31,15 @@ class DurationPlayedUpdaterImpl @Inject constructor(
         coroutineScope.launch {
             combine(
                 episodePlayerServiceConnection.playerState,
-                playbackPositionUpdater.totalDurationPreviousMediaItemPlayed
-            ) { playerState, durationPlayed ->
+                playbackPositionUpdater.playbackPosition
+            ) { playerState, playbackPosition ->
                 println( "DURATION PLAYED UPDATER: PLAYER STATE: $playerState" )
-                println( "DURATION PLAYED UPDATER: DURATION PLAYED: $durationPlayed" )
+                println( "DURATION PLAYED UPDATER: DURATION PLAYED: ${playbackPosition.played}" )
                 playerState.currentlyPlayingEpisodeUri?.let { uri ->
                     episodesRepository.fetchEpisodeWithUri( uri ).first()?.let { episode ->
                         episodesRepository.upsertEpisode(
                             episode.copy(
-                                durationPlayed = durationPlayed.toDuration( DurationUnit.MILLISECONDS )
+                                durationPlayed = playbackPosition.played.toDuration( DurationUnit.MILLISECONDS )
                             )
                         )
                     }

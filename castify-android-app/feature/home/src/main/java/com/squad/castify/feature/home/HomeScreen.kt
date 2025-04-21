@@ -31,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -159,6 +160,7 @@ private fun HomeScreenContent(
                                     textAlign = TextAlign.Center,
                                 )
                             }
+                            Spacer( modifier = Modifier.height( 16.dp ) )
                             Button(
                                 onClick = onNavigateToExplore
                             ) {
@@ -334,29 +336,31 @@ private fun DashedBorderCard(
 @Composable
 private fun HomeScreenEmptyPreview() {
     CastifyTheme {
-        HomeScreenContent(
-            uiState = HomeFeedUiState.Success(
-                followedPodcasts = emptyList(),
-                episodeFeed = emptyList(),
-                downloadedEpisodes = emptyMap(),
-                downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
-            ),
-            isSyncing = false,
-            onRequestSync = {},
-            onNavigateToExplore = {},
-            onPauseDownload = {},
-            onPlayEpisode = {},
-            onShareEpisode = {},
-            onRetryDownload = {},
-            onRemoveDownload = {},
-            onDownloadEpisode = {},
-            onResumeDownload = {},
-            onMarkAsCompleted = {},
-            onNavigateToEpisode = {},
-            onNavigateToPodcast = {},
-            onNavigateToSubscriptions = {},
-        )
+        Surface {
+            HomeScreenContent(
+                uiState = HomeFeedUiState.Success(
+                    followedPodcasts = emptyList(),
+                    episodeFeed = emptyList(),
+                    downloadedEpisodes = emptyMap(),
+                    downloadingEpisodes = emptyMap(),
+                    playerState = PlayerState()
+                ),
+                isSyncing = false,
+                onRequestSync = {},
+                onNavigateToExplore = {},
+                onPauseDownload = {},
+                onPlayEpisode = {},
+                onShareEpisode = {},
+                onRetryDownload = {},
+                onRemoveDownload = {},
+                onDownloadEpisode = {},
+                onResumeDownload = {},
+                onMarkAsCompleted = {},
+                onNavigateToEpisode = {},
+                onNavigateToPodcast = {},
+                onNavigateToSubscriptions = {},
+            )
+        }
     }
 }
 
@@ -367,28 +371,30 @@ private fun HomeScreenPopulatedLoadingPreview(
     previewData: PreviewData
 ) {
     CastifyTheme {
-        HomeScreenContent(
-            uiState = HomeFeedUiState.Success(
-                followedPodcasts = previewData.podcasts.map { it.podcast },
-                episodeFeed = previewData.episodes,
-                downloadedEpisodes = emptyMap(),
-                downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
-            ),
-            isSyncing = true,
-            onRequestSync = {},
-            onNavigateToExplore = {},
-            onPauseDownload = {},
-            onPlayEpisode = {},
-            onShareEpisode = {},
-            onRetryDownload = {},
-            onRemoveDownload = {},
-            onDownloadEpisode = {},
-            onResumeDownload = {},
-            onMarkAsCompleted = {},
-            onNavigateToEpisode = {},
-            onNavigateToPodcast = {},
-            onNavigateToSubscriptions = {},
-        )
+        Surface {
+            HomeScreenContent(
+                uiState = HomeFeedUiState.Success(
+                    followedPodcasts = previewData.podcasts.map { it.podcast },
+                    episodeFeed = previewData.episodes,
+                    downloadedEpisodes = emptyMap(),
+                    downloadingEpisodes = emptyMap(),
+                    playerState = PlayerState()
+                ),
+                isSyncing = true,
+                onRequestSync = {},
+                onNavigateToExplore = {},
+                onPauseDownload = {},
+                onPlayEpisode = {},
+                onShareEpisode = {},
+                onRetryDownload = {},
+                onRemoveDownload = {},
+                onDownloadEpisode = {},
+                onResumeDownload = {},
+                onMarkAsCompleted = {},
+                onNavigateToEpisode = {},
+                onNavigateToPodcast = {},
+                onNavigateToSubscriptions = {},
+            )
+        }
     }
 }

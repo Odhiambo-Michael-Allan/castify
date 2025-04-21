@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.squad.castify.feature.subscriptions"
+    namespace = "com.squad.castify.feature.downloads"
 
     defaultConfig {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -27,5 +27,4 @@ dependencies {
 
     androidTestImplementation( libs.androidx.junit )
     androidTestImplementation( libs.androidx.espresso.core )
-
 }
