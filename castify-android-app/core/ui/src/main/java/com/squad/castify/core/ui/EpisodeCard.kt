@@ -195,7 +195,7 @@ fun MinimalEpisodeCard(
             ) {
                 DynamicAsyncImage(
                     modifier = Modifier
-                        .size( 52.dp )
+                        .size( 40.dp )
                         .clip( MaterialTheme.shapes.small ),
                     imageUrl = userEpisode.followablePodcast.podcast.imageUrl,
                     contentDescription = null
@@ -203,7 +203,10 @@ fun MinimalEpisodeCard(
                 Spacer( modifier = Modifier.width( 12.dp ) )
                 Column {
                     Text(
-                        text = dateFormatted( date = userEpisode.published )
+                        text = dateFormatted( date = userEpisode.published ),
+                        style = LocalTextStyle.current.copy(
+                            fontSize = 12.sp
+                        )
                     )
                     Text(
                         text = userEpisode.title,
