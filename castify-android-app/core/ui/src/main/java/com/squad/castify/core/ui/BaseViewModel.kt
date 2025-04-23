@@ -19,7 +19,8 @@ abstract class BaseViewModel(
     private val downloadTracker: DownloadTracker,
     private val episodesRepository: EpisodesRepository,
     private val syncManager: SyncManager,
-    private val episodePlayer: EpisodePlayerServiceConnection
+    private val episodePlayer: EpisodePlayerServiceConnection,
+    private val queueRepository: QueueRepository,
 ) : ViewModel() {
 
     val isSyncing: StateFlow<Boolean> = syncManager.isSyncing

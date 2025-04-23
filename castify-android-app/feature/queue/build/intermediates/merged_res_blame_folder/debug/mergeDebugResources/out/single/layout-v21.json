@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.squad.castify.feature.queue-debug-104:/layout-v21/notification_action.xml",
+        "source": "com.squad.castify.feature.queue-core-1.13.1-81:/layout-v21/notification_action.xml"
+    },
+    {
+        "merged": "com.squad.castify.feature.queue-debug-104:/layout-v21/notification_action_tombstone.xml",
+        "source": "com.squad.castify.feature.queue-core-1.13.1-81:/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "com.squad.castify.feature.queue-debug-104:/layout-v21/notification_template_custom_big.xml",
+        "source": "com.squad.castify.feature.queue-core-1.13.1-81:/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "com.squad.castify.feature.queue-debug-104:/layout-v21/notification_template_icon_group.xml",
+        "source": "com.squad.castify.feature.queue-core-1.13.1-81:/layout-v21/notification_template_icon_group.xml"
+    }
+]

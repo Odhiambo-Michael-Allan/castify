@@ -99,7 +99,8 @@ internal fun HomeScreen(
         onRemoveDownload = viewModel::removeDownload,
         onResumeDownload = viewModel::resumeDownload,
         onDownloadEpisode = viewModel::downloadEpisode,
-        onMarkAsCompleted = viewModel::markAsCompleted
+        onMarkAsCompleted = viewModel::markAsCompleted,
+        onAddEpisodeToQueue = viewModel::addEpisodeToQueue,
     )
 }
 
@@ -120,6 +121,7 @@ private fun HomeScreenContent(
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onNavigateToPodcast: ( String ) -> Unit,
     onNavigateToSubscriptions: () -> Unit,
+    onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
 ) {
 
     val showErrorScreen = uiState is HomeFeedUiState.Error
@@ -279,6 +281,7 @@ private fun HomeScreenContent(
                                 onMarkAsCompleted = onMarkAsCompleted,
                                 episodeIsCompleted = { it.toEpisode().isCompleted() },
                                 onNavigateToEpisode = onNavigateToEpisode,
+                                onAddEpisodeToQueue = onAddEpisodeToQueue,
                             )
                         }
                     }
@@ -359,6 +362,7 @@ private fun HomeScreenEmptyPreview() {
                 onNavigateToEpisode = {},
                 onNavigateToPodcast = {},
                 onNavigateToSubscriptions = {},
+                onAddEpisodeToQueue = {},
             )
         }
     }
@@ -394,6 +398,7 @@ private fun HomeScreenPopulatedLoadingPreview(
                 onNavigateToEpisode = {},
                 onNavigateToPodcast = {},
                 onNavigateToSubscriptions = {},
+                onAddEpisodeToQueue = {},
             )
         }
     }

@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.squad.castify.feature.queue-debug-104:/layout-v26/mtrl_calendar_month.xml",
+        "source": "com.squad.castify.feature.queue-material-1.12.0-30:/layout-v26/mtrl_calendar_month.xml"
+    },
+    {
+        "merged": "com.squad.castify.feature.queue-debug-104:/layout-v26/abc_screen_toolbar.xml",
+        "source": "com.squad.castify.feature.queue-appcompat-1.7.0-2:/layout-v26/abc_screen_toolbar.xml"
+    }
+]

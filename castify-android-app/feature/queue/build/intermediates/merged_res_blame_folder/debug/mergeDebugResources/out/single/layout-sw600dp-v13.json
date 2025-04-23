@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.squad.castify.feature.queue-debug-104:/layout-sw600dp-v13/mtrl_layout_snackbar.xml",
+        "source": "com.squad.castify.feature.queue-material-1.12.0-30:/layout-sw600dp-v13/mtrl_layout_snackbar.xml"
+    },
+    {
+        "merged": "com.squad.castify.feature.queue-debug-104:/layout-sw600dp-v13/design_layout_snackbar.xml",
+        "source": "com.squad.castify.feature.queue-material-1.12.0-30:/layout-sw600dp-v13/design_layout_snackbar.xml"
+    }
+]

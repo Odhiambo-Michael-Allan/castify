@@ -1,0 +1,5 @@
+R_DEF: Internal format may change without notice
+local
+string queue
+string queue_empty
+string queue_empty_subtitle

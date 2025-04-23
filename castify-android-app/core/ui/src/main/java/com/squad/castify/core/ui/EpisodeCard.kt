@@ -87,6 +87,7 @@ fun EpisodeCard(
     onShareEpisode: ( String ) -> Unit,
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
 ) {
 
     Card(
@@ -154,6 +155,7 @@ fun EpisodeCard(
                 onShareEpisode = onShareEpisode,
                 onPauseDownload = onPauseDownload,
                 onMarkAsCompleted = onMarkAsCompleted,
+                onAddEpisodeToQueue = onAddEpisodeToQueue,
             )
         }
     }
@@ -178,6 +180,7 @@ fun MinimalEpisodeCard(
     onShareEpisode: ( String ) -> Unit,
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
 ) {
 
     Card (
@@ -195,8 +198,8 @@ fun MinimalEpisodeCard(
             ) {
                 DynamicAsyncImage(
                     modifier = Modifier
-                        .size( 40.dp )
-                        .clip( MaterialTheme.shapes.small ),
+                        .size(40.dp)
+                        .clip(MaterialTheme.shapes.small),
                     imageUrl = userEpisode.followablePodcast.podcast.imageUrl,
                     contentDescription = null
                 )
@@ -231,6 +234,7 @@ fun MinimalEpisodeCard(
                 onShareEpisode = onShareEpisode,
                 onPauseDownload = onPauseDownload,
                 onMarkAsCompleted = onMarkAsCompleted,
+                onAddEpisodeToQueue = onAddEpisodeToQueue,
             )
         }
     }
@@ -246,6 +250,7 @@ fun EpisodeCardBottomRow(
     isPlaying: Boolean,
     isBuffering: Boolean,
     downloadState: Int?,
+    downloadingEpisodes: Map<String, Float>,
     onPlayEpisode: () -> Unit,
     onRemoveDownload: () -> Unit,
     onRetryDownload: () -> Unit,
@@ -254,7 +259,7 @@ fun EpisodeCardBottomRow(
     onShareEpisode: ( String ) -> Unit,
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onDownloadEpisode: () -> Unit,
-    downloadingEpisodes: Map<String, Float>,
+    onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
 ) {
 
     var showDownloadStateOptionsBottomSheet by remember { mutableStateOf( false ) }
@@ -347,7 +352,7 @@ fun EpisodeCardBottomRow(
             }
             Spacer( modifier = Modifier.width( 4.dp ) )
             IconButton(
-                onClick = {}
+                onClick = { onAddEpisodeToQueue( userEpisode ) }
             ) {
                 Icon(
                     imageVector = CastifyIcons.PlaylistAdd,
@@ -650,7 +655,8 @@ fun EpisodeCardPreview(
                 onPauseDownload = {},
                 onShareEpisode = {},
                 onMarkAsCompleted = {},
-                onNavigateToEpisode = {}
+                onNavigateToEpisode = {},
+                onAddEpisodeToQueue = {},
             )
         }
     }
@@ -682,7 +688,8 @@ private fun MinimalEpisodeCardPreview(
                 onPauseDownload = {},
                 onShareEpisode = {},
                 onMarkAsCompleted = {},
-                onNavigateToEpisode = {}
+                onNavigateToEpisode = {},
+                onAddEpisodeToQueue = {},
             )
         }
     }

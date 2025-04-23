@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.squad.castify.feature.queue-mergeDebugResources-102:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/dea73b731d36b78f7192652d0db8d45a/transformed/material3-release/res/values-v30/values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.squad.castify.feature.queue-debug-104:/values-v30/values-v30.xml",
+            "map": [
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/dea73b731d36b78f7192652d0db8d45a/transformed/material3-release/res/values-v30/values-v30.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "72",
+                        "endOffsets": "123"
+                    }
+                }
+            ]
+        }
+    ]
+}

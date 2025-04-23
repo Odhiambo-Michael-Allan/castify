@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.squad.castify.feature.queue-debug-104:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+            "map": [
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/55686a328a866af0194bf44fff07beea/transformed/material-1.12.0/res/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "63",
+                        "endOffsets": "114"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.squad.castify.feature.queue-mergeDebugResources-102:/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+            "map": [
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/55686a328a866af0194bf44fff07beea/transformed/material-1.12.0/res/values-h320dp-port-v13/values-h320dp-port-v13.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "63",
+                        "endOffsets": "114"
+                    }
+                }
+            ]
+        }
+    ]
+}

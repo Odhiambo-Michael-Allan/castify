@@ -1,0 +1,4 @@
+com.squad.castify.feature.queue
+string queue
+string queue_empty
+string queue_empty_subtitle
