@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="queue">Queue</string>
+    <string name="queue_empty">Your queue is empty</string>
+    <string name="queue_empty_subtitle">Tap this button on any episode to add to your queue</string>
+
+</resources>

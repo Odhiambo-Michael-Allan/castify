@@ -60,6 +60,7 @@ dependencies {
     implementation( projects.feature.episode )
     implementation( projects.feature.subscriptions )
     implementation( projects.feature.downloads )
+    implementation( projects.feature.queue )
 
     implementation( projects.core.common )
     implementation( projects.core.ui )

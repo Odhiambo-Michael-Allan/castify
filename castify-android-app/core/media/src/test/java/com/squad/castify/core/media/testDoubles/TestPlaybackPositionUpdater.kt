@@ -12,8 +12,6 @@ class TestPlaybackPositionUpdater : PlaybackPositionUpdater {
         get() = TODO("Not yet implemented")
 
     private val _totalDurationPreviousMediaItemPlayed = MutableStateFlow( 0L )
-    override val totalDurationPreviousMediaItemPlayed =
-        _totalDurationPreviousMediaItemPlayed.asStateFlow()
 
     override fun cleanUp() {
         TODO("Not yet implemented")

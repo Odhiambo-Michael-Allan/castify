@@ -142,7 +142,7 @@ private fun SubscriptionsScreen(
                         )
                         ProvideTextStyle(
                             value = LocalTextStyle.current.copy(
-                                fontSize = 15.sp
+                                fontSize = 16.sp
                             )
                         ) {
                             Text(

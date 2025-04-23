@@ -7,6 +7,7 @@ import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.Episode
 import com.squad.castify.core.model.Podcast
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
+import com.squad.castify.core.testing.repository.TestQueueRepository
 import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
 import kotlinx.coroutines.CoroutineScope
@@ -29,16 +30,17 @@ class EpisodePlayerServiceConnectionImplTest {
     private val serviceConnector = TestServiceConnector()
     private val userDataRepository = TestUserDataRepository()
     private val episodeRepository = TestEpisodesRepository()
+    private val queueRepository = TestQueueRepository()
 
     private lateinit var subject: EpisodePlayerServiceConnectionImpl
 
     @Before
     fun setUp() {
 
-        episodeRepository.sendEpisodes( listOf( testEpisode ) )
+        episodeRepository.sendEpisodes( testEpisodes )
         userDataRepository.setUserData(
             emptyUserData.copy(
-                currentlyPlayingEpisodeUri = testEpisode.uri
+                currentlyPlayingEpisodeUri = testEpisodes.first().uri
             )
         )
 
@@ -47,7 +49,8 @@ class EpisodePlayerServiceConnectionImplTest {
             dispatcher = UnconfinedTestDispatcher(),
             userDataRepository = userDataRepository,
             episodesRepository = episodeRepository,
-            episodeToMediaItemConverter = TestEpisodeToMediaItemConverter()
+            episodeToMediaItemConverter = TestEpisodeToMediaItemConverter(),
+            queueRepository = queueRepository
         )
     }
 
@@ -90,7 +93,7 @@ class EpisodePlayerServiceConnectionImplTest {
     @Test
     fun testPreviouslyPlayingEpisodeIsCorrectlyInitialized() = runTest {
         assertEquals(
-            testEpisode.uri,
+            testEpisodes.first().uri,
             serviceConnector.player!!.currentMediaItem!!.mediaId
         )
     }
@@ -133,12 +136,23 @@ class EpisodePlayerServiceConnectionImplTest {
         assertEquals( 40, serviceConnector.player!!.currentPosition )
     }
 
+    @Test
+    fun whenTheUserSelectsAnEpisodeToPlay_theQueueIsClearedAndTheEpisodeSelectedIsAddedAsTheFirstQueueElement() = runTest {
+        queueRepository.sendEpisodes( testEpisodes )
+        subject.playEpisode( testEpisodes.first() )
+        assertEquals( 1, queueRepository.fetchEpisodesInQueueSortedByPosition().first().size )
+        assertEquals(
+            testEpisodes.first(),
+            queueRepository.fetchEpisodesInQueueSortedByPosition().first().first()
+        )
+    }
+
 }
 
 private class TestEpisodeToMediaItemConverter : EpisodeToMediaItemConverter {
     override fun convert( episode: Episode ): MediaItem =
         MediaItem.Builder().apply {
-            setMediaId( testEpisode.uri )
+            setMediaId( testEpisodes.first().uri )
         }.build()
 }
 
@@ -156,12 +170,32 @@ private val testPodcast = Podcast(
     )
 )
 
-private val testEpisode = Episode(
-    uri = "episode-0-uri",
-    published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
-    podcast = testPodcast,
-    audioUri = "",
-    audioMimeType = "",
-    duration = Duration.ZERO,
-    durationPlayed = Duration.ZERO
+private val testEpisodes = listOf(
+    Episode(
+        uri = "episode-0-uri",
+        published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
+        podcast = testPodcast,
+        audioUri = "",
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
+    ),
+    Episode(
+        uri = "episode-1-uri",
+        published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
+        podcast = testPodcast,
+        audioUri = "",
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
+    ),
+    Episode(
+        uri = "episode-2-uri",
+        published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
+        podcast = testPodcast,
+        audioUri = "",
+        audioMimeType = "",
+        duration = Duration.ZERO,
+        durationPlayed = Duration.ZERO
+    )
 )

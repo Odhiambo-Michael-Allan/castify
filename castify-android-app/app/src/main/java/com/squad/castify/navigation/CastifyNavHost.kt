@@ -30,6 +30,7 @@ import com.squad.castify.feature.nowplaying.NowPlayingScreen
 import com.squad.castify.feature.nowplaying.bottombar.NowPlayingBottomBar
 import com.squad.castify.feature.podcast.navigation.navigateToPodcast
 import com.squad.castify.feature.podcast.navigation.podcastScreen
+import com.squad.castify.feature.queue.navigation.queueScreen
 import com.squad.castify.feature.subscriptions.navigation.navigateToSubscriptions
 import com.squad.castify.feature.subscriptions.navigation.subscriptionsScreen
 import com.squad.castify.ui.CastifyAppState
@@ -115,6 +116,16 @@ fun CastifyNavHost(
             downloadsScreen(
                 onShareEpisode = { context.shareEpisode( it ) },
                 onNavigateBack = { navHostController.navigateUp() },
+                onNavigateToEpisode = {
+                    navHostController.navigateToEpisode(
+                        episodeUri = it.uri,
+                        podcastUri = it.followablePodcast.podcast.uri
+                    )
+                }
+            )
+            queueScreen(
+                onNavigateBack = { navHostController.navigateUp() },
+                onShareEpisode = { context.shareEpisode( it ) },
                 onNavigateToEpisode = {
                     navHostController.navigateToEpisode(
                         episodeUri = it.uri,

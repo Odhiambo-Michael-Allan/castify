@@ -4,10 +4,12 @@ import com.squad.castify.core.database.CastifyDatabase
 import com.squad.castify.core.database.dao.CategoryDao
 import com.squad.castify.core.database.dao.EpisodeDao
 import com.squad.castify.core.database.dao.PodcastDao
+import com.squad.castify.core.database.dao.QueueDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.util.Queue
 
 @Module
 @InstallIn( SingletonComponent::class )
@@ -26,4 +28,9 @@ internal object DaosModule {
     fun providesEpisodesDao(
         database: CastifyDatabase
     ): EpisodeDao = database.episodeDao()
+
+    @Provides
+    fun providesQueueDao(
+        database: CastifyDatabase
+    ): QueueDao = database.queueDao()
 }
