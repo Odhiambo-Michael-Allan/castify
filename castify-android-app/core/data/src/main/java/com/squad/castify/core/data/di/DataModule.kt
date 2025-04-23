@@ -3,11 +3,13 @@ package com.squad.castify.core.data.di
 import com.squad.castify.core.data.repository.CategoryRepository
 import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.data.repository.PodcastsRepository
+import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.data.repository.impl.OfflineFirstCategoryRepository
 import com.squad.castify.core.data.repository.impl.OfflineFirstEpisodesRepository
 import com.squad.castify.core.data.repository.impl.OfflineFirstPodcastsRepository
 import com.squad.castify.core.data.repository.impl.OfflineFirstUserDataRepository
+import com.squad.castify.core.data.repository.impl.QueueRepositoryImpl
 import com.squad.castify.core.data.util.NetworkMonitor
 import com.squad.castify.core.data.util.TimeZoneMonitor
 import com.squad.castify.core.data.util.impl.ConnectivityManagerNetworkMonitor
@@ -45,6 +47,11 @@ abstract class DataModule {
     ): UserDataRepository
 
     @Binds
+    internal abstract fun bindsQueueRepository(
+        queueRepository: QueueRepositoryImpl
+    ): QueueRepository
+
+            @Binds
     internal abstract fun bindsNetworkMonitor(
         networkMonitor: ConnectivityManagerNetworkMonitor
     ): NetworkMonitor
@@ -53,4 +60,5 @@ abstract class DataModule {
     internal abstract fun bindsTimeZoneMonitor(
         timeZoneMonitor: TimeZoneBroadcastMonitor
     ): TimeZoneMonitor
+
 }

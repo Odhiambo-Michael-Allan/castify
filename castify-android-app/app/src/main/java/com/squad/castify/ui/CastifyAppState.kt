@@ -17,6 +17,7 @@ import com.squad.castify.core.data.util.TimeZoneMonitor
 import com.squad.castify.feature.downloads.navigation.navigateToDownloads
 import com.squad.castify.feature.explore.navigation.navigateToExplore
 import com.squad.castify.feature.home.navigation.navigateToHome
+import com.squad.castify.feature.queue.navigation.navigateToQueue
 import com.squad.castify.feature.subscriptions.navigation.navigateToSubscriptions
 import com.squad.castify.navigation.LibraryDestination
 import com.squad.castify.navigation.TopLevelDestination
@@ -103,6 +104,7 @@ class CastifyAppState(
             when ( libraryDestination ) {
                 LibraryDestination.SUBSCRIPTIONS -> navHostController.navigateToSubscriptions()
                 LibraryDestination.DOWNLOADS -> navHostController.navigateToDownloads()
+                LibraryDestination.QUEUE -> navHostController.navigateToQueue()
             }
         }
     }

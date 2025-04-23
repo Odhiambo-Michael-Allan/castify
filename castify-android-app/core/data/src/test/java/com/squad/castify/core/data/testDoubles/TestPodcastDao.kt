@@ -34,6 +34,10 @@ class TestPodcastDao : PodcastDao {
                 categoryId in populatedPodcast.categories.map( CategoryEntity::id ) }
         }
 
+    override fun getPodcastWithUri( uri: String ): Flow<PodcastEntity> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun upsertPodcasts( podcastEntities: List<PodcastEntity> ) {
         // Prefer new values over old ones.
         entitiesStateFlow.update { oldValues ->

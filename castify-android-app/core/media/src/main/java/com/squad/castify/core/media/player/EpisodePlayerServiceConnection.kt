@@ -12,6 +12,7 @@ import androidx.media3.common.util.UnstableApi
 import com.squad.castify.core.common.network.CastifyDispatchers
 import com.squad.castify.core.common.network.Dispatcher
 import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.media.extensions.toMediaItem
 import com.squad.castify.core.model.Episode
@@ -53,7 +54,8 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
     private val serviceConnector: ServiceConnector,
     private val userDataRepository: UserDataRepository,
     private val episodesRepository: EpisodesRepository,
-    private val episodeToMediaItemConverter: EpisodeToMediaItemConverter
+    private val episodeToMediaItemConverter: EpisodeToMediaItemConverter,
+    private val queueRepository: QueueRepository,
 ) : EpisodePlayerServiceConnection {
 
 
@@ -187,7 +189,7 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
         player?.let {
             val isPrepared = it.playbackState != Player.STATE_IDLE
             it.setMediaItem(
-                episode.toMediaItem(),
+                episodeToMediaItemConverter.convert( episode ),
                 if ( episode.isCompleted().not() ) {
                     episode.durationPlayed.inWholeMilliseconds
                 } else {
@@ -196,6 +198,12 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
             )
             if ( !isPrepared ) it.prepare()
             it.play()
+
+            coroutineScope.launch {
+                queueRepository.clearQueue()
+                queueRepository.upsertEpisode( episode, 0 )
+            }
+
         }
     }
 

@@ -149,7 +149,7 @@ private fun DownloadsScreen(
                         )
                         ProvideTextStyle(
                             value = LocalTextStyle.current.copy(
-                                fontSize = 15.sp
+                                fontSize = 16.sp
                             )
                         ) {
                             Text(
@@ -199,7 +199,6 @@ private fun DownloadsScreen(
                 }
             }
         }
-
     }
 
     CastifyAnimatedLoadingWheel(

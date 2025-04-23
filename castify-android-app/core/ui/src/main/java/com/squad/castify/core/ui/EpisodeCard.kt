@@ -190,7 +190,7 @@ fun MinimalEpisodeCard(
             modifier = modifier
         ) {
             Row (
-                modifier = Modifier.fillMaxWidth(),
+//                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DynamicAsyncImage(

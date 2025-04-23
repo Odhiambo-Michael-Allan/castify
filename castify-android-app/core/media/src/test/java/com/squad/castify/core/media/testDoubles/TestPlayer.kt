@@ -1,5 +1,6 @@
 package com.squad.castify.core.media.testDoubles
 
+import android.media.session.PlaybackState
 import android.os.Looper
 import android.view.Surface
 import android.view.SurfaceHolder
@@ -126,9 +127,7 @@ class TestPlayer : Player {
 
     override fun prepare() {}
 
-    override fun getPlaybackState(): Int {
-        TODO("Not yet implemented")
-    }
+    override fun getPlaybackState(): Int = PlaybackState.STATE_NONE
 
     override fun getPlaybackSuppressionReason(): Int {
         TODO("Not yet implemented")
@@ -142,9 +141,7 @@ class TestPlayer : Player {
         TODO("Not yet implemented")
     }
 
-    override fun play() {
-        TODO("Not yet implemented")
-    }
+    override fun play() {}
 
     override fun pause() {
         TODO("Not yet implemented")

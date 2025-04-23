@@ -7,6 +7,7 @@ import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.feature.downloads.navigation.DownloadsRoute
 import com.squad.castify.feature.explore.navigation.ExploreRoute
 import com.squad.castify.feature.home.navigation.HomeRoute
+import com.squad.castify.feature.queue.navigation.QueueRoute
 import com.squad.castify.feature.subscriptions.navigation.SubscriptionsRoute
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
@@ -14,6 +15,7 @@ import com.squad.castify.feature.explore.R as exploreR
 import com.squad.castify.feature.home.R as homeR
 import com.squad.castify.feature.subscriptions.R as subscriptionsR
 import com.squad.castify.feature.downloads.R as downloadsR
+import com.squad.castify.feature.queue.R as queueR
 
 /**
  * Type for the top level destinations in the application. Each of these destinations can contain
@@ -54,20 +56,22 @@ enum class TopLevelDestination(
 
 enum class LibraryDestination(
     val icon: ImageVector,
-    @StringRes val iconTextId: Int,
     @StringRes val titleTextId: Int,
     val route: KClass<*>
 ) {
     SUBSCRIPTIONS(
         icon = CastifyIcons.Subscriptions,
-        iconTextId = subscriptionsR.string.title,
         titleTextId = subscriptionsR.string.title,
         route = SubscriptionsRoute::class
     ),
     DOWNLOADS(
         icon = CastifyIcons.DownloadDefault,
-        iconTextId = downloadsR.string.downloads,
         titleTextId = downloadsR.string.downloads,
         route = DownloadsRoute::class
+    ),
+    QUEUE(
+        icon = CastifyIcons.PlaylistAdd,
+        titleTextId = queueR.string.queue,
+        route = QueueRoute::class
     )
 }
