@@ -17,13 +17,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class QueueScreenViewModel @Inject constructor(
-    queueRepository: QueueRepository,
+    private val episodePlayer: EpisodePlayerServiceConnection,
     episodesRepository: EpisodesRepository,
-    episodePlayer: EpisodePlayerServiceConnection,
     downloadTracker: DownloadTracker,
     syncManager: SyncManager,
     userDataRepository: UserDataRepository,
@@ -36,7 +36,7 @@ class QueueScreenViewModel @Inject constructor(
 
     val uiState: StateFlow<QueueScreenUiState> =
         combine(
-            queueRepository.fetchEpisodesInQueueSortedByPosition(),
+            episodePlayer.episodesInQueue,
             userDataRepository.userData,
             downloadTracker.downloadedEpisodes,
             downloadTracker.downloadingEpisodes,
@@ -55,6 +55,11 @@ class QueueScreenViewModel @Inject constructor(
                 initialValue = QueueScreenUiState.Loading
             )
 
+    fun moveQueueItem( from: Int, to: Int ) {
+        viewModelScope.launch {
+            episodePlayer.move( from, to )
+        }
+    }
 }
 
 sealed interface QueueScreenUiState {

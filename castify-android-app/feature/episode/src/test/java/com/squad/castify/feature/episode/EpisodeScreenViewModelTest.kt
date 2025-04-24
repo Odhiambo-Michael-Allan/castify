@@ -12,6 +12,7 @@ import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.testing.media.TestDownloadTracker
 import com.squad.castify.core.testing.media.TestEpisodePlayerServiceConnection
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
+import com.squad.castify.core.testing.repository.TestQueueRepository
 import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
 import com.squad.castify.core.testing.rules.MainDispatcherRule
@@ -57,6 +58,7 @@ class EpisodeScreenViewModelTest {
     private val syncManager = TestSyncManager()
     private val episodePlayer = TestEpisodePlayerServiceConnection()
     private val downloadTracker = TestDownloadTracker()
+    private val queueRepository = TestQueueRepository()
 
     private lateinit var viewModel: EpisodeScreenViewModel
 
@@ -74,6 +76,7 @@ class EpisodeScreenViewModelTest {
             syncManager = syncManager,
             episodePlayer = episodePlayer,
             downloadTracker = downloadTracker,
+            queueRepository = queueRepository,
         )
     }
 
@@ -96,6 +99,7 @@ class EpisodeScreenViewModelTest {
 
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         val uiState = viewModel.episodeUiState.value
 
@@ -121,6 +125,7 @@ class EpisodeScreenViewModelTest {
         backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.episodeUiState.collect() }
 
         episodesRepository.sendEpisodes( sampleEpisodes )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals( EpisodeUiState.Loading, viewModel.episodeUiState.value )
     }
@@ -131,6 +136,7 @@ class EpisodeScreenViewModelTest {
 
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         val similarEpisodes = listOf(
             UserEpisode(
@@ -159,6 +165,7 @@ class EpisodeScreenViewModelTest {
 
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             EpisodeUiState.Success(
@@ -174,7 +181,8 @@ class EpisodeScreenViewModelTest {
                 ),
                 playerState = PlayerState(),
                 downloadedEpisodes = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodeUiState.value
         )
@@ -200,7 +208,8 @@ class EpisodeScreenViewModelTest {
                 ),
                 playerState = PlayerState(),
                 downloadedEpisodes = testDownloads,
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodeUiState.value
         )
@@ -212,6 +221,7 @@ class EpisodeScreenViewModelTest {
 
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             EpisodeUiState.Success(
@@ -227,7 +237,8 @@ class EpisodeScreenViewModelTest {
                 ),
                 playerState = PlayerState(),
                 downloadedEpisodes = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodeUiState.value
         )
@@ -253,7 +264,8 @@ class EpisodeScreenViewModelTest {
                 ),
                 playerState = PlayerState(),
                 downloadedEpisodes = emptyMap(),
-                downloadingEpisodes = downloadingEpisodes
+                downloadingEpisodes = downloadingEpisodes,
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodeUiState.value
         )
@@ -265,6 +277,7 @@ class EpisodeScreenViewModelTest {
 
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             EpisodeUiState.Success(
@@ -280,7 +293,8 @@ class EpisodeScreenViewModelTest {
                 ),
                 playerState = PlayerState(),
                 downloadedEpisodes = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodeUiState.value
         )
@@ -306,7 +320,8 @@ class EpisodeScreenViewModelTest {
                 ),
                 playerState = playerState,
                 downloadedEpisodes = emptyMap(),
-                downloadingEpisodes = emptyMap()
+                downloadingEpisodes = emptyMap(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodeUiState.value
         )

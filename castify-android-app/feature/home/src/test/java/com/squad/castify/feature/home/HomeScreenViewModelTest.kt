@@ -12,6 +12,7 @@ import com.squad.castify.core.testing.media.TestDownloadTracker
 import com.squad.castify.core.testing.media.TestEpisodePlayerServiceConnection
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
 import com.squad.castify.core.testing.repository.TestPodcastsRepository
+import com.squad.castify.core.testing.repository.TestQueueRepository
 import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
 import com.squad.castify.core.testing.rules.MainDispatcherRule
@@ -43,6 +44,7 @@ class HomeScreenViewModelTest {
     private val episodePlayer = TestEpisodePlayerServiceConnection()
     private val downloadTracker = TestDownloadTracker()
     private val syncManager = TestSyncManager()
+    private val queueRepository = TestQueueRepository()
 
     private lateinit var viewModel: HomeScreenViewModel
 
@@ -55,7 +57,8 @@ class HomeScreenViewModelTest {
             userEpisodesRepository = userEpisodesRepository,
             episodePlayer = episodePlayer,
             downloadTracker = downloadTracker,
-            syncManager = syncManager
+            syncManager = syncManager,
+            queueRepository = queueRepository
         )
     }
 
@@ -74,6 +77,7 @@ class HomeScreenViewModelTest {
         userDataRepository.setUserData( emptyUserData )
         podcastsRepository.sendPodcasts( emptyList() )
         episodesRepository.sendEpisodes( emptyList() )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             HomeFeedUiState.Success(
@@ -81,7 +85,8 @@ class HomeScreenViewModelTest {
                 episodeFeed = emptyList(),
                 downloadingEpisodes = emptyMap(),
                 downloadedEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.uiState.value
         )
@@ -93,6 +98,7 @@ class HomeScreenViewModelTest {
         userDataRepository.setUserData( userData )
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             HomeFeedUiState.Success(
@@ -103,7 +109,8 @@ class HomeScreenViewModelTest {
                 episodeFeed = sampleEpisodes.map { UserEpisode( it, userData ) },
                 downloadingEpisodes = emptyMap(),
                 downloadedEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.uiState.value
         )
@@ -124,6 +131,7 @@ class HomeScreenViewModelTest {
         userDataRepository.setUserData( emptyUserData )
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
+        queueRepository.sendEpisodes( emptyList() )
 
         val testDownloads = mapOf(
             "test/uri/1" to Download.STATE_COMPLETED,
@@ -137,7 +145,8 @@ class HomeScreenViewModelTest {
                 episodeFeed = emptyList(),
                 downloadingEpisodes = emptyMap(),
                 downloadedEpisodes = testDownloads,
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.uiState.value
         )
@@ -150,6 +159,7 @@ class HomeScreenViewModelTest {
         userDataRepository.setUserData( emptyUserData )
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
+        queueRepository.sendEpisodes( emptyList() )
 
         val downloadingEpisodes = mapOf(
             "test/uri/1" to .1f,
@@ -163,7 +173,8 @@ class HomeScreenViewModelTest {
                 episodeFeed = emptyList(),
                 downloadingEpisodes = downloadingEpisodes,
                 downloadedEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.uiState.value
         )
@@ -176,6 +187,7 @@ class HomeScreenViewModelTest {
         userDataRepository.setUserData( emptyUserData )
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
+        queueRepository.sendEpisodes( emptyList() )
 
         val playerState = PlayerState(
             currentlyPlayingEpisodeUri = "test/uri/1",
@@ -191,7 +203,8 @@ class HomeScreenViewModelTest {
                 episodeFeed = emptyList(),
                 downloadingEpisodes = emptyMap(),
                 downloadedEpisodes = emptyMap(),
-                playerState = playerState
+                playerState = playerState,
+                episodesInQueue = emptyList(),
             ),
             viewModel.uiState.value
         )

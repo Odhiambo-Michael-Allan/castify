@@ -23,8 +23,4 @@ class TestServiceConnector : ServiceConnector {
         disconnectListeners.add( disconnectListener )
     }
 
-    /* Test only API to allow simulation of a disconnect from tests. */
-    fun disconnect() {
-        disconnectListeners.forEach { it.invoke() }
-    }
 }

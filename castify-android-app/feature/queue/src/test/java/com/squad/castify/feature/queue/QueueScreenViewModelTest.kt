@@ -30,7 +30,6 @@ class QueueScreenViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val queueRepository = TestQueueRepository()
     private val episodesRepository = TestEpisodesRepository()
     private val episodePlayer = TestEpisodePlayerServiceConnection()
     private val downloadTracker = TestDownloadTracker()
@@ -42,7 +41,6 @@ class QueueScreenViewModelTest {
     @Before
     fun setUp() {
         viewModel = QueueScreenViewModel(
-            queueRepository = queueRepository,
             episodesRepository = episodesRepository,
             episodePlayer = episodePlayer,
             downloadTracker = downloadTracker,
@@ -62,7 +60,7 @@ class QueueScreenViewModelTest {
     fun uiStateIsUpdated_whenEpisodesInQueueChange() = runTest {
         backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.uiState.collect() }
 
-        queueRepository.sendEpisodes( sampleEpisodes )
+        episodePlayer.sendEpisodesInQueue( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
 
         assertEquals(
@@ -89,7 +87,7 @@ class QueueScreenViewModelTest {
         backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.uiState.collect() }
 
         userDataRepository.setUserData( emptyUserData )
-        queueRepository.sendEpisodes( sampleEpisodes )
+        episodePlayer.sendEpisodesInQueue( sampleEpisodes )
 
         val testDownloads = mapOf(
             "test/uri/1" to Download.STATE_COMPLETED,
@@ -113,7 +111,7 @@ class QueueScreenViewModelTest {
         backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.uiState.collect() }
 
         userDataRepository.setUserData( emptyUserData )
-        queueRepository.sendEpisodes( sampleEpisodes )
+        episodePlayer.sendEpisodesInQueue( sampleEpisodes )
 
         val testDownloads = mapOf(
             "test/uri/1" to .1f,
@@ -137,7 +135,7 @@ class QueueScreenViewModelTest {
         backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.uiState.collect() }
 
         userDataRepository.setUserData( emptyUserData )
-        queueRepository.sendEpisodes( sampleEpisodes )
+        episodePlayer.sendEpisodesInQueue( sampleEpisodes )
 
         val playerState = PlayerState(
             currentlyPlayingEpisodeUri = "test/uri/1",

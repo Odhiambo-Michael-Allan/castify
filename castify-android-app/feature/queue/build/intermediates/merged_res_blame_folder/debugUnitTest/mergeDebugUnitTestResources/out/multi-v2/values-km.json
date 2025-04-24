@@ -4,24 +4,7 @@
             "outputFile": "com.squad.castify.feature.queue.test.queue-mergeDebugUnitTestResources-105:/values-km/values-km.xml",
             "map": [
                 {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/82d0ede2428968d13360c5d274b43a89/transformed/play-services-basement-18.0.0/res/values-km/values.xml",
-                    "from": {
-                        "startLines": "4",
-                        "startColumns": "0",
-                        "startOffsets": "195",
-                        "endColumns": "144",
-                        "endOffsets": "339"
-                    },
-                    "to": {
-                        "startLines": "58",
-                        "startColumns": "4",
-                        "startOffsets": "5576",
-                        "endColumns": "148",
-                        "endOffsets": "5720"
-                    }
-                },
-                {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/50104962a4fdf79c6af4b939973388c8/transformed/browser-1.8.0/res/values-km/values-km.xml",
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/f2d0b64a2435938ab3796dade4eecf75/transformed/browser-1.8.0/res/values-km/values-km.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -38,7 +21,41 @@
                     }
                 },
                 {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/dea73b731d36b78f7192652d0db8d45a/transformed/material3-release/res/values-km/values-km.xml",
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/ef937c50483925bb568bea035eba0c2d/transformed/appcompat-1.7.0/res/values-km/values-km.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,207,306,416,503,606,727,805,881,972,1065,1157,1251,1351,1444,1539,1633,1724,1815,1898,2002,2106,2206,2315,2424,2533,2695,2793",
+                        "endColumns": "101,98,109,86,102,120,77,75,90,92,91,93,99,92,94,93,90,90,82,103,103,99,108,108,108,161,97,83",
+                        "endOffsets": "202,301,411,498,601,722,800,876,967,1060,1152,1246,1346,1439,1534,1628,1719,1810,1893,1997,2101,2201,2310,2419,2528,2690,2788,2872"
+                    },
+                    "to": {
+                        "startLines": "6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,235",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "319,421,520,630,717,820,941,1019,1095,1186,1279,1371,1465,1565,1658,1753,1847,1938,2029,2112,2216,2320,2420,2529,2638,2747,2909,22161",
+                        "endColumns": "101,98,109,86,102,120,77,75,90,92,91,93,99,92,94,93,90,90,82,103,103,99,108,108,108,161,97,83",
+                        "endOffsets": "416,515,625,712,815,936,1014,1090,1181,1274,1366,1460,1560,1653,1748,1842,1933,2024,2107,2211,2315,2415,2524,2633,2742,2904,3002,22240"
+                    }
+                },
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/ffa3828065fd9bb6eb3d10fa00f5689d/transformed/play-services-basement-18.0.0/res/values-km/values.xml",
+                    "from": {
+                        "startLines": "4",
+                        "startColumns": "0",
+                        "startOffsets": "195",
+                        "endColumns": "144",
+                        "endOffsets": "339"
+                    },
+                    "to": {
+                        "startLines": "58",
+                        "startColumns": "4",
+                        "startOffsets": "5576",
+                        "endColumns": "148",
+                        "endOffsets": "5720"
+                    }
+                },
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/f44996a3e4b0a82ced6627673dc63de1/transformed/material3-release/res/values-km/values-km.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -55,24 +72,7 @@
                     }
                 },
                 {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/1d4cbf9e2539b1d32d64498656992d9e/transformed/media3-session-1.4.0/res/values-km/values-km.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,127,222,302,401,499,579,671,770,866,958,1024,1126,1222,1322,1411,1514,1587,1675,1743,1809,1883,1965,2052",
-                        "endColumns": "71,94,79,98,97,79,91,98,95,91,65,101,95,99,88,102,72,87,67,65,73,81,86,86",
-                        "endOffsets": "122,217,297,396,494,574,666,765,861,953,1019,1121,1217,1317,1406,1509,1582,1670,1738,1804,1878,1960,2047,2134"
-                    },
-                    "to": {
-                        "startLines": "70,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,179,180,181,182,183,184",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "6999,7388,7483,7563,7662,7760,7840,7932,8031,8127,8219,8285,8387,8483,8583,8672,8775,8848,17561,17629,17695,17769,17851,17938",
-                        "endColumns": "71,94,79,98,97,79,91,98,95,91,65,101,95,99,88,102,72,87,67,65,73,81,86,86",
-                        "endOffsets": "7066,7478,7558,7657,7755,7835,7927,8026,8122,8214,8280,8382,8478,8578,8667,8770,8843,8931,17624,17690,17764,17846,17933,18020"
-                    }
-                },
-                {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/55686a328a866af0194bf44fff07beea/transformed/material-1.12.0/res/values-km/values-km.xml",
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/8db11b7fde915b71c41f62188955abb3/transformed/material-1.12.0/res/values-km/values-km.xml",
                     "from": {
                         "startLines": "2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -91,75 +91,7 @@
                     }
                 },
                 {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/037b08f624621df2b047d11680307de4/transformed/appcompat-1.7.0/res/values-km/values-km.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,207,306,416,503,606,727,805,881,972,1065,1157,1251,1351,1444,1539,1633,1724,1815,1898,2002,2106,2206,2315,2424,2533,2695,2793",
-                        "endColumns": "101,98,109,86,102,120,77,75,90,92,91,93,99,92,94,93,90,90,82,103,103,99,108,108,108,161,97,83",
-                        "endOffsets": "202,301,411,498,601,722,800,876,967,1060,1152,1246,1346,1439,1534,1628,1719,1810,1893,1997,2101,2201,2310,2419,2528,2690,2788,2872"
-                    },
-                    "to": {
-                        "startLines": "6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,235",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "319,421,520,630,717,820,941,1019,1095,1186,1279,1371,1465,1565,1658,1753,1847,1938,2029,2112,2216,2320,2420,2529,2638,2747,2909,22161",
-                        "endColumns": "101,98,109,86,102,120,77,75,90,92,91,93,99,92,94,93,90,90,82,103,103,99,108,108,108,161,97,83",
-                        "endOffsets": "416,515,625,712,815,936,1014,1090,1181,1274,1366,1460,1560,1653,1748,1842,1933,2024,2107,2211,2315,2415,2524,2633,2742,2904,3002,22240"
-                    }
-                },
-                {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/b8a24bd15359071a421097a4925fc5a5/transformed/ui-release/res/values-km/values-km.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "105,190,270,374,472,560,644,727,812,899,979,1064,1140,1214,1286,1357,1441,1507",
-                        "endColumns": "84,79,103,97,87,83,82,84,86,79,84,75,73,71,70,83,65,117",
-                        "endOffsets": "185,265,369,467,555,639,722,807,894,974,1059,1135,1209,1281,1352,1436,1502,1620"
-                    },
-                    "to": {
-                        "startLines": "48,49,69,71,72,106,107,230,231,233,234,238,240,241,242,244,245,246",
-                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "4412,4497,6895,7071,7169,10101,10185,21741,21826,21996,22076,22405,22557,22631,22703,22875,22959,23025",
-                        "endColumns": "84,79,103,97,87,83,82,84,86,79,84,75,73,71,70,83,65,117",
-                        "endOffsets": "4492,4572,6994,7164,7252,10180,10263,21821,21908,22071,22156,22476,22626,22698,22769,22954,23020,23138"
-                    }
-                },
-                {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/5a723b654acfbe86eb9384a499610e65/transformed/media3-exoplayer-1.4.0/res/values-km/values-km.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9,10",
-                        "startColumns": "4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,126,185,251,320,393,464,562,657",
-                        "endColumns": "70,58,65,68,72,70,97,94,68",
-                        "endOffsets": "121,180,246,315,388,459,557,652,721"
-                    },
-                    "to": {
-                        "startLines": "92,93,94,95,96,97,98,99,100",
-                        "startColumns": "4,4,4,4,4,4,4,4,4",
-                        "startOffsets": "8936,9007,9066,9132,9201,9274,9345,9443,9538",
-                        "endColumns": "70,58,65,68,72,70,97,94,68",
-                        "endOffsets": "9002,9061,9127,9196,9269,9340,9438,9533,9602"
-                    }
-                },
-                {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/ae38ca6703b3461a19499b422f1be3d8/transformed/foundation-release/res/values-km/values-km.xml",
-                    "from": {
-                        "startLines": "2,3",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,146",
-                        "endColumns": "90,91",
-                        "endOffsets": "141,233"
-                    },
-                    "to": {
-                        "startLines": "247,248",
-                        "startColumns": "4,4",
-                        "startOffsets": "23143,23234",
-                        "endColumns": "90,91",
-                        "endOffsets": "23229,23321"
-                    }
-                },
-                {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/c2c9a5ecc2fbcdb697fc614463ec8945/transformed/play-services-base-18.0.1/res/values-km/values.xml",
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/1dc6216a3dc8fc9fc29c39a3bb22a61f/transformed/play-services-base-18.0.1/res/values-km/values.xml",
                     "from": {
                         "startLines": "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
                         "startColumns": "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
@@ -176,7 +108,41 @@
                     }
                 },
                 {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/e22f7ccea5d57f9e2712545562940bee/transformed/core-1.13.1/res/values-km/values-km.xml",
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/1c27df19a49eab815dd41fcdead0c763/transformed/media3-exoplayer-1.4.0/res/values-km/values-km.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,126,185,251,320,393,464,562,657",
+                        "endColumns": "70,58,65,68,72,70,97,94,68",
+                        "endOffsets": "121,180,246,315,388,459,557,652,721"
+                    },
+                    "to": {
+                        "startLines": "92,93,94,95,96,97,98,99,100",
+                        "startColumns": "4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "8936,9007,9066,9132,9201,9274,9345,9443,9538",
+                        "endColumns": "70,58,65,68,72,70,97,94,68",
+                        "endOffsets": "9002,9061,9127,9196,9269,9340,9438,9533,9602"
+                    }
+                },
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/d3b64377c3fb83a48e613273e9dc6022/transformed/media3-session-1.4.0/res/values-km/values-km.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,127,222,302,401,499,579,671,770,866,958,1024,1126,1222,1322,1411,1514,1587,1675,1743,1809,1883,1965,2052",
+                        "endColumns": "71,94,79,98,97,79,91,98,95,91,65,101,95,99,88,102,72,87,67,65,73,81,86,86",
+                        "endOffsets": "122,217,297,396,494,574,666,765,861,953,1019,1121,1217,1317,1406,1509,1582,1670,1738,1804,1878,1960,2047,2134"
+                    },
+                    "to": {
+                        "startLines": "70,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,179,180,181,182,183,184",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "6999,7388,7483,7563,7662,7760,7840,7932,8031,8127,8219,8285,8387,8483,8583,8672,8775,8848,17561,17629,17695,17769,17851,17938",
+                        "endColumns": "71,94,79,98,97,79,91,98,95,91,65,101,95,99,88,102,72,87,67,65,73,81,86,86",
+                        "endOffsets": "7066,7478,7558,7657,7755,7835,7927,8026,8122,8214,8280,8382,8478,8578,8667,8770,8843,8931,17624,17690,17764,17846,17933,18020"
+                    }
+                },
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/1ac05baa1c66ae9324ee287b11f48dfb/transformed/core-1.13.1/res/values-km/values-km.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -190,6 +156,40 @@
                         "startOffsets": "3399,3494,3597,3695,3795,3896,4008,22774",
                         "endColumns": "94,102,97,99,100,111,111,100",
                         "endOffsets": "3489,3592,3690,3790,3891,4003,4115,22870"
+                    }
+                },
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/10eefaa8fcefd87e0c94c394595da510/transformed/ui-release/res/values-km/values-km.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "105,190,270,374,472,560,644,727,812,899,979,1064,1140,1214,1286,1357,1441,1507",
+                        "endColumns": "84,79,103,97,87,83,82,84,86,79,84,75,73,71,70,83,65,117",
+                        "endOffsets": "185,265,369,467,555,639,722,807,894,974,1059,1135,1209,1281,1352,1436,1502,1620"
+                    },
+                    "to": {
+                        "startLines": "48,49,69,71,72,106,107,230,231,233,234,238,240,241,242,244,245,246",
+                        "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
+                        "startOffsets": "4412,4497,6895,7071,7169,10101,10185,21741,21826,21996,22076,22405,22557,22631,22703,22875,22959,23025",
+                        "endColumns": "84,79,103,97,87,83,82,84,86,79,84,75,73,71,70,83,65,117",
+                        "endOffsets": "4492,4572,6994,7164,7252,10180,10263,21821,21908,22071,22156,22476,22626,22698,22769,22954,23020,23138"
+                    }
+                },
+                {
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/daab337a08593abd2e0db264419e71b1/transformed/foundation-release/res/values-km/values-km.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,146",
+                        "endColumns": "90,91",
+                        "endOffsets": "141,233"
+                    },
+                    "to": {
+                        "startLines": "247,248",
+                        "startColumns": "4,4",
+                        "startOffsets": "23143,23234",
+                        "endColumns": "90,91",
+                        "endOffsets": "23229,23321"
                     }
                 }
             ]

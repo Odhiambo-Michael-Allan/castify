@@ -4,6 +4,7 @@ import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.media.player.PlaybackPosition
 import com.squad.castify.core.media.player.PlayerState
 import com.squad.castify.core.model.Episode
+import com.squad.castify.core.model.UserEpisode
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +25,9 @@ class TestEpisodePlayerServiceConnection : EpisodePlayerServiceConnection {
 
     private val _seekForwardIncrement = MutableStateFlow( 30 )
     override val seekForwardIncrement = _seekForwardIncrement.asStateFlow()
+
+    private val _episodesInQueue = MutableStateFlow<List<Episode>>( emptyList() )
+    override val episodesInQueue = _episodesInQueue.asStateFlow()
 
     private val onDisconnectListeners = mutableListOf<() -> Unit>()
 
@@ -53,12 +57,24 @@ class TestEpisodePlayerServiceConnection : EpisodePlayerServiceConnection {
         TODO("Not yet implemented")
     }
 
+    override fun addEpisodeToQueue(userEpisode: UserEpisode) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun removeEpisodeFromQueue(userEpisode: UserEpisode) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun move( from: Int, to: Int ) {
+        TODO("Not yet implemented")
+    }
+
     fun setPlayerState( playerState: PlayerState ) {
         _playerState.value = playerState
     }
 
-    fun setPlaybackPosition( playbackPosition: PlaybackPosition ) {
-        this.playbackPosition = playbackPosition
+    fun sendEpisodesInQueue( episodes: List<Episode> ) {
+        _episodesInQueue.value = episodes
     }
 
 }

@@ -18,6 +18,7 @@ import com.squad.castify.core.testing.media.TestEpisodePlayerServiceConnection
 import com.squad.castify.core.testing.repository.TestCategoriesRepository
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
 import com.squad.castify.core.testing.repository.TestPodcastsRepository
+import com.squad.castify.core.testing.repository.TestQueueRepository
 import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
 import com.squad.castify.core.testing.rules.MainDispatcherRule
@@ -50,6 +51,7 @@ class ExploreScreenViewModelTest {
     private val syncManager = TestSyncManager()
     private val episodePlayerServiceConnection = TestEpisodePlayerServiceConnection()
     private val downloadTracker = TestDownloadTracker()
+    private val queueRepository = TestQueueRepository()
 
     private lateinit var filterableCategoriesUseCase: FilterableCategoriesUseCase
     private lateinit var podcastCategoryFilterUseCase: PodcastCategoryFilterUseCase
@@ -78,7 +80,8 @@ class ExploreScreenViewModelTest {
             syncManager = syncManager,
             episodePlayer = episodePlayerServiceConnection,
             downloadTracker = downloadTracker,
-            episodesRepository = episodesRepository
+            episodesRepository = episodesRepository,
+            queueRepository = queueRepository,
         )
     }
 
@@ -107,6 +110,7 @@ class ExploreScreenViewModelTest {
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( userData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             CategoriesUiState.Shown(
@@ -143,7 +147,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -162,6 +167,7 @@ class ExploreScreenViewModelTest {
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( userData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             PodcastFeedUiState.Success(
@@ -189,7 +195,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -214,7 +221,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -229,6 +237,7 @@ class ExploreScreenViewModelTest {
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             PodcastFeedUiState.Success(
@@ -245,7 +254,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -268,7 +278,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -290,6 +301,7 @@ class ExploreScreenViewModelTest {
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             PodcastFeedUiState.Success(
@@ -306,7 +318,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -332,7 +345,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = testDownloads,
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -347,6 +361,7 @@ class ExploreScreenViewModelTest {
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             PodcastFeedUiState.Success(
@@ -363,7 +378,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -389,7 +405,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = downloadingEpisodes,
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -404,6 +421,7 @@ class ExploreScreenViewModelTest {
         podcastsRepository.sendPodcasts( samplePodcasts )
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             PodcastFeedUiState.Success(
@@ -420,7 +438,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )
@@ -447,7 +466,8 @@ class ExploreScreenViewModelTest {
                 ),
                 downloadedEpisodes = emptyMap(),
                 downloadingEpisodes = emptyMap(),
-                playerState = playerState
+                playerState = playerState,
+                episodesInQueue = emptyList(),
             ),
             viewModel.podcastFeedUiState.value
         )

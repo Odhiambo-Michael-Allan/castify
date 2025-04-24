@@ -26,6 +26,7 @@ class TestPlayer : Player {
     private var seekBackDuration = 0L
     private var currentlyPlayingMediaItem: MediaItem? = null
     private var currentPlaybackPosition = 0L
+    private var queue = mutableListOf<MediaItem>()
 
     override fun getApplicationLooper(): Looper {
         TODO("Not yet implemented")
@@ -37,11 +38,11 @@ class TestPlayer : Player {
         TODO("Not yet implemented")
     }
 
-    override fun setMediaItems(mediaItems: MutableList<MediaItem>) {
+    override fun setMediaItems( mediaItems: MutableList<MediaItem> ) {
         TODO("Not yet implemented")
     }
 
-    override fun setMediaItems(mediaItems: MutableList<MediaItem>, resetPosition: Boolean) {
+    override fun setMediaItems( mediaItems: MutableList<MediaItem>, resetPosition: Boolean ) {
         TODO("Not yet implemented")
     }
 
@@ -50,7 +51,11 @@ class TestPlayer : Player {
         startIndex: Int,
         startPositionMs: Long
     ) {
-        TODO("Not yet implemented")
+        queue.clear()
+        queue.addAll( mediaItems )
+        println( "MEDIA ITEM IDS: ${mediaItems.map { it.mediaId }}" )
+        currentlyPlayingMediaItem = mediaItems[ startIndex ]
+        currentPlaybackPosition = startPositionMs
     }
 
     override fun setMediaItem( mediaItem: MediaItem ) {
@@ -58,15 +63,18 @@ class TestPlayer : Player {
     }
 
     override fun setMediaItem( mediaItem: MediaItem, startPositionMs: Long ) {
+        queue.clear()
+        queue.add( mediaItem )
         currentlyPlayingMediaItem = mediaItem
+        currentPlaybackPosition = startPositionMs
     }
 
-    override fun setMediaItem(mediaItem: MediaItem, resetPosition: Boolean) {
+    override fun setMediaItem( mediaItem: MediaItem, resetPosition: Boolean ) {
         TODO("Not yet implemented")
     }
 
-    override fun addMediaItem(mediaItem: MediaItem) {
-        TODO("Not yet implemented")
+    override fun addMediaItem( mediaItem: MediaItem ) {
+        queue.add( mediaItem )
     }
 
     override fun addMediaItem(index: Int, mediaItem: MediaItem) {
@@ -81,9 +89,7 @@ class TestPlayer : Player {
         TODO("Not yet implemented")
     }
 
-    override fun moveMediaItem(currentIndex: Int, newIndex: Int) {
-        TODO("Not yet implemented")
-    }
+    override fun moveMediaItem( currentIndex: Int, newIndex: Int ) {}
 
     override fun moveMediaItems(fromIndex: Int, toIndex: Int, newIndex: Int) {
         TODO("Not yet implemented")
@@ -101,8 +107,9 @@ class TestPlayer : Player {
         TODO("Not yet implemented")
     }
 
-    override fun removeMediaItem(index: Int) {
-        TODO("Not yet implemented")
+    override fun removeMediaItem( index: Int ) {
+        println( "REMOVING MEDIA ITEM AT: $index" )
+        queue.removeAt( index )
     }
 
     override fun removeMediaItems(fromIndex: Int, toIndex: Int) {
@@ -110,7 +117,7 @@ class TestPlayer : Player {
     }
 
     override fun clearMediaItems() {
-        TODO("Not yet implemented")
+        queue.clear()
     }
 
     override fun isCommandAvailable(command: Int): Boolean {
@@ -324,7 +331,7 @@ class TestPlayer : Player {
     }
 
     override fun getCurrentMediaItemIndex(): Int {
-        TODO("Not yet implemented")
+        return queue.indexOf( currentlyPlayingMediaItem )
     }
 
     override fun getNextWindowIndex(): Int {
@@ -346,11 +353,11 @@ class TestPlayer : Player {
     override fun getCurrentMediaItem(): MediaItem? = currentlyPlayingMediaItem
 
     override fun getMediaItemCount(): Int {
-        TODO("Not yet implemented")
+        return queue.size
     }
 
-    override fun getMediaItemAt(index: Int): MediaItem {
-        TODO("Not yet implemented")
+    override fun getMediaItemAt( index: Int ): MediaItem {
+        return queue[ index ]
     }
 
     override fun getDuration(): Long {

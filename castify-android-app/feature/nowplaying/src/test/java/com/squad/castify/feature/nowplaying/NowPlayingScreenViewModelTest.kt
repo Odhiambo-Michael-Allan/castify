@@ -196,6 +196,7 @@ class NowPlayingScreenViewModelTest {
             viewModel.uiState.value
         )
     }
+
 }
 
 private val samplePodcast = Podcast(

@@ -5,6 +5,7 @@ import com.squad.castify.core.testing.repository.TestPodcastsRepository
 import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
 import com.squad.castify.core.testing.rules.MainDispatcherRule
+import com.squad.castify.core.testing.util.TestSyncManager
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -22,6 +23,7 @@ class SubscriptionsScreenViewModelTest {
 
     private val userDataRepository = TestUserDataRepository()
     private val podcastsRepository = TestPodcastsRepository()
+    private val syncManager = TestSyncManager()
 
     private lateinit var viewModel: SubscriptionsScreenViewModel
 
@@ -29,7 +31,8 @@ class SubscriptionsScreenViewModelTest {
     fun setUp() {
         viewModel = SubscriptionsScreenViewModel(
             userDataRepository = userDataRepository,
-            podcastsRepository = podcastsRepository
+            podcastsRepository = podcastsRepository,
+            syncManager = syncManager,
         )
     }
 

@@ -25,6 +25,8 @@ fun LazyGridScope.episodesFeed(
     getDownloadStateFor: ( UserEpisode ) -> Int?,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    isPresentInQueue: ( UserEpisode ) -> Boolean,
+    onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
 ) {
     items(
         items = episodes,
@@ -48,6 +50,8 @@ fun LazyGridScope.episodesFeed(
             onMarkAsCompleted = onMarkAsCompleted,
             onNavigateToEpisode = onNavigateToEpisode,
             onAddEpisodeToQueue = onAddEpisodeToQueue,
+            isPresentInQueue = isPresentInQueue( it ),
+            onRemoveFromQueue = onRemoveEpisodeFromQueue,
         )
     }
 }

@@ -20,7 +20,7 @@ import kotlin.time.toDuration
 
 class DurationPlayedUpdaterTest {
 
-    private val episodePlayerServiceConnection = TestEpisodePlayerServiceConnection()
+    private val episodePlayer = TestEpisodePlayerServiceConnection()
     private val episodesRepository = TestEpisodesRepository()
     private val playbackPositionUpdater = TestPlaybackPositionUpdater()
 
@@ -30,7 +30,7 @@ class DurationPlayedUpdaterTest {
     fun setUp() {
         subject = DurationPlayedUpdaterImpl(
             dispatcher = UnconfinedTestDispatcher(),
-            episodePlayerServiceConnection = episodePlayerServiceConnection,
+            episodePlayerServiceConnection = episodePlayer,
             episodesRepository = episodesRepository,
             playbackPositionUpdater = playbackPositionUpdater
         )
@@ -39,7 +39,7 @@ class DurationPlayedUpdaterTest {
     @Test
     fun whenPlayingEpisodeChanges_previouslyPlayingEpisodeDurationIsSaved() = runTest {
         episodesRepository.sendEpisodes( sampleEpisodes )
-        episodePlayerServiceConnection.setPlayerState(
+        episodePlayer.setPlayerState(
             PlayerState(
                 currentlyPlayingEpisodeUri = "episode-0-uri"
             )
@@ -55,6 +55,24 @@ class DurationPlayedUpdaterTest {
             (3L).toDuration( DurationUnit.MILLISECONDS ),
             episodesRepository.fetchEpisodeWithUri( "episode-0-uri" ).first()?.durationPlayed
         )
+    }
+
+    @Test
+    fun whenTheDurationPlayedIsGreaterThanTheEpisodeDuration_durationPlayedIsSetToEpisodeDuration() = runTest {
+        episodesRepository.sendEpisodes( sampleEpisodes )
+        episodePlayer.setPlayerState(
+            PlayerState(
+                currentlyPlayingEpisodeUri = "episode-0-uri"
+            )
+        )
+
+        playbackPositionUpdater.setTotalDurationPreviousMediaItemPlayed( 5L )
+
+        assertEquals(
+            (4L).toDuration( DurationUnit.MILLISECONDS ),
+            episodesRepository.fetchEpisodeWithUri( "episode-0-uri" ).first()?.durationPlayed
+        )
+
     }
 
 }
@@ -80,7 +98,7 @@ private val sampleEpisodes = listOf(
         podcast = samplePodcast,
         audioUri = "",
         audioMimeType = "",
-        duration = Duration.ZERO,
+        duration = (4L).toDuration( DurationUnit.MILLISECONDS ),
         durationPlayed = Duration.ZERO
     ),
     Episode(

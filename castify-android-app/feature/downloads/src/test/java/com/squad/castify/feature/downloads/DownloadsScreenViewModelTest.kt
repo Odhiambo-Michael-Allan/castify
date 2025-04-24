@@ -9,6 +9,7 @@ import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.testing.media.TestDownloadTracker
 import com.squad.castify.core.testing.media.TestEpisodePlayerServiceConnection
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
+import com.squad.castify.core.testing.repository.TestQueueRepository
 import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
 import com.squad.castify.core.testing.rules.MainDispatcherRule
@@ -39,6 +40,7 @@ class DownloadsScreenViewModelTest {
     private val downloadTracker = TestDownloadTracker()
     private val episodePlayer = TestEpisodePlayerServiceConnection()
     private val syncManager = TestSyncManager()
+    private val queueRepository = TestQueueRepository()
 
     private lateinit var viewModel: DownloadsScreenViewModel
 
@@ -50,6 +52,7 @@ class DownloadsScreenViewModelTest {
             episodesRepository = episodesRepository,
             episodePlayer = episodePlayer,
             syncManager = syncManager,
+            queueRepository = queueRepository,
         )
     }
 
@@ -69,13 +72,15 @@ class DownloadsScreenViewModelTest {
 
         userDataRepository.setUserData( emptyUserData )
         episodesRepository.sendEpisodes( emptyList() )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             DownloadsScreenUiState.Success(
                 downloadedEpisodes = emptyList(),
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState(),
-                downloadStates = emptyMap()
+                downloadStates = emptyMap(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.uiState.value
         )
@@ -87,6 +92,7 @@ class DownloadsScreenViewModelTest {
 
         userDataRepository.setUserData( emptyUserData )
         episodesRepository.sendEpisodes( sampleEpisodes )
+        queueRepository.sendEpisodes( emptyList() )
         downloadTracker.sendDownloads(
             sampleEpisodes.associate { Pair( it.uri, Download.STATE_COMPLETED ) }
         )
@@ -96,7 +102,8 @@ class DownloadsScreenViewModelTest {
                 downloadedEpisodes = sampleEpisodes.map { UserEpisode( it, emptyUserData ) },
                 downloadingEpisodes = emptyMap(),
                 playerState = PlayerState(),
-                downloadStates = sampleEpisodes.associate { Pair( it.uri, Download.STATE_COMPLETED ) }
+                downloadStates = sampleEpisodes.associate { Pair( it.uri, Download.STATE_COMPLETED ) },
+                episodesInQueue = emptyList(),
             ),
             viewModel.uiState.value
         )
@@ -108,6 +115,7 @@ class DownloadsScreenViewModelTest {
 
         episodesRepository.sendEpisodes( emptyList() )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         val playerState = PlayerState(
             currentlyPlayingEpisodeUri = "test/uri/1",
@@ -122,7 +130,8 @@ class DownloadsScreenViewModelTest {
                 downloadedEpisodes = emptyList(),
                 downloadingEpisodes = emptyMap(),
                 playerState = playerState,
-                downloadStates = emptyMap()
+                downloadStates = emptyMap(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.uiState.value
         )
@@ -135,6 +144,7 @@ class DownloadsScreenViewModelTest {
 
         userDataRepository.setUserData( emptyUserData )
         episodesRepository.sendEpisodes( sampleEpisodes )
+        queueRepository.sendEpisodes( emptyList() )
 
         val downloadingEpisodes = mapOf(
             "test/uri/1" to .1f,
@@ -147,7 +157,8 @@ class DownloadsScreenViewModelTest {
                 downloadedEpisodes = emptyList(),
                 downloadingEpisodes = downloadingEpisodes,
                 playerState = PlayerState(),
-                downloadStates = emptyMap()
+                downloadStates = emptyMap(),
+                episodesInQueue = emptyList()
             ),
             viewModel.uiState.value
         )

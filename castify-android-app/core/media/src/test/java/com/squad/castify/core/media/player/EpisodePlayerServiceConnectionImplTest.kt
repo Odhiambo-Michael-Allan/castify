@@ -1,21 +1,18 @@
 package com.squad.castify.core.media.player
 
 import androidx.media3.common.MediaItem
-import com.squad.castify.core.media.extensions.toMediaItem
 import com.squad.castify.core.media.testDoubles.TestServiceConnector
 import com.squad.castify.core.model.Category
 import com.squad.castify.core.model.Episode
 import com.squad.castify.core.model.Podcast
+import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
 import com.squad.castify.core.testing.repository.TestQueueRepository
 import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.junit.Assert.*
 
@@ -37,10 +34,11 @@ class EpisodePlayerServiceConnectionImplTest {
     @Before
     fun setUp() {
 
-        episodeRepository.sendEpisodes( testEpisodes )
+        episodeRepository.sendEpisodes( sampleEpisodes )
+        queueRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData(
             emptyUserData.copy(
-                currentlyPlayingEpisodeUri = testEpisodes.first().uri
+                currentlyPlayingEpisodeUri = sampleEpisodes.first().uri
             )
         )
 
@@ -91,14 +89,6 @@ class EpisodePlayerServiceConnectionImplTest {
     }
 
     @Test
-    fun testPreviouslyPlayingEpisodeIsCorrectlyInitialized() = runTest {
-        assertEquals(
-            testEpisodes.first().uri,
-            serviceConnector.player!!.currentMediaItem!!.mediaId
-        )
-    }
-
-    @Test
     fun testSeekBackIncrementIsCorrectlyUpdated() = runTest {
         assertEquals( 10, subject.seekBackIncrement.value )
         userDataRepository.setSeekBackDuration( 30 )
@@ -110,6 +100,8 @@ class EpisodePlayerServiceConnectionImplTest {
         assertEquals( 30, subject.seekForwardIncrement.value )
         userDataRepository.setSeekForwardDuration( 10 )
         assertEquals( 10, subject.seekForwardIncrement.value )
+
+
     }
 
     @Test
@@ -129,22 +121,176 @@ class EpisodePlayerServiceConnectionImplTest {
 
     @Test
     fun testSeekForwardUsesSeekForwardIncrementValue() = runTest {
+        var expected = serviceConnector.player!!.currentPosition + 30
         subject.seekForward()
-        assertEquals( 30, serviceConnector.player!!.currentPosition )
+        assertEquals( expected, serviceConnector.player!!.currentPosition )
         userDataRepository.setSeekForwardDuration( 10 )
+        expected = serviceConnector.player!!.currentPosition + 10
         subject.seekForward()
-        assertEquals( 40, serviceConnector.player!!.currentPosition )
+        assertEquals( expected, serviceConnector.player!!.currentPosition )
+    }
+
+
+    @Test
+    fun testRemoveEpisodeFromQueue() = runTest {
+        subject.removeEpisodeFromQueue( UserEpisode( sampleEpisodes.first(), emptyUserData ) )
+        // 1. The episode is removed from the player
+        assertEquals( 2, serviceConnector.player!!.mediaItemCount )
+        println( "ID 1 : ${serviceConnector.player!!.getMediaItemAt( 0 ).mediaId}" )
+        println( "EPISODE REMOVED ID: ${sampleEpisodes.first().uri}" )
+        assertTrue(
+            serviceConnector.player!!.getMediaItemAt( 0 ).mediaId !=
+                    sampleEpisodes.first().uri
+        )
+
+        // 2. Episode is removed from queue.
+        assertEquals( 2, subject.episodesInQueue.value.size )
+        assertNull( subject.episodesInQueue.value.find { it.uri == sampleEpisodes.first().uri } )
+
+        // 3. Episode is removed from queue repository
+        assertEquals( 2, queueRepository.fetchEpisodesInQueueSortedByPosition().first().size )
+        assertNull(
+            queueRepository.fetchEpisodesInQueueSortedByPosition().first()
+                .find { it.uri == sampleEpisodes.first().uri }
+        )
+
+        // 4. If item removed was playing, update currently playing media item uri.
+        assertNull( subject.playerState.value.currentlyPlayingEpisodeUri )
     }
 
     @Test
-    fun whenTheUserSelectsAnEpisodeToPlay_theQueueIsClearedAndTheEpisodeSelectedIsAddedAsTheFirstQueueElement() = runTest {
-        queueRepository.sendEpisodes( testEpisodes )
-        subject.playEpisode( testEpisodes.first() )
+    fun whenEpisodesInQueueRepositoryAreUpdated_theInternalQueueIsAlsoUpdated() = runTest {
+        val episodesToEdit = sampleEpisodes.toMutableList()
+        val lastEpisode = episodesToEdit.removeLast()
+        println( "EPISODES TO EDIT SIZE: ${episodesToEdit.size}" )
+        episodesToEdit.add(
+            lastEpisode.copy(
+                durationPlayed = ( 3L ).toDuration( DurationUnit.MINUTES )
+            )
+        )
+        episodeRepository.sendEpisodes( episodesToEdit )
+        assertEquals(
+            episodesToEdit.map { it.durationPlayed },
+            subject.episodesInQueue.value.map { it.durationPlayed }
+        )
+    }
+
+    @Test
+    fun testAddEpisodeToQueue() = runTest {
+        val episodeToAdd = sampleEpisodes.last().copy(
+            uri = "episode-to-add-uri"
+        )
+        subject.addEpisodeToQueue( UserEpisode( episodeToAdd, emptyUserData ) )
+        val player = serviceConnector.player!!
+
+        // 1. Episode is added to the player.
+        assertEquals(
+            sampleEpisodes.size + 1,
+            player.mediaItemCount
+        )
+        assertEquals(
+            episodeToAdd.uri,
+            player.getMediaItemAt( player.mediaItemCount - 1 ).mediaId
+        )
+
+        // 2. Episode is added to the internal queue.
+        assertEquals(
+            sampleEpisodes.size + 1,
+            subject.episodesInQueue.value.size
+        )
+        assertEquals(
+            episodeToAdd.uri,
+            subject.episodesInQueue.value.last().uri
+        )
+
+        // 3. Episode is added to the queue repository.
+        assertEquals(
+            sampleEpisodes.size + 1,
+            queueRepository.fetchEpisodesInQueueSortedByPosition().first().size
+        )
+        assertEquals(
+            episodeToAdd.uri,
+            queueRepository.fetchEpisodesInQueueSortedByPosition().first().last().uri
+        )
+    }
+
+    @Test
+    fun testMoveEpisodeInQueue() = runTest {
+        queueRepository.sendEpisodes( sampleEpisodes )
+        subject.move( from = 0, to = 1 )
+        assertEquals(
+            listOf(
+                "episode-1-uri",
+                "episode-0-uri",
+                "episode-2-uri",
+            ),
+            queueRepository.fetchEpisodesInQueueSortedByPosition().first().map { it.uri }
+        )
+        subject.move( from = 2, to = 0 )
+        assertEquals(
+            listOf(
+                "episode-2-uri",
+                "episode-1-uri",
+                "episode-0-uri"
+            ),
+            queueRepository.fetchEpisodesInQueueSortedByPosition().first().map { it.uri }
+        )
+    }
+
+    @Test
+    fun whenPlayerIsInitialized_previouslySavedEpisodesAreFetchedAndSubmittedToThePlayer() = runTest {
+        assertEquals(
+            sampleEpisodes,
+            subject.episodesInQueue.value
+        )
+    }
+
+    @Test
+    fun testPreviouslyPlayingEpisodeIsCorrectlyInitialized() = runTest {
+        assertEquals(
+            sampleEpisodes.first().uri,
+            serviceConnector.player!!.currentMediaItem!!.mediaId
+        )
+        assertEquals(
+            (3L).toDuration( DurationUnit.MINUTES ).inWholeMilliseconds,
+            serviceConnector.player!!.currentPosition
+        )
+    }
+
+    @Test
+    fun testPlayEpisodeNotInQueue() = runTest {
+        val episodeToPlay = sampleEpisodes.last().copy( uri = "uri-of-episode-to-play" )
+        val player = serviceConnector.player!!
+        subject.playEpisode( episodeToPlay )
+        assertEquals(
+            "uri-of-episode-to-play",
+            player.currentMediaItem!!.mediaId
+        )
+        assertEquals( 1, player.mediaItemCount )
+
+        assertEquals( 1, subject.episodesInQueue.value.size )
+        assertEquals( episodeToPlay, subject.episodesInQueue.value.first() )
+
         assertEquals( 1, queueRepository.fetchEpisodesInQueueSortedByPosition().first().size )
         assertEquals(
-            testEpisodes.first(),
+            episodeToPlay,
             queueRepository.fetchEpisodesInQueueSortedByPosition().first().first()
         )
+    }
+
+    @Test
+    fun testPlaySongInQueue() = runTest {
+        val player = serviceConnector.player!!
+        subject.playEpisode( sampleEpisodes.last() )
+        assertEquals(
+            sampleEpisodes.last().uri,
+            player.currentMediaItem!!.mediaId
+        )
+        assertEquals( 3, player.mediaItemCount )
+        assertEquals( 2, player.currentMediaItemIndex )
+
+        assertEquals( 3, subject.episodesInQueue.value.size )
+        assertEquals( 3, queueRepository.fetchEpisodesInQueueSortedByPosition().first().size )
     }
 
 }
@@ -152,7 +298,8 @@ class EpisodePlayerServiceConnectionImplTest {
 private class TestEpisodeToMediaItemConverter : EpisodeToMediaItemConverter {
     override fun convert( episode: Episode ): MediaItem =
         MediaItem.Builder().apply {
-            setMediaId( testEpisodes.first().uri )
+            println( "CONVERTED EPISODE URI: ${episode.uri}" )
+            setMediaId( episode.uri )
         }.build()
 }
 
@@ -170,7 +317,7 @@ private val testPodcast = Podcast(
     )
 )
 
-private val testEpisodes = listOf(
+private val sampleEpisodes = listOf(
     Episode(
         uri = "episode-0-uri",
         published = Instant.parse( "2021-11-09T00:00:00.000Z" ),
@@ -178,7 +325,7 @@ private val testEpisodes = listOf(
         audioUri = "",
         audioMimeType = "",
         duration = Duration.ZERO,
-        durationPlayed = Duration.ZERO
+        durationPlayed = (3L).toDuration( DurationUnit.MINUTES )
     ),
     Episode(
         uri = "episode-1-uri",

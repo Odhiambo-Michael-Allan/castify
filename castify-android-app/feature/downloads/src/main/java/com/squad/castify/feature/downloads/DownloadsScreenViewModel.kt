@@ -3,6 +3,7 @@ package com.squad.castify.feature.downloads
 import androidx.lifecycle.viewModelScope
 import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.repository.UserEpisodesRepository
 import com.squad.castify.core.data.util.SyncManager
 import com.squad.castify.core.media.download.DownloadTracker
@@ -26,7 +27,8 @@ class DownloadsScreenViewModel @Inject constructor(
     downloadTracker: DownloadTracker,
     episodesRepository: EpisodesRepository,
     episodePlayer: EpisodePlayerServiceConnection,
-    syncManager: SyncManager
+    syncManager: SyncManager,
+    queueRepository: QueueRepository,
 ) : BaseViewModel(
     downloadTracker = downloadTracker,
     episodesRepository = episodesRepository,
@@ -46,14 +48,15 @@ class DownloadsScreenViewModel @Inject constructor(
                 },
             downloadTracker.downloadedEpisodes,
             downloadTracker.downloadingEpisodes,
-            episodePlayer.playerState
-        ) { downloadedEpisodes, downloadStates, downloadingEpisodes, playerState ->
-            println( "DOWNLOADED EPISODES: $downloadedEpisodes" )
+            episodePlayer.playerState,
+            queueRepository.fetchEpisodesInQueueSortedByPosition(),
+        ) { downloadedEpisodes, downloadStates, downloadingEpisodes, playerState, episodesInQueue ->
             DownloadsScreenUiState.Success(
                 downloadedEpisodes = downloadedEpisodes,
                 downloadStates = downloadStates,
                 downloadingEpisodes = downloadingEpisodes,
                 playerState = playerState,
+                episodesInQueue = episodesInQueue.map { it.uri }
             )
         }.catch { DownloadsScreenUiState.Error }
             .stateIn(
@@ -72,5 +75,6 @@ sealed interface DownloadsScreenUiState {
         val downloadStates: Map<String, Int>,
         val downloadingEpisodes: Map<String, Float>,
         val playerState: PlayerState,
+        val episodesInQueue: List<String>,
     ) : DownloadsScreenUiState
 }

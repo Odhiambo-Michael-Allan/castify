@@ -6,6 +6,7 @@ import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.database.dao.QueueDao
 import com.squad.castify.core.database.model.QueueEntity
 import com.squad.castify.core.model.Episode
+import com.squad.castify.core.model.QueueEntry
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -31,6 +32,18 @@ internal class QueueRepositoryImpl @Inject constructor(
                 episodeUri = episode.uri,
                 positionInQueue = posInQueue
             )
+        )
+    }
+
+    override suspend fun saveQueue( queue: List<Episode> ) {
+        queueDao.clearQueue()
+        queueDao.upsertQueueEntities(
+            queue.mapIndexed { index, ep ->
+                QueueEntity(
+                    ep.uri,
+                    index
+                )
+            }
         )
     }
 

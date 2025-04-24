@@ -13,6 +13,7 @@ import com.squad.castify.core.testing.media.TestDownloadTracker
 import com.squad.castify.core.testing.media.TestEpisodePlayerServiceConnection
 import com.squad.castify.core.testing.repository.TestEpisodesRepository
 import com.squad.castify.core.testing.repository.TestPodcastsRepository
+import com.squad.castify.core.testing.repository.TestQueueRepository
 import com.squad.castify.core.testing.repository.TestUserDataRepository
 import com.squad.castify.core.testing.repository.emptyUserData
 import com.squad.castify.core.testing.rules.MainDispatcherRule
@@ -59,6 +60,7 @@ class PodcastScreenViewModelTest {
     private val syncManager = TestSyncManager()
     private val episodePlayerServiceConnection = TestEpisodePlayerServiceConnection()
     private val downloadTracker = TestDownloadTracker()
+    private val queueRepository = TestQueueRepository()
 
 
     private lateinit var viewModel: PodcastScreenViewModel
@@ -75,7 +77,8 @@ class PodcastScreenViewModelTest {
             syncManager = syncManager,
             episodePlayer = episodePlayerServiceConnection,
             downloadTracker = downloadTracker,
-            episodesRepository = episodesRepository
+            episodesRepository = episodesRepository,
+            queueRepository = queueRepository,
         )
     }
 
@@ -94,6 +97,7 @@ class PodcastScreenViewModelTest {
 
         podcastsRepository.sendPodcasts( testInputPodcasts.map( FollowablePodcast::podcast ) )
         userDataRepository.setPodcastWithUriFollowed( testInputPodcasts[1].podcast.uri, true )
+        queueRepository.sendEpisodes( emptyList() )
 
         val uiState = viewModel.podcastUiState.value
 
@@ -121,6 +125,8 @@ class PodcastScreenViewModelTest {
             backgroundScope.launch( UnconfinedTestDispatcher() ) { viewModel.podcastUiState.collect() }
 
             userDataRepository.setPodcastWithUriFollowed( testInputPodcasts[1].podcast.uri, true )
+            queueRepository.sendEpisodes( emptyList() )
+
             assertEquals( PodcastUiState.Loading, viewModel.podcastUiState.value )
         }
 
@@ -131,6 +137,8 @@ class PodcastScreenViewModelTest {
 
             podcastsRepository.sendPodcasts( testInputPodcasts.map { it.podcast } )
             userDataRepository.setPodcastWithUriFollowed( testInputPodcasts[0].podcast.uri, true )
+            queueRepository.sendEpisodes( emptyList() )
+
             val podcastUiState = viewModel.podcastUiState.value
             val episodesUiState = viewModel.episodesUiState.value
 
@@ -152,6 +160,7 @@ class PodcastScreenViewModelTest {
             podcastsRepository.sendPodcasts( testInputPodcasts.map { it.podcast } )
             userDataRepository.setPodcastWithUriFollowed( testInputPodcasts[0].podcast.uri, true )
             episodesRepository.sendEpisodes( sampleEpisodes )
+            queueRepository.sendEpisodes( emptyList() )
 
             val podcastUiState = viewModel.podcastUiState.value
             val episodesUiState = viewModel.episodesUiState.value
@@ -192,6 +201,7 @@ class PodcastScreenViewModelTest {
 
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             EpisodesUiState.Success(
@@ -203,7 +213,8 @@ class PodcastScreenViewModelTest {
                 ),
                 playerState = PlayerState(),
                 downloadingEpisodes = emptyMap(),
-                downloadedEpisodes = emptyMap()
+                downloadedEpisodes = emptyMap(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodesUiState.value
         )
@@ -225,7 +236,8 @@ class PodcastScreenViewModelTest {
                 ),
                 downloadedEpisodes = testDownloads,
                 downloadingEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodesUiState.value
         )
@@ -237,6 +249,7 @@ class PodcastScreenViewModelTest {
 
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             EpisodesUiState.Success(
@@ -248,7 +261,8 @@ class PodcastScreenViewModelTest {
                 ),
                 downloadingEpisodes = emptyMap(),
                 downloadedEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodesUiState.value
         )
@@ -270,7 +284,8 @@ class PodcastScreenViewModelTest {
                 ),
                 downloadingEpisodes = downloadingEpisodes,
                 downloadedEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodesUiState.value
         )
@@ -282,6 +297,7 @@ class PodcastScreenViewModelTest {
 
         episodesRepository.sendEpisodes( sampleEpisodes )
         userDataRepository.setUserData( emptyUserData )
+        queueRepository.sendEpisodes( emptyList() )
 
         assertEquals(
             EpisodesUiState.Success(
@@ -293,7 +309,8 @@ class PodcastScreenViewModelTest {
                 ),
                 downloadingEpisodes = emptyMap(),
                 downloadedEpisodes = emptyMap(),
-                playerState = PlayerState()
+                playerState = PlayerState(),
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodesUiState.value
         )
@@ -316,6 +333,7 @@ class PodcastScreenViewModelTest {
                 downloadingEpisodes = emptyMap(),
                 downloadedEpisodes = emptyMap(),
                 playerState = playerState,
+                episodesInQueue = emptyList(),
             ),
             viewModel.episodesUiState.value
         )

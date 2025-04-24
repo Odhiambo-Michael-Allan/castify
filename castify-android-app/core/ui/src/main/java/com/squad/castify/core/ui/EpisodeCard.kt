@@ -77,6 +77,7 @@ fun EpisodeCard(
     isPlaying: Boolean,
     isBuffering: Boolean,
     isCompleted: Boolean,
+    isPresentInQueue: Boolean,
     downloadingEpisodes: Map<String, Float>,
     onPlayEpisode: () -> Unit,
     onDownloadEpisode: () -> Unit,
@@ -88,6 +89,7 @@ fun EpisodeCard(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    onRemoveFromQueue: ( UserEpisode ) -> Unit,
 ) {
 
     Card(
@@ -145,6 +147,7 @@ fun EpisodeCard(
                 isCompleted = isCompleted,
                 isPlaying = isPlaying,
                 isBuffering = isBuffering,
+                isPresentInQueue = isPresentInQueue,
                 downloadState = downloadState,
                 downloadingEpisodes = downloadingEpisodes,
                 onPlayEpisode = onPlayEpisode,
@@ -156,6 +159,7 @@ fun EpisodeCard(
                 onPauseDownload = onPauseDownload,
                 onMarkAsCompleted = onMarkAsCompleted,
                 onAddEpisodeToQueue = onAddEpisodeToQueue,
+                onRemoveFromQueue = onRemoveFromQueue,
             )
         }
     }
@@ -170,6 +174,7 @@ fun MinimalEpisodeCard(
     isPlaying: Boolean,
     isBuffering: Boolean,
     isCompleted: Boolean,
+    isPresentInQueue: Boolean,
     downloadingEpisodes: Map<String, Float>,
     onPlayEpisode: () -> Unit,
     onDownloadEpisode: () -> Unit,
@@ -181,6 +186,7 @@ fun MinimalEpisodeCard(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    onRemoveFromQueue: ( UserEpisode ) -> Unit,
 ) {
 
     Card (
@@ -224,6 +230,7 @@ fun MinimalEpisodeCard(
                 isCompleted = isCompleted,
                 isPlaying = isPlaying,
                 isBuffering = isBuffering,
+                isPresentInQueue = isPresentInQueue,
                 downloadState = downloadState,
                 downloadingEpisodes = downloadingEpisodes,
                 onPlayEpisode = onPlayEpisode,
@@ -235,6 +242,7 @@ fun MinimalEpisodeCard(
                 onPauseDownload = onPauseDownload,
                 onMarkAsCompleted = onMarkAsCompleted,
                 onAddEpisodeToQueue = onAddEpisodeToQueue,
+                onRemoveFromQueue = onRemoveFromQueue,
             )
         }
     }
@@ -249,6 +257,7 @@ fun EpisodeCardBottomRow(
     isCompleted: Boolean,
     isPlaying: Boolean,
     isBuffering: Boolean,
+    isPresentInQueue: Boolean,
     downloadState: Int?,
     downloadingEpisodes: Map<String, Float>,
     onPlayEpisode: () -> Unit,
@@ -260,6 +269,7 @@ fun EpisodeCardBottomRow(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onDownloadEpisode: () -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    onRemoveFromQueue: ( UserEpisode ) -> Unit,
 ) {
 
     var showDownloadStateOptionsBottomSheet by remember { mutableStateOf( false ) }
@@ -352,10 +362,13 @@ fun EpisodeCardBottomRow(
             }
             Spacer( modifier = Modifier.width( 4.dp ) )
             IconButton(
-                onClick = { onAddEpisodeToQueue( userEpisode ) }
+                onClick = {
+                    if ( isPresentInQueue ) { onRemoveFromQueue( userEpisode ) }
+                    else onAddEpisodeToQueue( userEpisode )
+                }
             ) {
                 Icon(
-                    imageVector = CastifyIcons.PlaylistAdd,
+                    imageVector = if ( isPresentInQueue ) CastifyIcons.PlaylistCheck else CastifyIcons.PlaylistAdd,
                     tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null
                 )
@@ -644,6 +657,7 @@ fun EpisodeCardPreview(
                 isPlaying = false,
                 isBuffering = false,
                 isCompleted = false,
+                isPresentInQueue = true,
                 downloadingEpisodes = mapOf(
                     previewData.episodes.first().audioUri to 0.4f
                 ),
@@ -657,6 +671,7 @@ fun EpisodeCardPreview(
                 onMarkAsCompleted = {},
                 onNavigateToEpisode = {},
                 onAddEpisodeToQueue = {},
+                onRemoveFromQueue = {},
             )
         }
     }
@@ -677,6 +692,7 @@ private fun MinimalEpisodeCardPreview(
                 isPlaying = false,
                 isBuffering = false,
                 isCompleted = false,
+                isPresentInQueue = false,
                 downloadingEpisodes = mapOf(
                     previewData.episodes.first().audioUri to 0.4f
                 ),
@@ -690,6 +706,7 @@ private fun MinimalEpisodeCardPreview(
                 onMarkAsCompleted = {},
                 onNavigateToEpisode = {},
                 onAddEpisodeToQueue = {},
+                onRemoveFromQueue = {},
             )
         }
     }

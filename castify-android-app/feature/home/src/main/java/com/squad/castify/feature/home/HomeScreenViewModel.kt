@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.data.repository.PodcastsRepository
+import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.data.repository.impl.CompositeUserEpisodesRepository
 import com.squad.castify.core.data.repository.impl.OfflineFirstPodcastsRepository
 import com.squad.castify.core.data.util.SyncManager
+import com.squad.castify.core.data.util.combine
 import com.squad.castify.core.media.download.DownloadTracker
 import com.squad.castify.core.media.player.EpisodePlayerServiceConnection
 import com.squad.castify.core.media.player.PlayerState
@@ -16,11 +18,11 @@ import com.squad.castify.core.model.Podcast
 import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -32,6 +34,7 @@ class HomeScreenViewModel @Inject constructor(
     private val userEpisodesRepository: CompositeUserEpisodesRepository,
     episodesRepository: EpisodesRepository,
     userDataRepository: UserDataRepository,
+    queueRepository: QueueRepository,
     episodePlayer: EpisodePlayerServiceConnection,
     downloadTracker: DownloadTracker,
     syncManager: SyncManager,
@@ -60,13 +63,15 @@ class HomeScreenViewModel @Inject constructor(
             downloadTracker.downloadingEpisodes,
             downloadTracker.downloadedEpisodes,
             episodePlayer.playerState,
-        ) { podcasts, episodes, downloadingEpisodes, downloadedEpisodes, playerState ->
+            queueRepository.fetchEpisodesInQueueSortedByPosition(),
+        ) { podcasts, episodes, downloadingEpisodes, downloadedEpisodes, playerState, episodesInQueue ->
             HomeFeedUiState.Success(
                 followedPodcasts = podcasts,
                 episodeFeed = episodes,
                 downloadingEpisodes =downloadingEpisodes,
                 downloadedEpisodes = downloadedEpisodes,
                 playerState = playerState,
+                episodesInQueue = episodesInQueue.map { it.uri }
             )
         }.catch {
             HomeFeedUiState.Error
@@ -88,6 +93,7 @@ sealed interface HomeFeedUiState {
         val episodeFeed: List<UserEpisode>,
         val downloadedEpisodes: Map<String, Int>,
         val downloadingEpisodes: Map<String, Float>,
-        val playerState: PlayerState
+        val playerState: PlayerState,
+        val episodesInQueue: List<String>,
     ) : HomeFeedUiState
 }

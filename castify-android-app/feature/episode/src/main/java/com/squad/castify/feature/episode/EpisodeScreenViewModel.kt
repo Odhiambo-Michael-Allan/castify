@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.repository.UserEpisodesRepository
 import com.squad.castify.core.data.util.SyncManager
+import com.squad.castify.core.data.util.combine
 import com.squad.castify.core.media.download.DownloadTracker
 import com.squad.castify.core.media.extensions.toEpisode
 import com.squad.castify.core.media.extensions.toMediaItem
@@ -21,7 +23,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -35,6 +36,7 @@ class EpisodeScreenViewModel @Inject constructor(
     syncManager: SyncManager,
     episodePlayer: EpisodePlayerServiceConnection,
     downloadTracker: DownloadTracker,
+    queueRepository: QueueRepository,
 ) : BaseViewModel(
     downloadTracker = downloadTracker,
     episodesRepository = episodesRepository,
@@ -61,14 +63,16 @@ class EpisodeScreenViewModel @Inject constructor(
             ),
             episodePlayer.playerState,
             downloadTracker.downloadingEpisodes,
-            downloadTracker.downloadedEpisodes
-        ) { selectedEpisode, similarEpisodes, playerState, downloadingEpisodes, downloadedEpisodes ->
+            downloadTracker.downloadedEpisodes,
+            queueRepository.fetchEpisodesInQueueSortedByPosition(),
+        ) { selectedEpisode, similarEpisodes, playerState, downloadingEpisodes, downloadedEpisodes, episodesInQueue ->
             EpisodeUiState.Success(
                 selectedEpisode = selectedEpisode.first(),
                 similarEpisodes = similarEpisodes.filterNot { it.uri == episodeUri },
                 playerState = playerState,
                 downloadingEpisodes = downloadingEpisodes,
-                downloadedEpisodes = downloadedEpisodes
+                downloadedEpisodes = downloadedEpisodes,
+                episodesInQueue = episodesInQueue.map { it.uri },
             )
         }.catch {
             EpisodeUiState.Error
@@ -88,6 +92,7 @@ sealed interface EpisodeUiState {
         val similarEpisodes: List<UserEpisode>,
         val downloadedEpisodes: Map<String, Int>,
         val downloadingEpisodes: Map<String, Float>,
-        val playerState: PlayerState
+        val playerState: PlayerState,
+        val episodesInQueue: List<String>,
     ) : EpisodeUiState
 }

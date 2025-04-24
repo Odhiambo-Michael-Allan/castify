@@ -47,6 +47,7 @@ androidTools = "31.6.1"
 media3Version = "1.4.0"
 androidxMediaVersion = "1.5.0"
 robolectric = "4.12.2"
+reorderable = "2.4.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -163,6 +164,7 @@ androidx-media3-datasource-okhttp = { module = "androidx.media3:media3-datasourc
 androidx-media3-datasource-rtmp = { module = "androidx.media3:media3-datasource-rtmp", version.ref = "media3Version" }
 
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

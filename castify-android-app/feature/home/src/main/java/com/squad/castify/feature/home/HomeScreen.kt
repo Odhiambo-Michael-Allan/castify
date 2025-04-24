@@ -101,6 +101,7 @@ internal fun HomeScreen(
         onDownloadEpisode = viewModel::downloadEpisode,
         onMarkAsCompleted = viewModel::markAsCompleted,
         onAddEpisodeToQueue = viewModel::addEpisodeToQueue,
+        onRemoveEpisodeFromQueue = viewModel::removeEpisodeFromQueue,
     )
 }
 
@@ -122,6 +123,7 @@ private fun HomeScreenContent(
     onNavigateToPodcast: ( String ) -> Unit,
     onNavigateToSubscriptions: () -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
 ) {
 
     val showErrorScreen = uiState is HomeFeedUiState.Error
@@ -282,6 +284,8 @@ private fun HomeScreenContent(
                                 episodeIsCompleted = { it.toEpisode().isCompleted() },
                                 onNavigateToEpisode = onNavigateToEpisode,
                                 onAddEpisodeToQueue = onAddEpisodeToQueue,
+                                isPresentInQueue = { uiState.episodesInQueue.contains( it.uri ) },
+                                onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                             )
                         }
                     }
@@ -346,7 +350,8 @@ private fun HomeScreenEmptyPreview() {
                     episodeFeed = emptyList(),
                     downloadedEpisodes = emptyMap(),
                     downloadingEpisodes = emptyMap(),
-                    playerState = PlayerState()
+                    playerState = PlayerState(),
+                    episodesInQueue = emptyList(),
                 ),
                 isSyncing = false,
                 onRequestSync = {},
@@ -363,6 +368,7 @@ private fun HomeScreenEmptyPreview() {
                 onNavigateToPodcast = {},
                 onNavigateToSubscriptions = {},
                 onAddEpisodeToQueue = {},
+                onRemoveEpisodeFromQueue = {},
             )
         }
     }
@@ -382,7 +388,8 @@ private fun HomeScreenPopulatedLoadingPreview(
                     episodeFeed = previewData.episodes,
                     downloadedEpisodes = emptyMap(),
                     downloadingEpisodes = emptyMap(),
-                    playerState = PlayerState()
+                    playerState = PlayerState(),
+                    episodesInQueue = emptyList(),
                 ),
                 isSyncing = true,
                 onRequestSync = {},
@@ -399,6 +406,7 @@ private fun HomeScreenPopulatedLoadingPreview(
                 onNavigateToPodcast = {},
                 onNavigateToSubscriptions = {},
                 onAddEpisodeToQueue = {},
+                onRemoveEpisodeFromQueue = {},
             )
         }
     }

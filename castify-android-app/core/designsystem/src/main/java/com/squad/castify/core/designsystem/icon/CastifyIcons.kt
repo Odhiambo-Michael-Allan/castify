@@ -3,6 +3,7 @@ package com.squad.castify.core.designsystem.icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
+import androidx.compose.material.icons.automirrored.rounded.PlaylistAddCheck
 import androidx.compose.material.icons.automirrored.rounded.PlaylistPlay
 import androidx.compose.material.icons.filled.AddLink
 import androidx.compose.material.icons.filled.Public
@@ -52,6 +53,7 @@ object CastifyIcons {
     val Play = Icons.Rounded.PlayArrow
     val PlaylistPlay = Icons.AutoMirrored.Rounded.PlaylistPlay
     val PlaylistAdd = Icons.AutoMirrored.Rounded.PlaylistAdd
+    val PlaylistCheck = Icons.AutoMirrored.Rounded.PlaylistAddCheck
     val DownloadDefault = Icons.Rounded.ArrowCircleDown
     val MoreVert = Icons.Rounded.MoreVert
     val MoreHorizontal = Icons.Rounded.MoreHoriz

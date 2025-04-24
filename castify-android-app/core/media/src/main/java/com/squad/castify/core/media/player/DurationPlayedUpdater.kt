@@ -37,9 +37,13 @@ class DurationPlayedUpdaterImpl @Inject constructor(
                 println( "DURATION PLAYED UPDATER: DURATION PLAYED: ${playbackPosition.played}" )
                 playerState.currentlyPlayingEpisodeUri?.let { uri ->
                     episodesRepository.fetchEpisodeWithUri( uri ).first()?.let { episode ->
+                        var durationPlayed = playbackPosition.played.toDuration( DurationUnit.MILLISECONDS )
+                        if ( durationPlayed > episode.duration ) {
+                            durationPlayed = episode.duration
+                        }
                         episodesRepository.upsertEpisode(
                             episode.copy(
-                                durationPlayed = playbackPosition.played.toDuration( DurationUnit.MILLISECONDS )
+                                durationPlayed = durationPlayed
                             )
                         )
                     }

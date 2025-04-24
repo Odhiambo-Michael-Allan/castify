@@ -14,6 +14,9 @@ interface QueueDao {
     @Upsert
     suspend fun upsertQueueEntity( queueEntity: QueueEntity )
 
+    @Upsert
+    suspend fun upsertQueueEntities( queueEntities: List<QueueEntity> )
+
     @Query(
         value = """
             SELECT * FROM queue

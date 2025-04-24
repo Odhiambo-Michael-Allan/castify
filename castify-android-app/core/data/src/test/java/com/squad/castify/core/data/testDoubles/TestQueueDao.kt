@@ -20,6 +20,10 @@ class TestQueueDao : QueueDao {
         }
     }
 
+    override suspend fun upsertQueueEntities( queueEntities: List<QueueEntity> ) {
+        TODO("Not yet implemented")
+    }
+
     override fun fetchQueueEntitiesSortedByPosition(): Flow<List<QueueEntity>> = queueEntitiesFlow
 
     override suspend fun deleteEntryWithUri( episodeUri: String ) {

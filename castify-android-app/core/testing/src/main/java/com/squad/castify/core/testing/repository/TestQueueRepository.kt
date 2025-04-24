@@ -25,6 +25,10 @@ class TestQueueRepository : QueueRepository {
         episodesInQueueFlow.tryEmit( currentEpisodes )
     }
 
+    override suspend fun saveQueue( queue: List<Episode> ) {
+        episodesInQueueFlow.tryEmit( queue )
+    }
+
     override suspend fun deleteEntryWithUri( uri: String ) {
         val currentEpisodes = episodesInQueueFlow.first().toMutableList()
         currentEpisodes.removeIf { it.uri == uri }
@@ -39,6 +43,7 @@ class TestQueueRepository : QueueRepository {
      * A test-only API to allow controlling the list of episodes from tests.
      */
     fun sendEpisodes( episodes: List<Episode> ) {
+        println( "SETTING EPISODES: $episodes" )
         episodesInQueueFlow.tryEmit( episodes )
     }
 

@@ -2,7 +2,6 @@ package com.squad.castify.core.media.player
 
 import android.util.Log
 import androidx.annotation.OptIn
-import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -11,11 +10,15 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import com.squad.castify.core.common.network.CastifyDispatchers
 import com.squad.castify.core.common.network.Dispatcher
+import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.repository.UserDataRepository
+import com.squad.castify.core.media.extensions.toEpisode
 import com.squad.castify.core.media.extensions.toMediaItem
 import com.squad.castify.core.model.Episode
+import com.squad.castify.core.model.QueueEntry
+import com.squad.castify.core.model.UserEpisode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -23,7 +26,6 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -38,6 +40,7 @@ interface EpisodePlayerServiceConnection {
     val playbackErrorOccurred: StateFlow<Boolean>
     val seekBackIncrement: StateFlow<Int>
     val seekForwardIncrement: StateFlow<Int>
+    val episodesInQueue: StateFlow<List<Episode>>
 
     fun playEpisode( episode: Episode )
     fun getCurrentPlaybackPosition(): PlaybackPosition
@@ -46,6 +49,9 @@ interface EpisodePlayerServiceConnection {
     fun seekBack()
     fun seekForward()
     fun seekTo( pos: Long )
+    fun addEpisodeToQueue( userEpisode: UserEpisode )
+    suspend fun removeEpisodeFromQueue( userEpisode: UserEpisode )
+    suspend fun move( from: Int, to: Int )
 }
 
 @OptIn( UnstableApi::class )
@@ -71,6 +77,9 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
     private val _seekForwardIncrement = MutableStateFlow( DEFAULT_SEEK_FORWARD_INCREMENT )
     override val seekForwardIncrement = _seekForwardIncrement.asStateFlow()
 
+    private var _episodesInQueue = MutableStateFlow( emptyList<Episode>() )
+    override val episodesInQueue = _episodesInQueue.asStateFlow()
+
     private val playerListener = PlayerListener()
 
     private var player: Player? = null
@@ -83,10 +92,10 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
         coroutineScope.launch {
             serviceConnector.establishConnection()
             serviceConnector.addDisconnectListener {
-                println( "EPISODE PLAYER SERVICE CONNECTION: RECEIVED DISCONNECT NOTIFICATION" )
                 onDisconnectListeners.forEach { it.invoke() }
                 coroutineScope.cancel()
             }
+            updateEpisodesInQueueWith( fetchPreviouslySavedQueue() )
             player = serviceConnector.player?.apply {
                 initializePlayer( this )
             }
@@ -95,26 +104,51 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
 
         coroutineScope.launch { observeSeekBackDuration()  }
         coroutineScope.launch { observeSeekForwardDuration() }
+        coroutineScope.launch {
+            episodesRepository.fetchEpisodesMatchingQuerySortedByPublishDate(
+                query = EpisodeQuery()
+            ).collect { episodes ->
+                val currentEpisodesInQueue = episodesInQueue.value.toMutableList()
+                val newQueue = mutableListOf<Episode>()
+                currentEpisodesInQueue.forEach { oldEpisode ->
+                    val updatedEpisode = episodes.find { it.uri == oldEpisode.uri }
+                    updatedEpisode?.let { newQueue.add( it ) }
+                }
+                println( "UPDATING EP.." )
+                _episodesInQueue.value = newQueue
+            }
+        }
     }
+
+    private fun updateEpisodesInQueueWith( newQueue: List<Episode> ) {
+        _episodesInQueue.value = newQueue
+        saveCurrentQueue()
+    }
+
+    private fun saveCurrentQueue() {
+        coroutineScope.launch {
+            queueRepository.clearQueue()
+            queueRepository.saveQueue( episodesInQueue.value )
+        }
+    }
+
+    private suspend fun fetchPreviouslySavedQueue(): List<Episode> =
+        queueRepository.fetchEpisodesInQueueSortedByPosition().first()
 
     private suspend fun initializePlayer( player: Player ) {
         player.apply {
             addListener( playerListener )
-            val previouslyPlayingEpisodeUri = userDataRepository.userData
-                .map { it.currentlyPlayingEpisodeUri }
-                .first()
-            println( "EPISODE-PLAYER-SERVICE-CONNECTION: PREVIOUSLY PLAYING EPISODE URI: $previouslyPlayingEpisodeUri" )
-            val previouslyPlayingEpisode = episodesRepository.fetchEpisodeWithUri(
-                previouslyPlayingEpisodeUri
-            ).first()
-            println( "EPISODE-PLAYER-SERVICE-CONNECTION: PREVIOUSLY PLAYING EPISODE: $previouslyPlayingEpisode" )
-            previouslyPlayingEpisode?.let {
-                setMediaItem(
-                    episodeToMediaItemConverter.convert( previouslyPlayingEpisode ),
-                    previouslyPlayingEpisode.durationPlayed.inWholeMilliseconds
-                )
-                prepare()
+            val previouslyPlayingEpisode = episodesInQueue.value.find {
+                it.uri == userDataRepository.userData.first().currentlyPlayingEpisodeUri
             }
+            previouslyPlayingEpisode?.let { previouslyPlayingEp ->
+                setMediaItems(
+                    episodesInQueue.value.map { episodeToMediaItemConverter.convert( it ) },
+                    episodesInQueue.value.indexOf( previouslyPlayingEp ),
+                    previouslyPlayingEp.durationPlayed.inWholeMilliseconds
+                )
+            }
+            prepare()
         }
     }
 
@@ -160,6 +194,37 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
         }
     }
 
+    private fun play( episode: Episode ) {
+        player?.let {
+            if ( episodesInQueue.value.contains( episode ) ) {
+                playEpisodeInQueue( it, episode )
+            } else {
+                playEpisodeNotInQueue( it, episode )
+            }
+
+            it.prepare()
+            it.play()
+        }
+    }
+
+    private fun playEpisodeInQueue( player: Player, episode: Episode ) {
+        player.setMediaItems(
+            episodesInQueue.value.map { episodeToMediaItemConverter.convert( it ) },
+            episodesInQueue.value.indexOf( episode ),
+            episode.durationPlayed.inWholeMilliseconds
+        )
+    }
+
+    private fun playEpisodeNotInQueue( player: Player, episode: Episode ) {
+        updateEpisodesInQueueWith( emptyList() )
+        player.clearMediaItems()
+        player.setMediaItem(
+            episodeToMediaItemConverter.convert( episode ),
+            episode.durationPlayed.inWholeMilliseconds
+        )
+        updateEpisodesInQueueWith( listOf( episode ) )
+    }
+
     override fun addOnDisconnectListener( listener: () -> Unit ) {
         onDisconnectListeners.add( listener )
     }
@@ -175,8 +240,6 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
 
     override fun seekForward() {
         player?.let {
-            println( "PLAYER CURRENT POS: ${it.currentPosition}" )
-            println( "INCREMENT: ${seekForwardIncrement.value}" )
             it.seekTo( it.currentPosition + seekForwardIncrement.value )
         }
     }
@@ -185,26 +248,31 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
         player?.seekTo( pos )
     }
 
-    private fun play( episode: Episode ) {
+    override fun addEpisodeToQueue( userEpisode: UserEpisode ) {
+        player?.addMediaItem( episodeToMediaItemConverter.convert( userEpisode.toEpisode() ) )
+        val currentEpisodesInQueue = episodesInQueue.value.toMutableList()
+        currentEpisodesInQueue.add( userEpisode.toEpisode() )
+        updateEpisodesInQueueWith( currentEpisodesInQueue )
+    }
+
+    override suspend fun removeEpisodeFromQueue( userEpisode: UserEpisode ) {
         player?.let {
-            val isPrepared = it.playbackState != Player.STATE_IDLE
-            it.setMediaItem(
-                episodeToMediaItemConverter.convert( episode ),
-                if ( episode.isCompleted().not() ) {
-                    episode.durationPlayed.inWholeMilliseconds
-                } else {
-                    C.TIME_UNSET
-                }
-            )
-            if ( !isPrepared ) it.prepare()
-            it.play()
-
-            coroutineScope.launch {
-                queueRepository.clearQueue()
-                queueRepository.upsertEpisode( episode, 0 )
-            }
-
+            val currentEpisodesInQueue = episodesInQueue.value.toMutableList()
+            println( "NUMBER OF EPISODES IN QUEUE: ${currentEpisodesInQueue.size}" )
+            val indexOfMediaItemInQueue = currentEpisodesInQueue.indexOfFirst { ep -> ep.uri == userEpisode.uri }
+            println( "INDEX OF MEDIA ITEM TO REMOVE: $indexOfMediaItemInQueue" )
+            it.removeMediaItem( indexOfMediaItemInQueue )
+            currentEpisodesInQueue.removeIf { ep -> ep.uri == userEpisode.uri }
+            queueRepository.deleteEntryWithUri( userEpisode.uri )
+            updateEpisodesInQueueWith( currentEpisodesInQueue )
         }
+    }
+
+    override suspend fun move( from: Int, to: Int ) {
+        player?.moveMediaItem( from, to )
+        val newQueue = _episodesInQueue.value.toMutableList()
+        newQueue.move( from, to )
+        updateEpisodesInQueueWith( newQueue )
     }
 
     private inner class PlayerListener : Player.Listener {
@@ -273,7 +341,7 @@ data class PlaybackPosition(
     }
 }
 
-fun Episode.isCompleted() = ( durationPlayed.inWholeMilliseconds + DEFAULT_PLAYBACK_POSITION_UPDATE_INTERVAL ) >= duration.inWholeMilliseconds
+fun Episode.isCompleted() = ( durationPlayed.inWholeMilliseconds ) >= duration.inWholeMilliseconds
 
 interface EpisodeToMediaItemConverter {
     fun convert( episode: Episode ): MediaItem
@@ -282,6 +350,12 @@ interface EpisodeToMediaItemConverter {
 
 class DefaultEpisodeToMediaItemConverter @Inject constructor() : EpisodeToMediaItemConverter {
     override fun convert( episode: Episode ) = episode.toMediaItem()
+}
+
+private fun MutableList<Episode>.move( from: Int, to: Int ) {
+    if ( from == to ) return
+    val element = removeAt( from )
+    add( to, element )
 }
 
 private const val TAG = "EPISODEPLAYERSERVCONN"

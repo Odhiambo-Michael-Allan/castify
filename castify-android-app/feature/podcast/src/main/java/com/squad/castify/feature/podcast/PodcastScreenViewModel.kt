@@ -9,6 +9,7 @@ import com.squad.castify.core.common.result.asResult
 import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.data.repository.PodcastsRepository
+import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.data.repository.UserEpisodesRepository
 import com.squad.castify.core.data.util.SyncManager
@@ -43,6 +44,7 @@ class PodcastScreenViewModel @Inject constructor(
     syncManager: SyncManager,
     episodePlayer: EpisodePlayerServiceConnection,
     downloadTracker: DownloadTracker,
+    queueRepository: QueueRepository,
 ) : BaseViewModel(
     downloadTracker = downloadTracker,
     episodesRepository = episodesRepository,
@@ -67,6 +69,7 @@ class PodcastScreenViewModel @Inject constructor(
         userEpisodesRepository = userEpisodesRepository,
         episodePlayer = episodePlayer,
         downloadTracker = downloadTracker,
+        queueRepository = queueRepository,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed( 5_000 ),
@@ -123,6 +126,7 @@ private fun episodesUiState(
     userEpisodesRepository: UserEpisodesRepository,
     episodePlayer: EpisodePlayerServiceConnection,
     downloadTracker: DownloadTracker,
+    queueRepository: QueueRepository,
 ): Flow<EpisodesUiState> {
 
     return combine(
@@ -133,13 +137,15 @@ private fun episodesUiState(
         ),
         episodePlayer.playerState,
         downloadTracker.downloadingEpisodes,
-        downloadTracker.downloadedEpisodes
-    ) { episodes, playerState, downloadingEpisodes, downloadedEpisodes ->
+        downloadTracker.downloadedEpisodes,
+        queueRepository.fetchEpisodesInQueueSortedByPosition(),
+    ) { episodes, playerState, downloadingEpisodes, downloadedEpisodes, episodesInQueue ->
         EpisodesUiState.Success(
             episodes = episodes,
             playerState = playerState,
             downloadingEpisodes = downloadingEpisodes,
             downloadedEpisodes = downloadedEpisodes,
+            episodesInQueue = episodesInQueue.map { it.uri }
         )
     }.catch {
         EpisodesUiState.Error
@@ -158,7 +164,8 @@ sealed interface EpisodesUiState {
         val episodes: List<UserEpisode>,
         val downloadedEpisodes: Map<String, Int>,
         val downloadingEpisodes: Map<String, Float>,
-        val playerState: PlayerState
+        val playerState: PlayerState,
+        val episodesInQueue: List<String>,
     ) : EpisodesUiState
     data object Error : EpisodesUiState
     data object Loading : EpisodesUiState

@@ -110,6 +110,8 @@ internal fun ExploreScreen(
         onRequestSync = viewModel::requestSync,
         onPodcastClick = onPodcastClick,
         onNavigateToEpisode = onNavigateToEpisode,
+        onAddEpisodeToQueue = viewModel::addEpisodeToQueue,
+        onRemoveEpisodeFromQueue = viewModel::removeEpisodeFromQueue,
     )
 }
 
@@ -133,6 +135,8 @@ internal fun ExploreScreen(
     onRequestSync: () -> Unit,
     onPodcastClick: ( FollowablePodcast ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
 ) {
 
     val isCategoriesLoading = categoriesUiState is CategoriesUiState.Loading
@@ -200,6 +204,9 @@ internal fun ExploreScreen(
                                             episodeIsCompleted = { it.toEpisode().isCompleted() },
                                             getDownloadStateFor = { podcastFeedUiState.downloadedEpisodes[ it.audioUri ] },
                                             onNavigateToEpisode = onNavigateToEpisode,
+                                            onAddEpisodeToQueue = onAddEpisodeToQueue,
+                                            isPresentInQueue = { podcastFeedUiState.episodesInQueue.contains( it.uri ) },
+                                            onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                                         )
                                     }
                                     else -> {}
@@ -329,7 +336,7 @@ private fun CategoryTabIndicator(
         modifier = modifier
             .padding(horizontal = 24.dp)
             .height(4.dp)
-            .background( color, RoundedCornerShape( topStartPercent = 100, topEndPercent = 100 ) )
+            .background(color, RoundedCornerShape(topStartPercent = 100, topEndPercent = 100))
     )
 }
 
@@ -452,6 +459,7 @@ private fun ExploreScreenPopulated(
                     isBuffering = true,
                     currentlyPlayingEpisodeUri = previewParameters.episodes.first().uri
                 ),
+                episodesInQueue = emptyList(),
             ),
             onCategoryChange = {},
             onFollowPodcast = {},
@@ -465,7 +473,9 @@ private fun ExploreScreenPopulated(
             onMarkAsCompleted = {},
             onRequestSync = {},
             onPodcastClick = {},
-            onNavigateToEpisode = {}
+            onNavigateToEpisode = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
         )
     }
 }
@@ -491,6 +501,8 @@ private fun ExploreScreenLoading() {
             onRequestSync = {},
             onPodcastClick = {},
             onNavigateToEpisode = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
         )
     }
 }
@@ -528,6 +540,7 @@ private fun ExploreScreenPopulatedAndLoading(
                 isBuffering = true,
                 currentlyPlayingEpisodeUri = previewParameters.episodes.first().uri
             ),
+            episodesInQueue = emptyList(),
         ),
         onCategoryChange = {},
         onFollowPodcast = {},
@@ -542,6 +555,8 @@ private fun ExploreScreenPopulatedAndLoading(
         onRequestSync = {},
         onPodcastClick = {},
         onNavigateToEpisode = {},
+        onAddEpisodeToQueue = {},
+        onRemoveEpisodeFromQueue = {},
     )
 }
 
@@ -569,6 +584,7 @@ private fun ExploreScreenError() {
                     isBuffering = false,
                     currentlyPlayingEpisodeUri = null
                 ),
+                episodesInQueue = emptyList(),
             ),
             onCategoryChange = {},
             onFollowPodcast = {},
@@ -583,6 +599,8 @@ private fun ExploreScreenError() {
             onRequestSync = {},
             onPodcastClick = {},
             onNavigateToEpisode = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
         )
     }
 }

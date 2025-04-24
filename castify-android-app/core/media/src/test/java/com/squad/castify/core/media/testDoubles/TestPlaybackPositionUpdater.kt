@@ -8,17 +8,16 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class TestPlaybackPositionUpdater : PlaybackPositionUpdater {
 
-    override val playbackPosition: StateFlow<PlaybackPosition>
-        get() = TODO("Not yet implemented")
+    private val _playbackPosition = MutableStateFlow( PlaybackPosition( 0L, 0L, 0L ) )
+    override val playbackPosition = _playbackPosition.asStateFlow()
 
-    private val _totalDurationPreviousMediaItemPlayed = MutableStateFlow( 0L )
 
     override fun cleanUp() {
         TODO("Not yet implemented")
     }
 
     fun setTotalDurationPreviousMediaItemPlayed( duration: Long ) {
-        _totalDurationPreviousMediaItemPlayed.value = duration
+        _playbackPosition.value = _playbackPosition.value.copy( played = duration )
     }
 
 }

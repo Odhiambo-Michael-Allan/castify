@@ -62,7 +62,9 @@ class NowPlayingScreenViewModel @Inject constructor(
 
     fun seekBack() = episodePlayer.seekBack()
 
-    fun seekForward() = episodePlayer.seekForward()
+    fun seekForward() {
+        episodePlayer.seekForward()
+    }
 
     fun setPlaybackPitch(pitch: Float ) {
         viewModelScope.launch { userDataRepository.setPlaybackPitch( pitch ) }

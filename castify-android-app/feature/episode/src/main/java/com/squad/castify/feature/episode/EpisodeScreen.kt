@@ -67,6 +67,8 @@ internal fun EpisodeScreen(
         onMarkAsCompleted = viewModel::markAsCompleted,
         onRequestSync = viewModel::requestSync,
         onNavigateToEpisode = onNavigateToEpisode,
+        onAddEpisodeToQueue = viewModel::addEpisodeToQueue,
+        onRemoveEpisodeFromQueue = viewModel::removeEpisodeFromQueue,
     )
 }
 
@@ -86,6 +88,8 @@ private fun EpisodeScreenContent(
     onShareEpisode: ( String ) -> Unit,
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
 ) {
 
     val isLoading = uiState is EpisodeUiState.Loading || isSyncing
@@ -149,7 +153,14 @@ private fun EpisodeScreenContent(
                                         onPlayEpisode = { onPlayEpisode( it ) },
                                         onMarkAsCompleted = onMarkAsCompleted,
                                         onResumeDownload = { onResumeDownload( it ) },
-                                        onNavigateToEpisode = {}
+                                        onNavigateToEpisode = {
+                                            if ( it.uri != uiState.selectedEpisode.uri ) {
+                                                onNavigateToEpisode( it )
+                                            }
+                                        },
+                                        onAddEpisodeToQueue = onAddEpisodeToQueue,
+                                        isPresentInQueue = uiState.episodesInQueue.contains( it.uri ),
+                                        onRemoveFromQueue = onRemoveEpisodeFromQueue,
                                     )
                                     Spacer( modifier = Modifier.height( 16.dp ) )
                                     Text(
@@ -182,7 +193,10 @@ private fun EpisodeScreenContent(
                             onShareEpisode = onShareEpisode,
                             onMarkAsCompleted = onMarkAsCompleted,
                             episodeIsCompleted = { it.toEpisode().isCompleted() },
-                            onNavigateToEpisode = onNavigateToEpisode
+                            onNavigateToEpisode = onNavigateToEpisode,
+                            onAddEpisodeToQueue = onAddEpisodeToQueue,
+                            isPresentInQueue = { uiState.episodesInQueue.contains( it.uri ) },
+                            onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                         )
                     }
                     else -> {}
@@ -211,7 +225,8 @@ private fun EpisodeScreenContentPopulatedLoading(
                     similarEpisodes = previewData.episodes,
                     downloadedEpisodes = emptyMap(),
                     downloadingEpisodes = emptyMap(),
-                    playerState = PlayerState()
+                    playerState = PlayerState(),
+                    episodesInQueue = emptyList(),
                 ),
                 isSyncing = true,
                 onNavigateBack = {},
@@ -225,6 +240,8 @@ private fun EpisodeScreenContentPopulatedLoading(
                 onRemoveDownload = {},
                 onMarkAsCompleted = {},
                 onNavigateToEpisode = {},
+                onAddEpisodeToQueue = {},
+                onRemoveEpisodeFromQueue = {},
             )
         }
     }
@@ -248,6 +265,8 @@ private fun EpisodeScreenError() {
             onRemoveDownload = {},
             onMarkAsCompleted = {},
             onNavigateToEpisode = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
         )
     }
 }

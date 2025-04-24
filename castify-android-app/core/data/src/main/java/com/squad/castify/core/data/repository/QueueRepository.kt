@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 interface QueueRepository {
     fun fetchEpisodesInQueueSortedByPosition(): Flow<List<Episode>>
     suspend fun upsertEpisode( episode: Episode, posInQueue: Int )
+    suspend fun saveQueue( queue: List<Episode> )
     suspend fun deleteEntryWithUri( uri: String )
     suspend fun clearQueue()
 }

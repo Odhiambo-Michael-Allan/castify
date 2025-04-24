@@ -4,26 +4,17 @@
             "outputFile": "com.squad.castify.feature.queue.test.queue-mergeDebugUnitTestResources-105:/values-v24/values-v24.xml",
             "map": [
                 {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/55686a328a866af0194bf44fff07beea/transformed/material-1.12.0/res/values-v24/values-v24.xml",
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/ef937c50483925bb568bea035eba0c2d/transformed/appcompat-1.7.0/res/values-v24/values-v24.xml",
                     "from": {
-                        "startLines": "2,3,4,5,6,9,12,15",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,140,239,326,427,626,839,1040",
-                        "endLines": "2,3,4,5,8,11,14,17",
-                        "endColumns": "84,98,86,100,10,10,10,10",
-                        "endOffsets": "135,234,321,422,621,834,1035,1250"
-                    },
-                    "to": {
-                        "startLines": "4,5,6,7,8,11,14,17",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "347,432,531,618,719,918,1131,1332",
-                        "endLines": "4,5,6,7,10,13,16,19",
-                        "endColumns": "84,98,86,100,10,10,10,10",
-                        "endOffsets": "427,526,613,714,913,1126,1327,1542"
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,212",
+                        "endColumns": "156,134",
+                        "endOffsets": "207,342"
                     }
                 },
                 {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/1d4cbf9e2539b1d32d64498656992d9e/transformed/media3-session-1.4.0/res/values-v24/values-v24.xml",
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/d3b64377c3fb83a48e613273e9dc6022/transformed/media3-session-1.4.0/res/values-v24/values-v24.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",
@@ -40,13 +31,22 @@
                     }
                 },
                 {
-                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/037b08f624621df2b047d11680307de4/transformed/appcompat-1.7.0/res/values-v24/values-v24.xml",
+                    "source": "/home/michael-allan-odhiambo/.gradle/caches/transforms-4/8db11b7fde915b71c41f62188955abb3/transformed/material-1.12.0/res/values-v24/values-v24.xml",
                     "from": {
-                        "startLines": "2,3",
-                        "startColumns": "4,4",
-                        "startOffsets": "55,212",
-                        "endColumns": "156,134",
-                        "endOffsets": "207,342"
+                        "startLines": "2,3,4,5,6,9,12,15",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,140,239,326,427,626,839,1040",
+                        "endLines": "2,3,4,5,8,11,14,17",
+                        "endColumns": "84,98,86,100,10,10,10,10",
+                        "endOffsets": "135,234,321,422,621,834,1035,1250"
+                    },
+                    "to": {
+                        "startLines": "4,5,6,7,8,11,14,17",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "347,432,531,618,719,918,1131,1332",
+                        "endLines": "4,5,6,7,10,13,16,19",
+                        "endColumns": "84,98,86,100,10,10,10,10",
+                        "endOffsets": "427,526,613,714,913,1126,1327,1542"
                     }
                 }
             ]

@@ -3,6 +3,7 @@ package com.squad.castify.core.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.util.SyncManager
 import com.squad.castify.core.media.download.DownloadTracker
 import com.squad.castify.core.media.extensions.toEpisode
@@ -20,7 +21,6 @@ abstract class BaseViewModel(
     private val episodesRepository: EpisodesRepository,
     private val syncManager: SyncManager,
     private val episodePlayer: EpisodePlayerServiceConnection,
-    private val queueRepository: QueueRepository,
 ) : ViewModel() {
 
     val isSyncing: StateFlow<Boolean> = syncManager.isSyncing
@@ -59,6 +59,18 @@ abstract class BaseViewModel(
 
     fun requestSync() {
         syncManager.requestSync()
+    }
+
+    fun addEpisodeToQueue( userEpisode: UserEpisode ) {
+        viewModelScope.launch {
+            episodePlayer.addEpisodeToQueue( userEpisode )
+        }
+    }
+
+    fun removeEpisodeFromQueue( userEpisode: UserEpisode ) {
+        viewModelScope.launch {
+            episodePlayer.removeEpisodeFromQueue( userEpisode )
+        }
     }
 
 }

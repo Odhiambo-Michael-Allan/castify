@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.QueueRepository
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.data.util.SyncManager
 import com.squad.castify.core.domain.model.PodcastCategoryFilterResult
@@ -38,7 +39,8 @@ class ExploreScreenViewModel @Inject constructor(
     private val podcastCategoryFilterUseCase: PodcastCategoryFilterUseCase,
     episodePlayer: EpisodePlayerServiceConnection,
     downloadTracker: DownloadTracker,
-    private val episodesRepository: EpisodesRepository,
+    episodesRepository: EpisodesRepository,
+    queueRepository: QueueRepository,
     syncManager: SyncManager,
 ) : BaseViewModel(
     downloadTracker = downloadTracker,
@@ -70,13 +72,15 @@ class ExploreScreenViewModel @Inject constructor(
             },
             downloadTracker.downloadedEpisodes,
             downloadTracker.downloadingEpisodes,
-            episodePlayer.playerState
-        ) { podcastFilterCategoryResult, downloadedEpisodes, downloadingEpisodes, playerState ->
+            episodePlayer.playerState,
+            queueRepository.fetchEpisodesInQueueSortedByPosition(),
+        ) { podcastFilterCategoryResult, downloadedEpisodes, downloadingEpisodes, playerState, episodesInQueue ->
             PodcastFeedUiState.Success(
                 model = podcastFilterCategoryResult,
                 downloadedEpisodes = downloadedEpisodes,
                 downloadingEpisodes = downloadingEpisodes,
-                playerState = playerState
+                playerState = playerState,
+                episodesInQueue = episodesInQueue.map { it.uri }
             )
         }.stateIn(
             scope = viewModelScope,
@@ -108,7 +112,8 @@ sealed interface PodcastFeedUiState {
         val model: PodcastCategoryFilterResult,
         val downloadedEpisodes: Map<String, Int>,
         val downloadingEpisodes: Map<String, Float>,
-        val playerState: PlayerState
+        val playerState: PlayerState,
+        val episodesInQueue: List<String>,
     ) : PodcastFeedUiState
 }
 

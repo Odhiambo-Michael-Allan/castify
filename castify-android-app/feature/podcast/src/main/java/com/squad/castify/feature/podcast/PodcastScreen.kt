@@ -97,6 +97,8 @@ internal fun PodcastScreen(
         onToggleFollowPodcast = viewModel::followPodcastToggle,
         onNavigateBack = onNavigateBack,
         onNavigateToEpisode = onNavigateToEpisode,
+        onAddEpisodeToQueue = viewModel::addEpisodeToQueue,
+        onRemoveEpisodeFromQueue = viewModel::removeEpisodeFromQueue,
     )
 
 }
@@ -119,6 +121,8 @@ private fun PodcastScreenContent(
     onToggleFollowPodcast: ( Boolean ) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -337,6 +341,9 @@ private fun PodcastScreenContent(
                             episodeIsCompleted = { it.toEpisode().isCompleted() },
                             getDownloadStateFor = { episodesUiState.downloadedEpisodes[ it.audioUri ] },
                             onNavigateToEpisode = onNavigateToEpisode,
+                            onAddEpisodeToQueue = onAddEpisodeToQueue,
+                            isPresentInQueue = { episodesUiState.episodesInQueue.contains( it.uri ) },
+                            onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
                         )
                     }
                     else -> {}
@@ -369,7 +376,8 @@ private fun PodcastScreenContentSuccessSyncingPreview(
                     isPlaying = true,
                     isBuffering = true,
                     currentlyPlayingEpisodeUri = previewData.episodes.first().uri
-                )
+                ),
+                episodesInQueue = emptyList(),
             ),
             isSyncing = true,
             onRetryDownload = {},
@@ -383,7 +391,9 @@ private fun PodcastScreenContentSuccessSyncingPreview(
             onPauseDownload = {},
             onToggleFollowPodcast = {},
             onNavigateBack = {},
-            onNavigateToEpisode = {}
+            onNavigateToEpisode = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
         )
     }
 }
@@ -407,7 +417,9 @@ private fun PodcastScreenError() {
             onPauseDownload = {},
             onToggleFollowPodcast = {},
             onNavigateBack = {},
-            onNavigateToEpisode = {}
+            onNavigateToEpisode = {},
+            onAddEpisodeToQueue = {},
+            onRemoveEpisodeFromQueue = {},
         )
     }
 }

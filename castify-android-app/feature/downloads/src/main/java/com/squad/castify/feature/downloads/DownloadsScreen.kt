@@ -70,6 +70,8 @@ internal fun DownloadsScreen(
         onRemoveDownload = viewModel::removeDownload,
         onShareEpisode = onShareEpisode,
         onMarkAsCompleted = viewModel::markAsCompleted,
+        onAddEpisodeToQueue = viewModel::addEpisodeToQueue,
+        onRemoveEpisodeFromQueue = viewModel::removeEpisodeFromQueue,
     )
 
 }
@@ -90,6 +92,8 @@ private fun DownloadsScreen(
     onPauseDownload: ( UserEpisode ) -> Unit,
     onShareEpisode: ( String ) -> Unit,
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
+    onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
+    onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
 ) {
 
     val isLoading = uiState is DownloadsScreenUiState.Loading || isSyncing
@@ -180,6 +184,7 @@ private fun DownloadsScreen(
                                 onDownloadEpisode = { onDownloadEpisode( it ) },
                                 isPlaying = isPlaying,
                                 isBuffering = isBuffering,
+                                isPresentInQueue = uiState.episodesInQueue.contains( it.uri ),
                                 isCompleted = it.toEpisode().isCompleted(),
                                 downloadState = uiState.downloadStates[ it.audioUri ],
                                 downloadingEpisodes = uiState.downloadingEpisodes,
@@ -190,6 +195,8 @@ private fun DownloadsScreen(
                                 onShareEpisode = onShareEpisode,
                                 onMarkAsCompleted = onMarkAsCompleted,
                                 onNavigateToEpisode = onNavigateToEpisode,
+                                onAddEpisodeToQueue = onAddEpisodeToQueue,
+                                onRemoveFromQueue = onRemoveEpisodeFromQueue,
                             )
                             if ( uiState.downloadedEpisodes.indexOf( it ) < uiState.downloadedEpisodes.size - 1 ) {
                                 HorizontalDivider( thickness = 1.dp )
@@ -217,7 +224,8 @@ private fun DownloadsScreenPreviewEmptySyncing() {
                     downloadedEpisodes = emptyList(),
                     playerState = PlayerState(),
                     downloadingEpisodes = emptyMap(),
-                    downloadStates = emptyMap()
+                    downloadStates = emptyMap(),
+                    episodesInQueue = emptyList(),
                 ),
                 isSyncing = true,
                 onNavigateBack = {},
@@ -230,7 +238,9 @@ private fun DownloadsScreenPreviewEmptySyncing() {
                 onResumeDownload = {},
                 onPlayEpisode = {},
                 onShareEpisode = {},
-                onMarkAsCompleted = {}
+                onMarkAsCompleted = {},
+                onAddEpisodeToQueue = {},
+                onRemoveEpisodeFromQueue = {},
             )
         }
     }
@@ -249,7 +259,8 @@ private fun DownloadsScreenPreviewPopulatedSyncing(
                     downloadedEpisodes = previewData.episodes,
                     playerState = PlayerState(),
                     downloadingEpisodes = emptyMap(),
-                    downloadStates = emptyMap()
+                    downloadStates = emptyMap(),
+                    episodesInQueue = emptyList(),
                 ),
                 isSyncing = true,
                 onNavigateBack = {},
@@ -262,7 +273,9 @@ private fun DownloadsScreenPreviewPopulatedSyncing(
                 onResumeDownload = {},
                 onPlayEpisode = {},
                 onShareEpisode = {},
-                onMarkAsCompleted = {}
+                onMarkAsCompleted = {},
+                onAddEpisodeToQueue = {},
+                onRemoveEpisodeFromQueue = {},
             )
         }
     }
