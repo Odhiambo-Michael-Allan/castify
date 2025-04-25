@@ -30,6 +30,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 const val DEFAULT_SEEK_BACK_INCREMENT = 10000
 const val DEFAULT_SEEK_FORWARD_INCREMENT = 30000
@@ -196,10 +199,15 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
 
     private fun play( episode: Episode ) {
         player?.let {
+            println( "EPISODE DURATION: ${episode.duration.inWholeMilliseconds}" )
+            println( "EPISODE DURATION PLAYED: ${episode.durationPlayed.inWholeMilliseconds}" )
+            var startPosition = episode.durationPlayed.inWholeMilliseconds
+            println( "START POSITION: $startPosition" )
+            if ( episode.isCompleted() ) startPosition = 0L
             if ( episodesInQueue.value.contains( episode ) ) {
-                playEpisodeInQueue( it, episode )
+                playEpisodeInQueue( it, episode, startPosition )
             } else {
-                playEpisodeNotInQueue( it, episode )
+                playEpisodeNotInQueue( it, episode, startPosition )
             }
 
             it.prepare()
@@ -207,20 +215,20 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
         }
     }
 
-    private fun playEpisodeInQueue( player: Player, episode: Episode ) {
+    private fun playEpisodeInQueue( player: Player, episode: Episode, startPosition: Long ) {
         player.setMediaItems(
             episodesInQueue.value.map { episodeToMediaItemConverter.convert( it ) },
             episodesInQueue.value.indexOf( episode ),
-            episode.durationPlayed.inWholeMilliseconds
+            startPosition
         )
     }
 
-    private fun playEpisodeNotInQueue( player: Player, episode: Episode ) {
+    private fun playEpisodeNotInQueue( player: Player, episode: Episode, startPosition: Long ) {
         updateEpisodesInQueueWith( emptyList() )
         player.clearMediaItems()
         player.setMediaItem(
             episodeToMediaItemConverter.convert( episode ),
-            episode.durationPlayed.inWholeMilliseconds
+            startPosition
         )
         updateEpisodesInQueueWith( listOf( episode ) )
     }
@@ -234,18 +242,37 @@ class EpisodePlayerServiceConnectionImpl @Inject constructor(
             val seekBackPos = ( player.currentPosition - seekBackIncrement.value ).takeIf { value ->
                 value >= 0
             } ?: 0
-            player.seekTo( seekBackPos )
+            seekTo( seekBackPos )
         }
     }
 
     override fun seekForward() {
         player?.let {
-            it.seekTo( it.currentPosition + seekForwardIncrement.value )
+            seekTo( it.currentPosition + seekForwardIncrement.value )
         }
     }
 
     override fun seekTo( pos: Long ) {
-        player?.seekTo( pos )
+        player?.let {
+            println( "SEEK TO: $pos" )
+            val currentlyPlayingEpisode = episodesInQueue.value[ it.currentMediaItemIndex ]
+            var seekToPos = pos
+            if ( pos > currentlyPlayingEpisode.duration.inWholeMilliseconds ) {
+                seekToPos = currentlyPlayingEpisode.duration.inWholeMilliseconds
+            } else if ( pos < 0 ) {
+                seekToPos = 0
+            }
+            it.seekTo( seekToPos )
+            val durationPlayed = seekToPos.toDuration( DurationUnit.MILLISECONDS )
+            println( "DURATION PLAYED: $durationPlayed" )
+            coroutineScope.launch {
+                episodesRepository.upsertEpisode(
+                    currentlyPlayingEpisode.copy(
+                        durationPlayed = durationPlayed
+                    )
+                )
+            }
+        }
     }
 
     override fun addEpisodeToQueue( userEpisode: UserEpisode ) {
@@ -341,7 +368,7 @@ data class PlaybackPosition(
     }
 }
 
-fun Episode.isCompleted() = ( durationPlayed.inWholeMilliseconds ) >= duration.inWholeMilliseconds
+fun Episode.isCompleted() = ( durationPlayed.inWholeMilliseconds + DEFAULT_PLAYBACK_POSITION_UPDATE_INTERVAL ) >= duration.inWholeMilliseconds
 
 interface EpisodeToMediaItemConverter {
     fun convert( episode: Episode ): MediaItem

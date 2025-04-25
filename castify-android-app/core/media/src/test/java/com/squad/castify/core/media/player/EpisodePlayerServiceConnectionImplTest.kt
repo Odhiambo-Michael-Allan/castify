@@ -100,8 +100,6 @@ class EpisodePlayerServiceConnectionImplTest {
         assertEquals( 30, subject.seekForwardIncrement.value )
         userDataRepository.setSeekForwardDuration( 10 )
         assertEquals( 10, subject.seekForwardIncrement.value )
-
-
     }
 
     @Test
@@ -124,10 +122,23 @@ class EpisodePlayerServiceConnectionImplTest {
         var expected = serviceConnector.player!!.currentPosition + 30
         subject.seekForward()
         assertEquals( expected, serviceConnector.player!!.currentPosition )
-        userDataRepository.setSeekForwardDuration( 10 )
-        expected = serviceConnector.player!!.currentPosition + 10
+        val currentlyPlayingMediaItem = serviceConnector.player!!.currentMediaItem!!
+
+        assertEquals(
+            expected,
+            episodeRepository.fetchEpisodeWithUri( currentlyPlayingMediaItem.mediaId ).first()!!
+                .durationPlayed.inWholeMilliseconds
+        )
+
+        userDataRepository.setSeekForwardDuration( 1000000 )
+        expected = sampleEpisodes.first().duration.inWholeMilliseconds
         subject.seekForward()
         assertEquals( expected, serviceConnector.player!!.currentPosition )
+        assertEquals(
+            expected,
+            episodeRepository.fetchEpisodeWithUri( currentlyPlayingMediaItem.mediaId ).first()!!
+                .durationPlayed.inWholeMilliseconds
+        )
     }
 
 
@@ -324,7 +335,7 @@ private val sampleEpisodes = listOf(
         podcast = testPodcast,
         audioUri = "",
         audioMimeType = "",
-        duration = Duration.ZERO,
+        duration = (5L).toDuration( DurationUnit.MINUTES ),
         durationPlayed = (3L).toDuration( DurationUnit.MINUTES )
     ),
     Episode(
