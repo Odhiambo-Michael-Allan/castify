@@ -14,11 +14,17 @@ import androidx.media3.exoplayer.offline.DownloadNotificationHelper
 import androidx.media3.exoplayer.offline.DownloadService
 import androidx.media3.exoplayer.scheduler.PlatformScheduler
 import androidx.media3.exoplayer.scheduler.Scheduler
+import com.squad.castify.core.common.network.di.ApplicationScope
+import com.squad.castify.core.data.repository.EpisodeQuery
+import com.squad.castify.core.data.repository.EpisodesRepository
 import com.squad.castify.core.media.R
+import com.squad.castify.core.model.Episode
 //import com.squad.castify.core.media.R
 //import com.squad.castify.sync.workers.DelegatingWorker
 //import com.squad.castify.sync.workers.delegatedData
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -101,10 +107,8 @@ class CastifyDownloadService : DownloadService(
     /**
      * Creates and displays notifications for downloads when they complete or fail.
      *
-     * Also creates a worker that
-     *
-     * This helper will outlive the lifespan of a single instance of CastifyDownloadService. It is
-     * nested ( static ) to avoid leaking the first CastifyDownloadService instance.
+     * <p>This helper will outlive the lifespan of a single instance of {@link CastifyDownloadService}.
+     * It is static to avoid leaking the first {@link CastifyDownloadService} instance.
      */
     private class TerminalStateNotificationHelper(
         private val context: Context,
@@ -126,8 +130,7 @@ class CastifyDownloadService : DownloadService(
                         context,
                         R.drawable.ic_download_done,
                         /* contentIntent */ null,
-                        download.request.toMediaItem().mediaMetadata.title.toString()
-//                        Util.fromUtf8Bytes( download.request.data )
+                        Util.fromUtf8Bytes( download.request.data )
                     )
                 Download.STATE_FAILED -> downloadNotificationHelper
                     .buildDownloadFailedNotification(

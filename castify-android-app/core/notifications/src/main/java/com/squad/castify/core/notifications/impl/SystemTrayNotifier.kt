@@ -56,12 +56,21 @@ internal class SystemTrayNotifier @Inject constructor(
             val episodesNotifications = truncatedEpisodes.map { episode ->
                 createEpisodeNotification {
                     setSmallIcon( R.drawable.core_notifications_ic_castify_notification )
-                        .setContentTitle( episode.title )
+                        .setContentTitle( episode.podcast.title )
                         .setContentText(
                             HtmlCompat.fromHtml(
-                                episode.summary,
+                                episode.title,
                                 HtmlCompat.FROM_HTML_MODE_COMPACT
                             )
+                        )
+                        .setStyle(
+                            NotificationCompat.BigTextStyle()
+                                .bigText(
+                                    HtmlCompat.fromHtml(
+                                        episode.summary,
+                                        HtmlCompat.FROM_HTML_MODE_COMPACT
+                                    )
+                                )
                         )
                         .setContentIntent( episodePendingIntent( episode ) )
                         .setGroup( EPISODES_NOTIFICATION_GROUP )
@@ -71,9 +80,8 @@ internal class SystemTrayNotifier @Inject constructor(
 
             val summaryNotification = createEpisodeNotification {
                 val title = getString(
-                    R.string.core_notifications_episode_notification_group_summary,
-                    truncatedEpisodes.size
-                )
+                    R.string.core_notifications_episode_notification_group_summary
+                    )
                 setContentTitle( title )
                     .setContentText( title )
                     .setSmallIcon( R.drawable.core_notifications_ic_castify_notification )

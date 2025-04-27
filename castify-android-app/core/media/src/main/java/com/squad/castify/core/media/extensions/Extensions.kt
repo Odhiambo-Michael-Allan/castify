@@ -10,12 +10,13 @@ import androidx.media3.common.util.UnstableApi
 import com.squad.castify.core.model.Episode
 import com.squad.castify.core.model.UserEpisode
 import kotlinx.datetime.Instant
+import androidx.core.net.toUri
 
 @OptIn(UnstableApi::class)
 fun Episode.toMediaItem(): MediaItem = MediaItem.Builder()
     .apply {
         setMediaId( uri )
-        setUri( Uri.parse( audioUri ) )
+        setUri( audioUri.toUri() )
         setMimeType( audioMimeType )
         setMediaMetadata(
             MediaMetadata.Builder().from( this@toMediaItem ).build()
@@ -29,7 +30,7 @@ fun MediaMetadata.Builder.from( episode: Episode ): MediaMetadata.Builder {
     setTitle( episode.title )
     setDisplayTitle( episode.title )
     setArtist( episode.podcast.author )
-    setArtworkUri( Uri.parse( episode.podcast.imageUrl ) )
+    setArtworkUri( episode.podcast.imageUrl.toUri() )
     setIsPlayable( true )
     setExtras(
         Bundle().apply {

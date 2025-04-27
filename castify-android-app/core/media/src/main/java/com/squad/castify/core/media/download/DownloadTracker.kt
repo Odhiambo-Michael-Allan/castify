@@ -25,6 +25,7 @@ import java.io.IOException
 import java.lang.Exception
 import java.util.concurrent.CopyOnWriteArraySet
 import javax.inject.Inject
+import androidx.core.net.toUri
 
 @UnstableApi
 class CastifyDownloadTracker @Inject constructor(
@@ -52,7 +53,7 @@ class CastifyDownloadTracker @Inject constructor(
     }
 
     override fun isDownloaded( mediaItemUri: String ): Boolean =
-        downloads[ Uri.parse( mediaItemUri ) ]?.let {
+        downloads[ mediaItemUri.toUri() ]?.let {
             it.state != Download.STATE_FAILED
         } ?: run { false }
 
@@ -198,7 +199,7 @@ class CastifyDownloadTracker @Inject constructor(
 
         private fun buildDownloadRequest(): DownloadRequest = DownloadRequest.Builder(
             mediaItem.mediaId, mediaItem.localConfiguration!!.uri
-        ).build()
+        ).setData( mediaItem.mediaMetadata.title.toString().toByteArray() ).build()
 
         override fun onPrepareError( helper: DownloadHelper, e: IOException ) {
             val isLiveContent = e is LiveContentUnsupportedException

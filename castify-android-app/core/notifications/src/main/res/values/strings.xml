@@ -3,6 +3,6 @@
 
     <string name="core_notifications_episode_notification_channel_name">Episode updates</string>
     <string name="core_notifications_episode_notification_channel_description">The latest updates on castify</string>
-    <string name="core_notifications_episode_notification_group_summary">%1$d episode updates</string>
+    <string name="core_notifications_episode_notification_group_summary">updates</string>
 
 </resources>
