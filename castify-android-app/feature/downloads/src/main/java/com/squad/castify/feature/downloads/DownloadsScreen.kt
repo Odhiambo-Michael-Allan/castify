@@ -20,6 +20,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,9 +42,13 @@ import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.CastifyAnimatedLoadingWheel
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
+import com.squad.castify.core.ui.EmptyScreen
 import com.squad.castify.core.ui.ErrorScreen
+import com.squad.castify.core.ui.LoadingScaffold
 import com.squad.castify.core.ui.MinimalEpisodeCard
 import com.squad.castify.core.ui.PreviewData
+import androidx.compose.runtime.setValue
+import com.squad.castify.core.designsystem.component.CastifyTopAppBar
 
 
 @Composable
@@ -51,6 +57,7 @@ internal fun DownloadsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onShareEpisode: ( String ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,6 +68,7 @@ internal fun DownloadsScreen(
         isSyncing = isSyncing,
         onNavigateToEpisode = onNavigateToEpisode,
         onNavigateBack = onNavigateBack,
+        onNavigateToPodcast = onNavigateToPodcast,
         onRequestSync = viewModel::requestSync,
         onPlayEpisode = viewModel::playEpisode,
         onPauseDownload = viewModel::pauseDownload,
@@ -94,112 +102,74 @@ private fun DownloadsScreen(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
     onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
 
     val isLoading = uiState is DownloadsScreenUiState.Loading || isSyncing
+    var showOptionsMenu by remember { mutableStateOf( false ) }
 
     Column (
         modifier = Modifier.fillMaxSize()
     ) {
 
-        TopAppBar(
-            navigationIcon = {
-                IconButton(
-                    onClick = onNavigateBack
-                ) {
-                    Icon(
-                        imageVector = CastifyIcons.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-            },
-            actions = {
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = CastifyIcons.MoreVert,
-                        contentDescription = null
-                    )
-                }
-            },
-            title = {
-                Text(
-                    text = stringResource( id = R.string.downloads )
-                )
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent
-            )
+        CastifyTopAppBar(
+            onNavigateBack = onNavigateBack,
+            title = R.string.downloads,
         )
 
-        when ( uiState ) {
-            DownloadsScreenUiState.Error -> ErrorScreen { onRequestSync() }
-            DownloadsScreenUiState.Loading -> {}
-            is DownloadsScreenUiState.Success -> {
-                if ( uiState.downloadedEpisodes.isEmpty() ) {
-                    Column (
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding( 16.dp )
-                    ) {
-                        Icon(
-                            modifier = Modifier.size( 150.dp ),
+        LoadingScaffold(
+            modifier = Modifier.fillMaxSize(),
+            isLoading = isLoading
+        ) {
+            when ( uiState ) {
+                DownloadsScreenUiState.Error -> ErrorScreen { onRequestSync() }
+                DownloadsScreenUiState.Loading -> {}
+                is DownloadsScreenUiState.Success -> {
+                    if ( uiState.downloadedEpisodes.isEmpty() ) {
+                        EmptyScreen(
                             imageVector = CastifyIcons.DownloadDefault,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                            title = R.string.no_downloads,
+                            titleDescription = R.string.no_downloads_subtitle,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding( 16.dp )
                         )
-                        ProvideTextStyle(
-                            value = LocalTextStyle.current.copy(
-                                fontSize = 16.sp
-                            )
-                        ) {
-                            Text(
-                                text = stringResource( id = R.string.no_downloads ),
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = stringResource( id = R.string.no_downloads_subtitle ),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
-                } else {
-                    LazyColumn {
-                        items(
-                            items = uiState.downloadedEpisodes,
-                            key = { it.uri }
-                        ) {
-                            val isPlaying = uiState.playerState.isPlaying &&
-                                    uiState.playerState.currentlyPlayingEpisodeUri == it.uri
-                            val isBuffering = uiState.playerState.isBuffering &&
-                                    uiState.playerState.currentlyPlayingEpisodeUri == it.uri
+                    } else {
+                        LazyColumn {
+                            items(
+                                items = uiState.downloadedEpisodes,
+                                key = { it.uri }
+                            ) {
+                                val isPlaying = uiState.playerState.isPlaying &&
+                                        uiState.playerState.currentlyPlayingEpisodeUri == it.uri
+                                val isBuffering = uiState.playerState.isBuffering &&
+                                        uiState.playerState.currentlyPlayingEpisodeUri == it.uri
 
-                            MinimalEpisodeCard(
-                                modifier = Modifier.padding( 16.dp, 8.dp ),
-                                userEpisode = it,
-                                onPlayEpisode = { onPlayEpisode( it ) },
-                                onDownloadEpisode = { onDownloadEpisode( it ) },
-                                isPlaying = isPlaying,
-                                isBuffering = isBuffering,
-                                isPresentInQueue = uiState.episodesInQueue.contains( it.uri ),
-                                isCompleted = it.toEpisode().isCompleted(),
-                                downloadState = uiState.downloadStates[ it.audioUri ],
-                                downloadingEpisodes = uiState.downloadingEpisodes,
-                                onRetryDownload = { onRetryDownload( it ) },
-                                onRemoveDownload = { onRemoveDownload( it ) },
-                                onResumeDownload = { onResumeDownload( it ) },
-                                onPauseDownload = { onPauseDownload( it ) },
-                                onShareEpisode = onShareEpisode,
-                                onMarkAsCompleted = onMarkAsCompleted,
-                                onNavigateToEpisode = onNavigateToEpisode,
-                                onAddEpisodeToQueue = onAddEpisodeToQueue,
-                                onRemoveFromQueue = onRemoveEpisodeFromQueue,
-                            )
-                            if ( uiState.downloadedEpisodes.indexOf( it ) < uiState.downloadedEpisodes.size - 1 ) {
-                                HorizontalDivider( thickness = 1.dp )
+                                MinimalEpisodeCard(
+                                    modifier = Modifier.padding( 16.dp, 8.dp ),
+                                    userEpisode = it,
+                                    onPlayEpisode = { onPlayEpisode( it ) },
+                                    onDownloadEpisode = { onDownloadEpisode( it ) },
+                                    isPlaying = isPlaying,
+                                    isBuffering = isBuffering,
+                                    isPresentInQueue = uiState.episodesInQueue.contains( it.uri ),
+                                    isCompleted = it.toEpisode().isCompleted(),
+                                    downloadState = uiState.downloadStates[ it.audioUri ],
+                                    downloadingEpisodes = uiState.downloadingEpisodes,
+                                    onRetryDownload = { onRetryDownload( it ) },
+                                    onRemoveDownload = { onRemoveDownload( it ) },
+                                    onResumeDownload = { onResumeDownload( it ) },
+                                    onPauseDownload = { onPauseDownload( it ) },
+                                    onShareEpisode = onShareEpisode,
+                                    onMarkAsCompleted = onMarkAsCompleted,
+                                    onNavigateToEpisode = onNavigateToEpisode,
+                                    onAddEpisodeToQueue = onAddEpisodeToQueue,
+                                    onRemoveFromQueue = onRemoveEpisodeFromQueue,
+                                    onNavigateToPodcast = onNavigateToPodcast,
+                                )
+                                if ( uiState.downloadedEpisodes.indexOf( it ) < uiState.downloadedEpisodes.size - 1 ) {
+                                    HorizontalDivider( thickness = 1.dp )
+                                }
                             }
                         }
                     }
@@ -207,10 +177,6 @@ private fun DownloadsScreen(
             }
         }
     }
-
-    CastifyAnimatedLoadingWheel(
-        isVisible = isLoading
-    )
 
 }
 
@@ -241,6 +207,7 @@ private fun DownloadsScreenPreviewEmptySyncing() {
                 onMarkAsCompleted = {},
                 onAddEpisodeToQueue = {},
                 onRemoveEpisodeFromQueue = {},
+                onNavigateToPodcast = {},
             )
         }
     }
@@ -276,6 +243,7 @@ private fun DownloadsScreenPreviewPopulatedSyncing(
                 onMarkAsCompleted = {},
                 onAddEpisodeToQueue = {},
                 onRemoveEpisodeFromQueue = {},
+                onNavigateToPodcast = {}
             )
         }
     }

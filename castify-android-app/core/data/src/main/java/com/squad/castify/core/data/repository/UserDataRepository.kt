@@ -14,7 +14,7 @@ interface UserDataRepository {
     suspend fun setEpisodeWithUriListened( episodeUri: String )
     suspend fun setDarkThemeConfig( darkThemeConfig: DarkThemeConfig )
     suspend fun setDynamicColorPreference( useDynamicColor: Boolean )
-    suspend fun setShouldHideOnboarding( shouldHideOnboarding: Boolean )
+//    suspend fun setShouldHideOnboarding( shouldHideOnboarding: Boolean )
     suspend fun setThemeBrand( themeBrand: ThemeBrand )
     suspend fun setPlaybackPitch( pitch: Float );
     suspend fun setPlaybackSpeed( speed: Float )
@@ -23,4 +23,5 @@ interface UserDataRepository {
     suspend fun setCurrentlyPlayingEpisodeUri( uri: String )
     suspend fun setCurrentlyPlayingEpisodeDurationPlayed( duration: Duration )
     suspend fun setUrisOfEpisodesInQueue( episodeUris: Set<String> )
+    suspend fun setShouldHideCompletedEpisodes( hideCompletedEpisodes: Boolean )
 }

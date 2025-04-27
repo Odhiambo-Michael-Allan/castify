@@ -49,7 +49,9 @@ import com.squad.castify.core.model.UserEpisode
 import com.squad.castify.core.ui.CastifyAnimatedLoadingWheel
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
+import com.squad.castify.core.ui.EmptyScreen
 import com.squad.castify.core.ui.ErrorScreen
+import com.squad.castify.core.ui.LoadingScaffold
 import com.squad.castify.core.ui.MinimalEpisodeCard
 import com.squad.castify.core.ui.PreviewData
 import sh.calvin.reorderable.ReorderableItem
@@ -62,6 +64,7 @@ internal fun QueueScreen(
     onNavigateBack: () -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onShareEpisode: ( String ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -73,6 +76,7 @@ internal fun QueueScreen(
         onNavigateToEpisode = onNavigateToEpisode,
         onNavigateBack = onNavigateBack,
         onShareEpisode = onShareEpisode,
+        onNavigateToPodcast = onNavigateToPodcast,
         onPauseDownload = viewModel::pauseDownload,
         onRequestSync = viewModel::requestSync,
         onPlayEpisode = viewModel::playEpisode,
@@ -105,6 +109,7 @@ private fun QueueScreen(
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onRemoveFromQueue: ( UserEpisode ) -> Unit,
     onMoveQueueItem: ( Int, Int ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
 
     val isLoading = uiState is QueueScreenUiState.Loading || isSyncing
@@ -148,34 +153,14 @@ private fun QueueScreen(
             QueueScreenUiState.Loading -> {}
             is QueueScreenUiState.Success -> {
                 if ( uiState.episodesInQueue.isEmpty() ) {
-                    Column (
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
+                    EmptyScreen(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(16.dp)
-                    ) {
-                        Icon(
-                            imageVector = CastifyIcons.PlaylistAdd,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size( 150.dp ),
-                        )
-                        ProvideTextStyle(
-                            value = LocalTextStyle.current.copy(
-                                fontSize = 16.sp
-                            )
-                        ) {
-                            Text(
-                                text = stringResource( id = R.string.queue_empty ),
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = stringResource( id = R.string.queue_empty_subtitle ),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
+                            .padding( 16.dp ),
+                        imageVector = CastifyIcons.PlaylistAdd,
+                        title = R.string.queue_empty,
+                        titleDescription = R.string.queue_empty_subtitle
+                    )
                 } else {
                     val view = LocalView.current
                     val lazyListState = rememberLazyListState(
@@ -188,76 +173,81 @@ private fun QueueScreen(
                     ) { from, to ->
                         onMoveQueueItem( from.index, to.index )
                     }
-
-                    LazyColumn (
-                        state = lazyListState
+                    LoadingScaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        isLoading = isLoading
                     ) {
-                        items(
-                            items = uiState.episodesInQueue,
-                            key = { it.uri }
-                        ) { userEpisode ->
-                            val isPlaying = uiState.playerState.isPlaying &&
-                                    uiState.playerState.currentlyPlayingEpisodeUri == userEpisode.uri
-                            val isBuffering = uiState.playerState.isBuffering &&
-                                    uiState.playerState.currentlyPlayingEpisodeUri == userEpisode.uri
+                        LazyColumn (
+                            state = lazyListState
+                        ) {
+                            items(
+                                items = uiState.episodesInQueue,
+                                key = { it.uri }
+                            ) { userEpisode ->
+                                val isPlaying = uiState.playerState.isPlaying &&
+                                        uiState.playerState.currentlyPlayingEpisodeUri == userEpisode.uri
+                                val isBuffering = uiState.playerState.isBuffering &&
+                                        uiState.playerState.currentlyPlayingEpisodeUri == userEpisode.uri
 
-                            ReorderableItem(
-                                state = reorderableLazyColumnState,
-                                key = userEpisode.uri
-                            ) {
-                                Row (
-                                    verticalAlignment = Alignment.CenterVertically,
+                                ReorderableItem(
+                                    state = reorderableLazyColumnState,
+                                    key = userEpisode.uri
                                 ) {
-                                    IconButton(
-                                        modifier = Modifier.draggableHandle(
-                                            onDragStarted = {
-                                                ViewCompat.performHapticFeedback(
-                                                    view,
-                                                    HapticFeedbackConstantsCompat.GESTURE_START
-                                                )
-                                            },
-                                            onDragStopped = {
-                                                ViewCompat.performHapticFeedback(
-                                                    view,
-                                                    HapticFeedbackConstantsCompat.GESTURE_END
-                                                )
-                                            }
-                                        ),
-                                        onClick = {}
+                                    Row (
+                                        verticalAlignment = Alignment.CenterVertically,
                                     ) {
-                                        Icon(
-                                            imageVector = CastifyIcons.DragHandle,
-                                            contentDescription = null
+                                        IconButton(
+                                            modifier = Modifier.draggableHandle(
+                                                onDragStarted = {
+                                                    ViewCompat.performHapticFeedback(
+                                                        view,
+                                                        HapticFeedbackConstantsCompat.GESTURE_START
+                                                    )
+                                                },
+                                                onDragStopped = {
+                                                    ViewCompat.performHapticFeedback(
+                                                        view,
+                                                        HapticFeedbackConstantsCompat.GESTURE_END
+                                                    )
+                                                }
+                                            ),
+                                            onClick = {}
+                                        ) {
+                                            Icon(
+                                                imageVector = CastifyIcons.DragHandle,
+                                                contentDescription = null
+                                            )
+                                        }
+                                        MinimalEpisodeCard(
+                                            modifier = Modifier
+                                                .padding( 16.dp, 8.dp ),
+                                            userEpisode = userEpisode,
+                                            onPlayEpisode = { onPlayEpisode( userEpisode ) },
+                                            onDownloadEpisode = { onDownloadEpisode( userEpisode ) },
+                                            isPlaying = isPlaying,
+                                            isBuffering = isBuffering,
+                                            isCompleted = userEpisode.toEpisode().isCompleted(),
+                                            isPresentInQueue = true,
+                                            downloadState = uiState.downloadedEpisodes[ userEpisode.audioUri ],
+                                            downloadingEpisodes = uiState.downloadingEpisodes,
+                                            onRetryDownload = { onRetryDownload( userEpisode ) },
+                                            onRemoveDownload = { onRemoveDownload( userEpisode ) },
+                                            onResumeDownload = { onResumeDownload( userEpisode ) },
+                                            onPauseDownload = { onPauseDownload( userEpisode ) },
+                                            onShareEpisode = onShareEpisode,
+                                            onMarkAsCompleted = onMarkAsCompleted,
+                                            onNavigateToEpisode = onNavigateToEpisode,
+                                            onAddEpisodeToQueue = {
+                                                /* Do nothing because episode is already in queue. */
+                                            },
+                                            onRemoveFromQueue = onRemoveFromQueue,
+                                            onNavigateToPodcast = onNavigateToPodcast,
                                         )
                                     }
-                                    MinimalEpisodeCard(
-                                        modifier = Modifier
-                                            .padding( 16.dp, 8.dp ),
-                                        userEpisode = userEpisode,
-                                        onPlayEpisode = { onPlayEpisode( userEpisode ) },
-                                        onDownloadEpisode = { onDownloadEpisode( userEpisode ) },
-                                        isPlaying = isPlaying,
-                                        isBuffering = isBuffering,
-                                        isCompleted = userEpisode.toEpisode().isCompleted(),
-                                        isPresentInQueue = true,
-                                        downloadState = uiState.downloadedEpisodes[ userEpisode.audioUri ],
-                                        downloadingEpisodes = uiState.downloadingEpisodes,
-                                        onRetryDownload = { onRetryDownload( userEpisode ) },
-                                        onRemoveDownload = { onRemoveDownload( userEpisode ) },
-                                        onResumeDownload = { onResumeDownload( userEpisode ) },
-                                        onPauseDownload = { onPauseDownload( userEpisode ) },
-                                        onShareEpisode = onShareEpisode,
-                                        onMarkAsCompleted = onMarkAsCompleted,
-                                        onNavigateToEpisode = onNavigateToEpisode,
-                                        onAddEpisodeToQueue = {
-                                            /* Do nothing because episode is already in queue. */
-                                        },
-                                        onRemoveFromQueue = onRemoveFromQueue,
-                                    )
                                 }
-                            }
-                            if ( uiState.episodesInQueue.indexOf( userEpisode ) < uiState.episodesInQueue.size - 1 ) {
-                                HorizontalDivider( thickness = 1.dp )
+                                if ( uiState.episodesInQueue.indexOf( userEpisode ) < uiState.episodesInQueue.size - 1 ) {
+                                    HorizontalDivider( thickness = 1.dp )
+                                }
                             }
                         }
                     }
@@ -265,10 +255,6 @@ private fun QueueScreen(
             }
         }
     }
-
-    CastifyAnimatedLoadingWheel(
-        isVisible = isLoading
-    )
 
 }
 
@@ -297,7 +283,8 @@ private fun QueueScreenPreviewEmpty() {
                 onPauseDownload = {},
                 onRetryDownload = {},
                 onRemoveFromQueue = {},
-                onMoveQueueItem = { _, _ -> }
+                onMoveQueueItem = { _, _ -> },
+                onNavigateToPodcast = {}
             )
         }
     }
@@ -331,7 +318,8 @@ private fun QueueScreenPreviewPopulatedSyncing(
                 onPauseDownload = {},
                 onRetryDownload = {},
                 onRemoveFromQueue = {},
-                onMoveQueueItem = { _, _ -> }
+                onMoveQueueItem = { _, _ -> },
+                onNavigateToPodcast = {}
             )
         }
     }

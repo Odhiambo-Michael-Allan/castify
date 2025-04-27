@@ -6,6 +6,7 @@ import com.squad.castify.R
 import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.feature.downloads.navigation.DownloadsRoute
 import com.squad.castify.feature.explore.navigation.ExploreRoute
+import com.squad.castify.feature.history.navigation.HistoryRoute
 import com.squad.castify.feature.home.navigation.HomeRoute
 import com.squad.castify.feature.queue.navigation.QueueRoute
 import com.squad.castify.feature.subscriptions.navigation.SubscriptionsRoute
@@ -16,6 +17,7 @@ import com.squad.castify.feature.home.R as homeR
 import com.squad.castify.feature.subscriptions.R as subscriptionsR
 import com.squad.castify.feature.downloads.R as downloadsR
 import com.squad.castify.feature.queue.R as queueR
+import com.squad.castify.feature.history.R as historyR
 
 /**
  * Type for the top level destinations in the application. Each of these destinations can contain
@@ -73,5 +75,10 @@ enum class LibraryDestination(
         icon = CastifyIcons.PlaylistAdd,
         titleTextId = queueR.string.queue,
         route = QueueRoute::class
+    ),
+    HISTORY(
+        icon = CastifyIcons.History,
+        titleTextId = historyR.string.history,
+        route = HistoryRoute::class
     )
 }

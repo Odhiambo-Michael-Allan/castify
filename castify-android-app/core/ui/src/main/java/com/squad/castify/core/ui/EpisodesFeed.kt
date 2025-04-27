@@ -27,6 +27,7 @@ fun LazyGridScope.episodesFeed(
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
     isPresentInQueue: ( UserEpisode ) -> Boolean,
     onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
     items(
         items = episodes,
@@ -52,6 +53,7 @@ fun LazyGridScope.episodesFeed(
             onAddEpisodeToQueue = onAddEpisodeToQueue,
             isPresentInQueue = isPresentInQueue( it ),
             onRemoveFromQueue = onRemoveEpisodeFromQueue,
+            onNavigateToPodcast = onNavigateToPodcast,
         )
     }
 }

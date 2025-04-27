@@ -40,13 +40,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.squad.castify.core.designsystem.component.CastifyTopAppBar
 import com.squad.castify.core.designsystem.component.DynamicAsyncImage
 import com.squad.castify.core.designsystem.icon.CastifyIcons
 import com.squad.castify.core.designsystem.theme.CastifyTheme
 import com.squad.castify.core.ui.CastifyAnimatedLoadingWheel
 import com.squad.castify.core.ui.CategoryPodcastEpisodePreviewParameterProvider
 import com.squad.castify.core.ui.DevicePreviews
+import com.squad.castify.core.ui.EmptyScreen
 import com.squad.castify.core.ui.ErrorScreen
+import com.squad.castify.core.ui.LoadingScaffold
 import com.squad.castify.core.ui.PreviewData
 
 @Composable
@@ -79,102 +82,51 @@ private fun SubscriptionsScreen(
     onRequestSync: () -> Unit,
 ) {
 
-    val isLoading = uiState is SubscriptionsScreenUiState.Loading
+    val isLoading = uiState is SubscriptionsScreenUiState.Loading || isSyncing
 
     Column (
         modifier = Modifier.fillMaxSize()
     ) {
-        TopAppBar(
-            navigationIcon = {
-                IconButton(
-                    onClick = onNavigateBack
-                ) {
-                    Icon(
-                        imageVector = CastifyIcons.ArrowBack,
-                        contentDescription = null
-                    )
-                }
-            },
-            actions = {
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = CastifyIcons.AddLink,
-                        contentDescription = null
-                    )
-                }
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = CastifyIcons.MoreVert,
-                        contentDescription = null
-                    )
-                }
-            },
-            title = {
-                Text(
-                    text = stringResource( id = R.string.title )
-                )
-            },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = Color.Transparent
-            )
+        CastifyTopAppBar(
+            onNavigateBack = onNavigateBack,
+            title = R.string.title
         )
-        when ( uiState ) {
-            SubscriptionsScreenUiState.Error -> { ErrorScreen { onRequestSync() } }
-            SubscriptionsScreenUiState.Loading -> {}
-            is SubscriptionsScreenUiState.Success -> {
-                if ( uiState.subscribedPodcasts.isEmpty() ) {
-                    Column (
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding( 16.dp )
-                    ) {
-                        Icon(
-                            modifier = Modifier.size( 150.dp ),
+        LoadingScaffold(
+            modifier = Modifier.fillMaxSize(),
+            isLoading = isLoading
+        ) {
+            when ( uiState ) {
+                SubscriptionsScreenUiState.Error -> { ErrorScreen { onRequestSync() } }
+                SubscriptionsScreenUiState.Loading -> {}
+                is SubscriptionsScreenUiState.Success -> {
+                    if ( uiState.subscribedPodcasts.isEmpty() ) {
+                        EmptyScreen(
+                            title = R.string.no_subscriptions,
+                            titleDescription = R.string.no_subscriptions_desc,
                             imageVector = CastifyIcons.Add,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding( 16.dp )
                         )
-                        ProvideTextStyle(
-                            value = LocalTextStyle.current.copy(
-                                fontSize = 16.sp
-                            )
+                    } else {
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive( minSize = 100.dp ),
+                            contentPadding = PaddingValues( 16.dp )
                         ) {
-                            Text(
-                                text = stringResource( id = R.string.no_subscriptions ),
-                                fontWeight = FontWeight.SemiBold,
-                            )
-                            Text(
-                                text = stringResource( id = R.string.no_subscriptions_desc ),
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-                    }
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive( minSize = 100.dp ),
-                        contentPadding = PaddingValues( 16.dp )
-                    ) {
-                        items(
-                            items = uiState.subscribedPodcasts
-                        ) {
-                            Card (
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding( 4.dp ),
-                                shape = RoundedCornerShape( 8.dp ),
-                                colors = CardDefaults.cardColors(
-                                    containerColor = Color.Transparent
-                                ),
-                                onClick = { onNavigateToPodcast( it.uri ) }
+                            items(
+                                items = uiState.subscribedPodcasts
                             ) {
-                                Column {
-                                    Box {
+                                Card (
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding( 4.dp ),
+                                    shape = RoundedCornerShape( 8.dp ),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = Color.Transparent
+                                    ),
+                                    onClick = { onNavigateToPodcast( it.uri ) }
+                                ) {
+                                    Column {
                                         DynamicAsyncImage(
                                             modifier = Modifier
                                                 .aspectRatio( 1f )
@@ -182,27 +134,16 @@ private fun SubscriptionsScreen(
                                             imageUrl = it.imageUrl,
                                             contentDescription = null
                                         )
-                                        IconButton(
-                                            modifier = Modifier.align(
-                                                Alignment.TopEnd
-                                            ),
-                                            onClick = {}
-                                        ) {
-                                            Icon(
-                                                imageVector = CastifyIcons.MoreVert,
-                                                contentDescription = null,
+                                        Text(
+                                            text = it.title,
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis,
+                                            fontWeight = FontWeight.SemiBold,
+                                            style = LocalTextStyle.current.copy(
+                                                fontSize = 15.sp
                                             )
-                                        }
-                                    }
-                                    Text(
-                                        text = it.title,
-                                        maxLines = 2,
-                                        overflow = TextOverflow.Ellipsis,
-                                        fontWeight = FontWeight.SemiBold,
-                                        style = LocalTextStyle.current.copy(
-                                            fontSize = 15.sp
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }
@@ -211,10 +152,6 @@ private fun SubscriptionsScreen(
             }
         }
     }
-
-    CastifyAnimatedLoadingWheel(
-        isVisible = isLoading || isSyncing
-    )
 }
 
 @DevicePreviews

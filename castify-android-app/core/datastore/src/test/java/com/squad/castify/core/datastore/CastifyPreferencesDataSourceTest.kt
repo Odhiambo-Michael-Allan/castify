@@ -41,18 +41,12 @@ class CastifyPreferencesDataSourceTest {
         assertFalse( subject.userData.first().shouldHideOnboarding )
     }
 
-    @Test
-    fun shouldHideOnboardingIsTrueWhenSet() = testScope.runTest {
-        subject.setShouldHideOnboarding( true )
-        assertTrue( subject.userData.first().shouldHideOnboarding )
-    }
 
     @Test
     fun shouldHideOnboarding_userUnfollowsLastPodcast_shouldHideOnboardingIsFalse() =
         testScope.runTest {
             // Given: User completes onboarding by following a single podcast.
             subject.setPodcastUriFollowed( "1", true )
-            subject.setShouldHideOnboarding( true )
 
             // When: they unfollow that Podcast.
             subject.setPodcastUriFollowed( "1", false )
@@ -303,5 +297,12 @@ class CastifyPreferencesDataSourceTest {
                 .map { it.urisOfEpisodesInQueue }
                 .first()
         )
+    }
+
+    @Test
+    fun testHideCompletedEpisodesInSetCorrectly() = testScope.runTest {
+        assertFalse( subject.userData.first().hideCompletedEpisodes )
+        subject.setShouldHideCompletedEpisodes( true )
+        assertTrue( subject.userData.first().hideCompletedEpisodes )
     }
 }

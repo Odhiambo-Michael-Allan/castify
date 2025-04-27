@@ -63,7 +63,8 @@ class OfflineFirstUserDataRepositoryTest {
                     seekForwardDuration = DEFAULT_SEEK_FORWARD_DURATION,
                     currentlyPlayingEpisodeUri = "",
                     currentlyPlayingEpisodeDurationPlayed = Duration.ZERO,
-                    urisOfEpisodesInQueue = emptySet()
+                    urisOfEpisodesInQueue = emptySet(),
+                    hideCompletedEpisodes = false
                 ),
                 subject.userData.first()
             )
@@ -162,6 +163,23 @@ class OfflineFirstUserDataRepositoryTest {
         }
 
     @Test
+    fun offlineFirstUserDataRepository_set_hide_completed_episodes_delegates_to_castify_preferences() =
+        testScope.runTest {
+            subject.setShouldHideCompletedEpisodes( true )
+            assertTrue(
+                subject.userData
+                    .map { it.hideCompletedEpisodes }
+                    .first()
+            )
+            subject.setShouldHideCompletedEpisodes( false )
+            assertFalse(
+                subject.userData
+                    .map { it.hideCompletedEpisodes }
+                    .first()
+            )
+        }
+
+    @Test
     fun offlineFirstUserDataRepository_set_dark_theme_config_delegates_to_castify_preferences() =
         testScope.runTest {
             subject.setDarkThemeConfig( DarkThemeConfig.DARK )
@@ -204,7 +222,7 @@ class OfflineFirstUserDataRepositoryTest {
     fun whenUserCompletesOnboarding_thenUnfollowsAllPodcasts_shouldHideOnboardingIsFalse() =
         testScope.runTest {
             subject.setPodcastWithUriFollowed( "1", true )
-            subject.setShouldHideOnboarding( true )
+//            subject.setShouldHideOnboarding( true )
             assertTrue( subject.userData.first().shouldHideOnboarding )
 
             subject.setPodcastWithUriFollowed( "1", false )

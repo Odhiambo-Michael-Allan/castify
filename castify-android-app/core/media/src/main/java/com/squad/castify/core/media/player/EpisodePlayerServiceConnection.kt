@@ -368,7 +368,9 @@ data class PlaybackPosition(
     }
 }
 
-fun Episode.isCompleted() = ( durationPlayed.inWholeMilliseconds + DEFAULT_PLAYBACK_POSITION_UPDATE_INTERVAL ) >= duration.inWholeMilliseconds
+fun Episode.isCompleted() = (
+        durationPlayed.inWholeMilliseconds + DEFAULT_PLAYBACK_POSITION_UPDATE_INTERVAL
+        ) >= duration.inWholeMilliseconds
 
 interface EpisodeToMediaItemConverter {
     fun convert( episode: Episode ): MediaItem

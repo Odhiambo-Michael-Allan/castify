@@ -61,6 +61,7 @@ dependencies {
     implementation( projects.feature.subscriptions )
     implementation( projects.feature.downloads )
     implementation( projects.feature.queue )
+    implementation( projects.feature.history )
 
     implementation( projects.core.common )
     implementation( projects.core.ui )

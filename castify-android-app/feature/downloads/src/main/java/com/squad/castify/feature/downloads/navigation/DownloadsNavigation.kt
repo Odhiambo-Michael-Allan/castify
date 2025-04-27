@@ -31,6 +31,7 @@ fun NavGraphBuilder.downloadsScreen(
     onNavigateBack: () -> Unit,
     onShareEpisode: ( String ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
     composable<DownloadsRoute>(
         enterTransition = { SlideTransition.slideUp.enterTransition() }
@@ -38,7 +39,8 @@ fun NavGraphBuilder.downloadsScreen(
         DownloadsScreen(
             onNavigateBack = onNavigateBack,
             onShareEpisode = onShareEpisode,
-            onNavigateToEpisode = onNavigateToEpisode
+            onNavigateToEpisode = onNavigateToEpisode,
+            onNavigateToPodcast = onNavigateToPodcast,
         )
     }
 }

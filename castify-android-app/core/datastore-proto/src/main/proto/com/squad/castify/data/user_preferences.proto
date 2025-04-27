@@ -33,7 +33,8 @@ message UserPreferences {
   string currently_playing_episode_duration_played = 15;
 
   map<string, bool> uris_of_episodes_in_queue = 16;
+  bool hide_completed_episodes = 17;
 
 
-  // NEXT AVAILABLE ID = 17
+  // NEXT AVAILABLE ID = 18
 }

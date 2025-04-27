@@ -29,6 +29,7 @@ import com.google.common.util.concurrent.MoreExecutors
 import com.squad.castify.core.common.network.di.ApplicationScope
 import com.squad.castify.core.data.repository.EpisodeQuery
 import com.squad.castify.core.data.repository.EpisodesRepository
+import com.squad.castify.core.data.repository.PlayHistoryRepository
 import com.squad.castify.core.data.repository.UserDataRepository
 import com.squad.castify.core.media.extensions.toMediaItem
 import com.squad.castify.core.media.notification.CastifyMediaNotificationProvider
@@ -37,6 +38,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import java.util.concurrent.Executors
 import javax.inject.Inject
 
@@ -77,6 +79,9 @@ class EpisodePlayerService : MediaLibraryService() {
 
     @Inject
     lateinit var userDataRepository: UserDataRepository
+
+    @Inject
+    lateinit var playHistoryRepository: PlayHistoryRepository
 
     private var mediaItems = emptyList<MediaItem>()
 
@@ -214,10 +219,18 @@ class EpisodePlayerService : MediaLibraryService() {
 
         override fun onMediaItemTransition( mediaItem: MediaItem?, reason: Int ) {
             super.onMediaItemTransition( mediaItem, reason )
-            Log.d( "EPISODE PLAYER SERVICE", "MEDIA ITEM TRANSITION, ID: ${mediaItem?.mediaId}" )
+            Log.d( TAG, "MEDIA ITEM TRANSITION, ID: ${mediaItem?.mediaId}" )
             mediaItem?.let {
                 serviceScope.launch {
+                    Log.d( TAG, "STORING CURRENTLY PLAYING EPISODE URI" )
                     userDataRepository.setCurrentlyPlayingEpisodeUri( it.mediaId )
+                }
+                serviceScope.launch {
+                    Log.d( TAG, "ADDING ENTRY TO HISTORY REPOSITORY" )
+                    playHistoryRepository.upsertEpisode(
+                        episodeUri = it.mediaId,
+                        timePlayed = Clock.System.now()
+                    )
                 }
             }
         }
@@ -271,4 +284,5 @@ class EpisodePlayerService : MediaLibraryService() {
 }
 
 const val CASTIFY_BROWSABLE_ROOT = "/"
+private const val TAG = "EPISODE PLAYER SERVICE"
 

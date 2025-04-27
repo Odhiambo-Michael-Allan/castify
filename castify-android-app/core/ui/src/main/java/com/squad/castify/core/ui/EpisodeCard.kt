@@ -90,6 +90,7 @@ fun EpisodeCard(
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
     onRemoveFromQueue: ( UserEpisode ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
 
     Card(
@@ -160,6 +161,7 @@ fun EpisodeCard(
                 onMarkAsCompleted = onMarkAsCompleted,
                 onAddEpisodeToQueue = onAddEpisodeToQueue,
                 onRemoveFromQueue = onRemoveFromQueue,
+                onNavigateToPodcast = onNavigateToPodcast,
             )
         }
     }
@@ -187,6 +189,7 @@ fun MinimalEpisodeCard(
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
     onRemoveFromQueue: ( UserEpisode ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
 
     Card (
@@ -243,6 +246,7 @@ fun MinimalEpisodeCard(
                 onMarkAsCompleted = onMarkAsCompleted,
                 onAddEpisodeToQueue = onAddEpisodeToQueue,
                 onRemoveFromQueue = onRemoveFromQueue,
+                onNavigateToPodcast = onNavigateToPodcast,
             )
         }
     }
@@ -270,6 +274,7 @@ fun EpisodeCardBottomRow(
     onDownloadEpisode: () -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
     onRemoveFromQueue: ( UserEpisode ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
 
     var showDownloadStateOptionsBottomSheet by remember { mutableStateOf( false ) }
@@ -450,11 +455,9 @@ fun EpisodeCardBottomRow(
                     showEpisodeOptionsBottomSheet = false
                     onShareEpisode( userEpisode.uri )
                 },
-                onGoToEpisode = {
-                    showEpisodeOptionsBottomSheet = false
-                },
                 onGoToPodcast = {
                     showEpisodeOptionsBottomSheet = false
+                    onNavigateToPodcast( userEpisode.followablePodcast.podcast.uri )
                 },
                 onMarkAsCompleted = {
                     showEpisodeOptionsBottomSheet = false
@@ -536,7 +539,6 @@ private fun EpisodeOptions(
     userEpisode: UserEpisode,
     onMarkAsCompleted: () -> Unit,
     onGoToPodcast: () -> Unit,
-    onGoToEpisode: () -> Unit,
     onShare: () -> Unit,
 ) {
     Column (
@@ -588,11 +590,6 @@ private fun EpisodeOptions(
             titleResId = R.string.go_to_podcast,
             imageVector = CastifyIcons.Podcast,
             onClick = onGoToPodcast
-        )
-        OptionCard(
-            titleResId = R.string.go_to_episode,
-            imageVector = CastifyIcons.Podcast,
-            onClick = onGoToEpisode
         )
         OptionCard(
             titleResId = R.string.share,
@@ -672,6 +669,7 @@ fun EpisodeCardPreview(
                 onNavigateToEpisode = {},
                 onAddEpisodeToQueue = {},
                 onRemoveFromQueue = {},
+                onNavigateToPodcast = {},
             )
         }
     }
@@ -707,6 +705,7 @@ private fun MinimalEpisodeCardPreview(
                 onNavigateToEpisode = {},
                 onAddEpisodeToQueue = {},
                 onRemoveFromQueue = {},
+                onNavigateToPodcast = {}
             )
         }
     }
@@ -722,7 +721,6 @@ fun EpisodeOptionsPreview(
         Surface {
             EpisodeOptions(
                 userEpisode = previewData.episodes.first(),
-                onGoToEpisode = {},
                 onShare = {},
                 onGoToPodcast = {},
                 onMarkAsCompleted = {}

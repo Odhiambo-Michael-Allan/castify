@@ -2,7 +2,6 @@ package com.squad.castify.navigation
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -16,20 +15,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import com.squad.castify.feature.downloads.navigation.downloadsScreen
 import com.squad.castify.feature.episode.navigation.episodeScreen
 import com.squad.castify.feature.episode.navigation.navigateToEpisode
-import com.squad.castify.feature.explore.navigation.ExploreRoute
 import com.squad.castify.feature.explore.navigation.exploreScreen
 import com.squad.castify.feature.explore.navigation.navigateToExplore
+import com.squad.castify.feature.history.navigation.historyScreen
+import com.squad.castify.feature.history.navigation.navigateToHistory
 import com.squad.castify.feature.home.navigation.HomeRoute
 import com.squad.castify.feature.home.navigation.homeScreen
 import com.squad.castify.feature.nowplaying.NowPlayingScreen
 import com.squad.castify.feature.nowplaying.bottombar.NowPlayingBottomBar
 import com.squad.castify.feature.podcast.navigation.navigateToPodcast
 import com.squad.castify.feature.podcast.navigation.podcastScreen
+import com.squad.castify.feature.queue.navigation.navigateToQueue
 import com.squad.castify.feature.queue.navigation.queueScreen
 import com.squad.castify.feature.subscriptions.navigation.navigateToSubscriptions
 import com.squad.castify.feature.subscriptions.navigation.subscriptionsScreen
@@ -51,7 +51,7 @@ fun CastifyNavHost(
 ) {
 
     val navHostController = appState.navHostController
-    var shouldShowNowPlayingScreen by remember { mutableStateOf( false ) }
+    var showNowPlayingScreen by remember { mutableStateOf( false ) }
     val context = LocalContext.current
 
     Column {
@@ -79,8 +79,8 @@ fun CastifyNavHost(
             )
             exploreScreen(
                 onShareEpisode = { context.shareEpisode( it ) },
-                onPodcastClick = {
-                    navHostController.navigateToPodcast( it.podcast.uri )
+                onNavigateToPodcast = {
+                    navHostController.navigateToPodcast( it )
                 },
                 onNavigateToEpisode = {
                     navHostController.navigateToEpisode(
@@ -107,7 +107,8 @@ fun CastifyNavHost(
                         episodeUri = it.uri,
                         podcastUri = it.followablePodcast.podcast.uri
                     )
-                }
+                },
+                onNavigateToPodcast = { navHostController.navigateToPodcast( it ) }
             )
             subscriptionsScreen(
                 onNavigateBack = { navHostController.navigateUp() },
@@ -121,7 +122,8 @@ fun CastifyNavHost(
                         episodeUri = it.uri,
                         podcastUri = it.followablePodcast.podcast.uri
                     )
-                }
+                },
+                onNavigateToPodcast = { navHostController.navigateToPodcast( it ) }
             )
             queueScreen(
                 onNavigateBack = { navHostController.navigateUp() },
@@ -131,24 +133,40 @@ fun CastifyNavHost(
                         episodeUri = it.uri,
                         podcastUri = it.followablePodcast.podcast.uri
                     )
-                }
+                },
+                onNavigateToPodcast = { navHostController.navigateToPodcast( it ) }
+            )
+            historyScreen(
+                onNavigateBack = { navHostController.navigateUp() },
+                onShareEpisode = { context.shareEpisode( it ) },
+                onNavigateToEpisode = {
+                    navHostController.navigateToEpisode(
+                        episodeUri = it.uri,
+                        podcastUri = it.followablePodcast.podcast.uri
+                    )
+                },
+                onNavigateToPodcast = { navHostController.navigateToPodcast( it ) }
             )
 
         }
         NowPlayingBottomBar {
-            shouldShowNowPlayingScreen = true
+            showNowPlayingScreen = true
         }
     }
 
-    if ( shouldShowNowPlayingScreen ) {
+    if ( showNowPlayingScreen ) {
         ModalBottomSheet(
             sheetState = rememberModalBottomSheetState(
                 skipPartiallyExpanded = true
             ),
-            onDismissRequest = { shouldShowNowPlayingScreen = false }
+            onDismissRequest = { showNowPlayingScreen = false }
         ) {
             NowPlayingScreen(
                 onLaunchEqualizerActivity = onLaunchEqualizerActivity,
+                onNavigateToQueue = {
+                    showNowPlayingScreen = false
+                    navHostController.navigateToQueue()
+                },
                 onShareEpisode = { context.shareEpisode( it ) }
             )
         }

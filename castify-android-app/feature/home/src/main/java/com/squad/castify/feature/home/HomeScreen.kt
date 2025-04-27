@@ -1,6 +1,7 @@
 package com.squad.castify.feature.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -189,7 +190,7 @@ private fun HomeScreenContent(
                                     Row (
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding( 16.dp, 0.dp ),
+                                            .padding( start = 16.dp, end = 16.dp, top = 8.dp ),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
@@ -200,17 +201,16 @@ private fun HomeScreenContent(
                                                 fontSize = 15.sp
                                             )
                                         )
-                                        IconButton(
-                                            onClick = onNavigateToSubscriptions
-                                        ) {
-                                            Text(
-                                                text = stringResource( R.string.more ),
-                                                fontWeight = FontWeight.SemiBold,
-                                                style = LocalTextStyle.current.copy(
-                                                    color = MaterialTheme.colorScheme.primary
-                                                )
+                                        Text(
+                                            modifier = Modifier.clickable {
+                                                onNavigateToSubscriptions()
+                                            },
+                                            text = stringResource( R.string.more ),
+                                            fontWeight = FontWeight.SemiBold,
+                                            style = LocalTextStyle.current.copy(
+                                                color = MaterialTheme.colorScheme.primary
                                             )
-                                        }
+                                        )
                                     }
                                     Spacer( modifier = Modifier.height( 16.dp ) )
                                     LazyRow (
@@ -286,6 +286,7 @@ private fun HomeScreenContent(
                                 onAddEpisodeToQueue = onAddEpisodeToQueue,
                                 isPresentInQueue = { uiState.episodesInQueue.contains( it.uri ) },
                                 onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
+                                onNavigateToPodcast = onNavigateToPodcast,
                             )
                         }
                     }

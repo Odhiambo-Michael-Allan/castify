@@ -251,7 +251,7 @@ class OfflineFirstEpisodesRepositoryTest {
     fun offlineFirstEpisodeRepository_send_notifications_for_newly_synced_episodes_from_followed_podcasts() =
         testScope.runTest {
             // User has onboarded.
-            castifyPreferencesDataSource.setShouldHideOnboarding( true )
+//            castifyPreferencesDataSource.setShouldHideOnboarding( true )
 
             val networkEpisodes = networkDataSource.getEpisodes()
 
@@ -291,7 +291,7 @@ class OfflineFirstEpisodesRepositoryTest {
     @Test
     fun offlineFirstEpisodeRepository_does_not_send_notifications_for_existing_podcasts() =
         testScope.runTest {
-            castifyPreferencesDataSource.setShouldHideOnboarding( true )
+//            castifyPreferencesDataSource.setShouldHideOnboarding( true )
 
             val networkEpisodes = networkDataSource.getEpisodes()
                 .distinctBy { it.uri }

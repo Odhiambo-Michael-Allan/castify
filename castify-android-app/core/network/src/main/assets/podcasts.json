@@ -957,17 +957,6 @@
     ]
   },
   {
-    "uri": "https://feeds.megaphone.fm/stupid-genius",
-    "title": "anything goes with emma chamberlain",
-    "description": "emma prefers to share her thoughts with a microphone rather than a physical human being, so thank god she has a podcast. recorded from the comfort of her bed...and some other fun places, emma talks at length about whatever is on her mind every week. anything really does go on this podcast. sometimes philosophy, sometimes a random story from 10 years ago, sometimes advice, sometimes fun interviews, and sometimes nothing at all. you never know what you are going to get, but that’s what keeps it interesting. new episodes every thursday and sunday, video available only on spotify.",
-    "author": "emma chamberlain",
-    "copyright": "EFC LLC.",
-    "imageUrl": "https://megaphone.imgix.net/podcasts/d2559f3c-54a3-11e9-85f3-4b0dc7ea6463/image/c9a396630bd1f08eb142adfce0da9d39.jpg?ixlib\u003drails-4.3.1\u0026max-w\u003d3000\u0026max-h\u003d3000\u0026fit\u003dcrop\u0026auto\u003dformat,compress",
-    "categoryIds": [
-      "18"
-    ]
-  },
-  {
     "uri": "https://anchor.fm/s/ef8a7c40/podcast/rss",
     "title": "Tate Speech by Andrew Tate\n",
     "description": "The official channel of Andrew Tate. Subscribe and get the latest videos and Emergency Meeting Podcast episodes.",
@@ -1150,6 +1139,49 @@
     "author": "Jam Sessions + Ryan Hefner",
     "copyright": "© 2024 - 2025 Jam Sessions",
     "imageUrl": "https://img.transistor.fm/YkukEpuKqHG4BfOT0bvzN_gSFDbc6gIMA_zHXLxxOAk/rs:fill:3000:3000:1/q:60/aHR0cHM6Ly9pbWct/dXBsb2FkLXByb2R1/Y3Rpb24udHJhbnNp/c3Rvci5mbS82MWRm/ZmI2NTQxZTYzYzVh/YWNlODVhNzZhMjFk/YWEwMy5wbmc.jpg",
+    "categoryIds": [
+      "0"
+    ]
+  },
+  {
+    "uri": "https://api.substack.com/feed/podcast/458709.rss",
+    "title": "The Pragmatic Engineer",
+    "author": "Gergely Orosz",
+    "copyright": "Gergely Orosz",
+    "imageUrl": "https://substackcdn.com/feed/podcast/458709/90b8608fc05535db53f32c5705737010.jpg",
+    "categoryIds": [
+      "0"
+    ]
+  },
+  {
+    "uri": "https://feeds.libsyn.com/419861/rss",
+    "title": "Kubernetes Podcast from Google",
+    "description": "A weekly podcast focused on what\u0027s happening in the Kubernetes community hosted by Abdel Sghiouar and Kaslin Fields. We cover Kubernetes, cloud-native applications, and other developments in the ecosystem. Abdel and Kaslin on Twitter at @KubernetesPod or by email at kubernetespodcast@google.com.",
+    "author": "gdevs.podcast@gmail.com (gdevs.podcast@gmail.com)",
+    "copyright": "This work is licensed under a Creative Commons License - Attribution-NonCommercial-NoDerivatives 4.0 International - http://creativecommons.org/licenses/by-nc-nd/4.0/",
+    "imageUrl": "https://static.libsyn.com/p/assets/a/3/a/a/a3aa4f08236059f5e55e3c100dce7605/NewKPodRoboWhite-20240924-1zwoxpn1sl.png",
+    "categoryIds": [
+      "0"
+    ]
+  },
+  {
+    "uri": "https://softskills.audio/feed.xml",
+    "title": "Soft Skills Engineering",
+    "description": "It takes more than great code to be a great engineer. Soft Skills Engineering is a weekly advice podcast for software developers about the non-technical stuff that goes into being a great software developer.",
+    "author": "Jamison Dance and Dave Smith",
+    "copyright": "2016 Jamison Dance and Dave Smith",
+    "imageUrl": "https://download.softskills.audio/sse-cover-art.png",
+    "categoryIds": [
+      "0"
+    ]
+  },
+  {
+    "uri": "https://stackoverflow.blog/podcast/feed/",
+    "title": "The Stack Overflow Podcast",
+    "description": "For more than a dozen years, the Stack Overflow Podcast has been exploring what it means to be a software developer and how the art and practice of programming is changing our world. From Rails to React, from Java to Node.js, join the Stack home team for conversations with fascinating guests to help you understand how technology is made and where it’s headed.",
+    "author": "The Stack Overflow Podcast",
+    "copyright": "All rights reserved 699484",
+    "imageUrl": "https://image.simplecastcdn.com/images/f0fdf349-149b-42f9-95d0-8ddf72185776/02a60604-9d42-4ec4-a716-8d9a2942f79c/3000x3000/stack-overflow-podcast-1080x1080.jpg?aid\u003drss_feed",
     "categoryIds": [
       "0"
     ]

@@ -3,11 +3,9 @@ package com.squad.castify.feature.explore.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.squad.castify.core.model.FollowablePodcast
 import com.squad.castify.core.model.UserEpisode
-import com.squad.castify.core.ui.FadeTransition
 import com.squad.castify.core.ui.SlideTransition
 import com.squad.castify.feature.explore.ExploreScreen
 import kotlinx.serialization.Serializable
@@ -31,7 +29,7 @@ fun NavController.navigateToExplore() =
 
 fun NavGraphBuilder.exploreScreen(
     onShareEpisode: ( String ) -> Unit,
-    onPodcastClick: ( FollowablePodcast ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
     composable<ExploreRoute>(
@@ -40,7 +38,7 @@ fun NavGraphBuilder.exploreScreen(
     ) {
         ExploreScreen(
             onShareEpisode = onShareEpisode,
-            onPodcastClick = onPodcastClick,
+            onNavigateToPodcast = onNavigateToPodcast,
             onNavigateToEpisode = onNavigateToEpisode,
         )
     }

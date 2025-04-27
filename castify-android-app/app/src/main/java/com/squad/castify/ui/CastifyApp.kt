@@ -3,7 +3,6 @@ package com.squad.castify.ui
 import android.content.Context
 import android.content.Intent
 import android.media.audiofx.AudioEffect
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -32,10 +31,8 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -44,24 +41,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -70,9 +61,8 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.squad.castify.R
 import com.squad.castify.core.designsystem.component.CastifyNavigationSuiteScaffold
-import com.squad.castify.core.designsystem.component.CastifyTopAppBar
+import com.squad.castify.core.designsystem.component.CastifyCenterAlignedTopAppBar
 import com.squad.castify.core.designsystem.icon.CastifyIcons
-import com.squad.castify.feature.home.navigation.HomeRoute
 import com.squad.castify.navigation.CastifyNavHost
 import com.squad.castify.navigation.LibraryDestination
 import com.squad.castify.navigation.TopLevelDestination
@@ -213,7 +203,7 @@ internal fun CastifyApp(
                 topBar = {
                     if ( destination != null ) {
                         shouldShowTopAppBar = true
-                        CastifyTopAppBar(
+                        CastifyCenterAlignedTopAppBar(
                             titleRes = destination.titleTextId,
                             navigationIcon = CastifyIcons.Search,
                             navigationIconContentDescription = "",

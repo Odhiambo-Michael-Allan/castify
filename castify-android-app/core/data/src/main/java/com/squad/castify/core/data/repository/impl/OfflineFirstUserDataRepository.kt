@@ -31,9 +31,9 @@ internal class OfflineFirstUserDataRepository @Inject constructor(
         castifyPreferencesDataSource.setDynamicColorPreference( useDynamicColor )
     }
 
-    override suspend fun setShouldHideOnboarding( shouldHideOnboarding: Boolean ) {
-        castifyPreferencesDataSource.setShouldHideOnboarding( shouldHideOnboarding )
-    }
+//    override suspend fun setShouldHideOnboarding( shouldHideOnboarding: Boolean ) {
+//        castifyPreferencesDataSource.setShouldHideOnboarding( shouldHideOnboarding )
+//    }
 
     override suspend fun setThemeBrand( themeBrand: ThemeBrand ) {
         castifyPreferencesDataSource.setThemeBrand( themeBrand )
@@ -65,5 +65,9 @@ internal class OfflineFirstUserDataRepository @Inject constructor(
 
     override suspend fun setUrisOfEpisodesInQueue( episodeUris: Set<String> ) {
         castifyPreferencesDataSource.setUrisOfEpisodesInQueue( episodeUris )
+    }
+
+    override suspend fun setShouldHideCompletedEpisodes( hideCompletedEpisodes: Boolean ) {
+        castifyPreferencesDataSource.setShouldHideCompletedEpisodes( hideCompletedEpisodes )
     }
 }

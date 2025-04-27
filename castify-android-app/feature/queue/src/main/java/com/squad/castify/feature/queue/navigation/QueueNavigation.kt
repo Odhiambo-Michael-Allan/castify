@@ -31,6 +31,7 @@ fun NavGraphBuilder.queueScreen(
     onNavigateBack: () -> Unit,
     onShareEpisode: ( String ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
     composable<QueueRoute>(
         enterTransition = { SlideTransition.slideUp.enterTransition() }
@@ -38,7 +39,8 @@ fun NavGraphBuilder.queueScreen(
         QueueScreen(
             onNavigateBack = onNavigateBack,
             onShareEpisode = onShareEpisode,
-            onNavigateToEpisode = onNavigateToEpisode
+            onNavigateToEpisode = onNavigateToEpisode,
+            onNavigateToPodcast = onNavigateToPodcast,
         )
     }
 }

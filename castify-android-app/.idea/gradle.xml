@@ -44,6 +44,7 @@
             <option value="$PROJECT_DIR$/feature/downloads" />
             <option value="$PROJECT_DIR$/feature/episode" />
             <option value="$PROJECT_DIR$/feature/explore" />
+            <option value="$PROJECT_DIR$/feature/history" />
             <option value="$PROJECT_DIR$/feature/home" />
             <option value="$PROJECT_DIR$/feature/nowplaying" />
             <option value="$PROJECT_DIR$/feature/podcast" />

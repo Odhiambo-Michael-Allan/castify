@@ -16,4 +16,5 @@ data class UserData(
     val followedPodcasts : Set<String>,
     val listenedEpisodes: Set<String>,
     val urisOfEpisodesInQueue: Set<String>,
+    val hideCompletedEpisodes: Boolean,
 )

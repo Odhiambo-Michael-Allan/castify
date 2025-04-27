@@ -41,40 +41,16 @@ fun CastifyNavigationSuiteScaffold(
 ) {
     val layoutType = NavigationSuiteScaffoldDefaults
         .calculateFromAdaptiveInfo( windowAdaptiveInfo )
-//    val navigationSuiteItemColors = NavigationSuiteItemColors(
-//        navigationBarItemColors = NavigationBarItemDefaults.colors(
-//            selectedIconColor = CastifyNavigationDefaults.navigationSelectedItemColor(),
-//            unselectedIconColor = CastifyNavigationDefaults.navigationContentColor(),
-//            selectedTextColor = CastifyNavigationDefaults.navigationSelectedItemColor(),
-//            unselectedTextColor = CastifyNavigationDefaults.navigationContentColor(),
-//            indicatorColor = CastifyNavigationDefaults.navigationIndicatorColor(),
-//        ),
-//        navigationRailItemColors = NavigationRailItemDefaults.colors(
-//            selectedIconColor = CastifyNavigationDefaults.navigationSelectedItemColor(),
-//            unselectedIconColor = CastifyNavigationDefaults.navigationContentColor(),
-//            selectedTextColor = CastifyNavigationDefaults.navigationSelectedItemColor(),
-//            unselectedTextColor = CastifyNavigationDefaults.navigationContentColor(),
-//            indicatorColor = CastifyNavigationDefaults.navigationIndicatorColor(),
-//        ),
-//        navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(
-//            selectedIconColor = CastifyNavigationDefaults.navigationSelectedItemColor(),
-//            unselectedIconColor = CastifyNavigationDefaults.navigationContentColor(),
-//            selectedTextColor = CastifyNavigationDefaults.navigationSelectedItemColor(),
-//            unselectedTextColor = CastifyNavigationDefaults.navigationContentColor(),
-//        ),
-//    )
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
             CastifyNavigationSuiteScope(
                 navigationSuiteScope = this,
-//                navigationSuiteItemColors = navigationSuiteItemColors,
-            ).run(navigationSuiteItems)
+            ).run( navigationSuiteItems )
         },
         layoutType = layoutType,
         containerColor = Color.Transparent,
         navigationSuiteColors = NavigationSuiteDefaults.colors(
-//            navigationBarContentColor = CastifyNavigationDefaults.navigationContentColor(),
             navigationRailContainerColor = Color.Transparent,
         ),
         modifier = modifier,
@@ -88,7 +64,6 @@ fun CastifyNavigationSuiteScaffold(
  */
 class CastifyNavigationSuiteScope internal constructor(
     private val navigationSuiteScope: NavigationSuiteScope,
-//    private val navigationSuiteItemColors: NavigationSuiteItemColors
 ) {
     fun item(
         selected: Boolean,
@@ -108,7 +83,6 @@ class CastifyNavigationSuiteScope internal constructor(
             }
         },
         label = label,
-//        colors = navigationSuiteItemColors,
         modifier = modifier
     )
 }
@@ -127,7 +101,6 @@ fun CastifyNavigationBar(
 ) {
     NavigationBar(
         modifier = modifier,
-//        contentColor = CastifyNavigationDefaults.navigationContentColor(),
         tonalElevation = 0.dp,
         content = content
     )
@@ -167,13 +140,6 @@ fun RowScope.CastifyNavigationBarItem(
         enabled = enabled,
         label = label,
         alwaysShowLabel = alwaysShowLabel,
-//        colors = NavigationBarItemDefaults.colors(
-//            selectedIconColor = CastifyNavigationDefaults.navigationSelectedItemColor(),
-//            unselectedIconColor = CastifyNavigationDefaults.navigationContentColor(),
-//            selectedTextColor = CastifyNavigationDefaults.navigationSelectedItemColor(),
-//            unselectedTextColor = CastifyNavigationDefaults.navigationContentColor(),
-//            indicatorColor = CastifyNavigationDefaults.navigationIndicatorColor(),
-//        ),
     )
 }
 
@@ -218,19 +184,3 @@ fun CastifyNavigationBarPreview() {
         }
     }
 }
-
-/**
- * Castify navigation default values.
- */
-//object CastifyNavigationDefaults {
-//    @Composable
-//    fun navigationContentColor() = MaterialTheme.colorScheme.onSurfaceVariant
-//
-//    @Composable
-//    fun navigationSelectedItemColor() = MaterialTheme.colorScheme.primaryContainer.copy(
-//        alpha = 0.5f
-//    )
-//
-//    @Composable
-//    fun navigationIndicatorColor() = MaterialTheme.colorScheme.primaryContainer
-//}

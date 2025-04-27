@@ -80,6 +80,7 @@ internal class OfflineFirstEpisodesRepository @Inject constructor(
                 val followedPodcastUris = userData.followedPodcasts
 
                 println( "NUMBER OF FOLLOWED PODCASTS: ${followedPodcastUris.size}" )
+                println( "HAS ONBOARDED: $hasOnboarded" )
 
                 val urisOfExistingEpisodesForFollowedPodcastsThatHaveChanged = when {
                     hasOnboarded -> episodeDao

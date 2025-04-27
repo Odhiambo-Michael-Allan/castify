@@ -3,6 +3,7 @@ package com.squad.castify.core.database.di
 import com.squad.castify.core.database.CastifyDatabase
 import com.squad.castify.core.database.dao.CategoryDao
 import com.squad.castify.core.database.dao.EpisodeDao
+import com.squad.castify.core.database.dao.HistoryDao
 import com.squad.castify.core.database.dao.PodcastDao
 import com.squad.castify.core.database.dao.QueueDao
 import dagger.Module
@@ -33,4 +34,9 @@ internal object DaosModule {
     fun providesQueueDao(
         database: CastifyDatabase
     ): QueueDao = database.queueDao()
+
+    @Provides
+    fun providesHistoryDao(
+        database: CastifyDatabase
+    ): HistoryDao = database.historyDao()
 }

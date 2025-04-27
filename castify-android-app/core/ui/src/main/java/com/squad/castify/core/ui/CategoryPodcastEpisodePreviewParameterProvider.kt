@@ -48,7 +48,8 @@ object PreviewParameterData {
         seekForwardDuration = 30,
         currentlyPlayingEpisodeUri = "",
         currentlyPlayingEpisodeDurationPlayed = Duration.ZERO,
-        urisOfEpisodesInQueue = emptySet()
+        urisOfEpisodesInQueue = emptySet(),
+        hideCompletedEpisodes = false
     )
 
     val categories = listOf(

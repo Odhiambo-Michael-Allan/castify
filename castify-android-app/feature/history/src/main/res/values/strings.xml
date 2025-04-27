@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="history">History</string>
+    <string name="empty">Play history is empty</string>
+    <string name="empty_description">Tap on this button on any episode to listen and
+        add it to your history</string>
+    <string name="show_completed_episodes">Show completed episodes</string>
+    <string name="hide_completed_episodes">Hide completed episodes</string>
+
+</resources>

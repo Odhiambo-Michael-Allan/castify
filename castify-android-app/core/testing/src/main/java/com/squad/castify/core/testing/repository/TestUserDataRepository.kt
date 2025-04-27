@@ -66,15 +66,15 @@ class TestUserDataRepository : UserDataRepository {
         }
     }
 
-    override suspend fun setShouldHideOnboarding( shouldHideOnboarding: Boolean ) {
-        currentUserData.let { current ->
-            _userData.tryEmit(
-                current.copy(
-                    shouldHideOnboarding = shouldHideOnboarding
-                )
-            )
-        }
-    }
+//    override suspend fun setShouldHideOnboarding( shouldHideOnboarding: Boolean ) {
+//        currentUserData.let { current ->
+//            _userData.tryEmit(
+//                current.copy(
+//                    shouldHideOnboarding = shouldHideOnboarding
+//                )
+//            )
+//        }
+//    }
 
     override suspend fun setThemeBrand( themeBrand: ThemeBrand ) {
         currentUserData.let { current ->
@@ -150,6 +150,16 @@ class TestUserDataRepository : UserDataRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun setShouldHideCompletedEpisodes( hideCompletedEpisodes: Boolean ) {
+        currentUserData.let { current ->
+            _userData.tryEmit(
+                current.copy(
+                    hideCompletedEpisodes = hideCompletedEpisodes
+                )
+            )
+        }
+    }
+
     /**
      * A test-only API to allow setting of user data directly.
      */
@@ -171,5 +181,6 @@ val emptyUserData = UserData(
     currentlyPlayingEpisodeDurationPlayed = Duration.ZERO,
     followedPodcasts = emptySet(),
     listenedEpisodes = emptySet(),
-    urisOfEpisodesInQueue = emptySet()
+    urisOfEpisodesInQueue = emptySet(),
+    hideCompletedEpisodes = false,
 )

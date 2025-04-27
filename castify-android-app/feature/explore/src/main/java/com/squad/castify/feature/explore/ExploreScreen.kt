@@ -84,7 +84,7 @@ internal fun ExploreScreen(
     modifier: Modifier = Modifier,
     viewModel: ExploreScreenViewModel = hiltViewModel(),
     onShareEpisode: ( String ) -> Unit,
-    onPodcastClick: ( FollowablePodcast ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
 ) {
 
@@ -108,7 +108,7 @@ internal fun ExploreScreen(
         onShareEpisode = onShareEpisode,
         onMarkAsCompleted = viewModel::markAsCompleted,
         onRequestSync = viewModel::requestSync,
-        onPodcastClick = onPodcastClick,
+        onNavigateToPodcast = onNavigateToPodcast,
         onNavigateToEpisode = onNavigateToEpisode,
         onAddEpisodeToQueue = viewModel::addEpisodeToQueue,
         onRemoveEpisodeFromQueue = viewModel::removeEpisodeFromQueue,
@@ -133,7 +133,7 @@ internal fun ExploreScreen(
     onShareEpisode: (String ) -> Unit,
     onMarkAsCompleted: ( UserEpisode ) -> Unit,
     onRequestSync: () -> Unit,
-    onPodcastClick: ( FollowablePodcast ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
     onAddEpisodeToQueue: ( UserEpisode ) -> Unit,
     onRemoveEpisodeFromQueue: ( UserEpisode ) -> Unit,
@@ -183,7 +183,7 @@ internal fun ExploreScreen(
                                 podcastsFeed(
                                     podcastFeedUiState = podcastFeedUiState,
                                     onFollowPodcast = onFollowPodcast,
-                                    onPodcastClick = onPodcastClick,
+                                    onPodcastClick = { onNavigateToPodcast( it.podcast.uri ) },
                                 )
                                 when ( podcastFeedUiState ) {
                                     is PodcastFeedUiState.Success -> {
@@ -207,6 +207,7 @@ internal fun ExploreScreen(
                                             onAddEpisodeToQueue = onAddEpisodeToQueue,
                                             isPresentInQueue = { podcastFeedUiState.episodesInQueue.contains( it.uri ) },
                                             onRemoveEpisodeFromQueue = onRemoveEpisodeFromQueue,
+                                            onNavigateToPodcast = onNavigateToPodcast
                                         )
                                     }
                                     else -> {}
@@ -472,7 +473,7 @@ private fun ExploreScreenPopulated(
             onShareEpisode = {},
             onMarkAsCompleted = {},
             onRequestSync = {},
-            onPodcastClick = {},
+            onNavigateToPodcast = {},
             onNavigateToEpisode = {},
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
@@ -499,7 +500,7 @@ private fun ExploreScreenLoading() {
             onShareEpisode = {},
             onMarkAsCompleted = {},
             onRequestSync = {},
-            onPodcastClick = {},
+            onNavigateToPodcast = {},
             onNavigateToEpisode = {},
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},
@@ -553,7 +554,7 @@ private fun ExploreScreenPopulatedAndLoading(
         onShareEpisode = {},
         onMarkAsCompleted = {},
         onRequestSync = {},
-        onPodcastClick = {},
+        onNavigateToPodcast = {},
         onNavigateToEpisode = {},
         onAddEpisodeToQueue = {},
         onRemoveEpisodeFromQueue = {},
@@ -597,7 +598,7 @@ private fun ExploreScreenError() {
             onShareEpisode = {},
             onMarkAsCompleted = {},
             onRequestSync = {},
-            onPodcastClick = {},
+            onNavigateToPodcast = {},
             onNavigateToEpisode = {},
             onAddEpisodeToQueue = {},
             onRemoveEpisodeFromQueue = {},

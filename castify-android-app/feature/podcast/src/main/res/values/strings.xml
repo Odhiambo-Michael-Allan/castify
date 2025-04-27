@@ -6,5 +6,6 @@
     <string name="num_of_episodes">%d Episodes</string>
     <string name="more">More</string>
     <string name="less">Less</string>
+    <string name="view_rss">View RSS</string>
 
 </resources>

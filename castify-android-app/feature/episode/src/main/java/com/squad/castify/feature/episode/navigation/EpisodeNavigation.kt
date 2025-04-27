@@ -44,6 +44,7 @@ fun NavGraphBuilder.episodeScreen(
     onShareEpisode: ( String ) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToEpisode: ( UserEpisode ) -> Unit,
+    onNavigateToPodcast: ( String ) -> Unit,
 ) {
     composable<EpisodeRoute>(
         enterTransition = { SlideTransition.slideUp.enterTransition() }
@@ -52,6 +53,7 @@ fun NavGraphBuilder.episodeScreen(
             onShareEpisode = onShareEpisode,
             onNavigateBack = onNavigateBack,
             onNavigateToEpisode = onNavigateToEpisode,
+            onNavigateToPodcast = onNavigateToPodcast,
         )
     }
 }

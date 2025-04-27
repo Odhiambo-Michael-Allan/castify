@@ -37,7 +37,7 @@ class CastifyPreferencesDataSource @Inject constructor(
                     DarkThemeConfigProto.DARK_THEME_CONFIG_DARK -> DarkThemeConfig.DARK
                 },
                 useDynamicColor = it.useDynamicColor,
-                shouldHideOnboarding = it.shouldHideOnboarding,
+                shouldHideOnboarding = it.followedPodcastIdsMap.isNotEmpty(),
                 followedPodcasts = it.followedPodcastIdsMap.keys,
                 listenedEpisodes = it.listenedEpisodeIdsMap.keys,
                 playbackPitch = it.playbackPitch.takeIf { pitch -> pitch > 0 }
@@ -51,14 +51,23 @@ class CastifyPreferencesDataSource @Inject constructor(
                 currentlyPlayingEpisodeUri = it.currentlyPlayingEpisodeUri,
                 currentlyPlayingEpisodeDurationPlayed = Duration.parseOrNull(
                     it.currentlyPlayingEpisodeDurationPlayed ) ?: Duration.ZERO,
-                urisOfEpisodesInQueue = it.urisOfEpisodesInQueueMap.keys
+                urisOfEpisodesInQueue = it.urisOfEpisodesInQueueMap.keys,
+                hideCompletedEpisodes = it.hideCompletedEpisodes,
             )
         }
 
-    suspend fun setShouldHideOnboarding( shouldHideOnboarding: Boolean ) {
+//    suspend fun setShouldHideOnboarding( shouldHideOnboarding: Boolean ) {
+//        userPreferencesDataStore.updateData {
+//            it.copy {
+//                this.shouldHideOnboarding = shouldHideOnboarding
+//            }
+//        }
+//    }
+
+    suspend fun setShouldHideCompletedEpisodes( hideCompletedEpisodes: Boolean ) {
         userPreferencesDataStore.updateData {
             it.copy {
-                this.shouldHideOnboarding = shouldHideOnboarding
+                this.hideCompletedEpisodes = hideCompletedEpisodes
             }
         }
     }
@@ -69,7 +78,7 @@ class CastifyPreferencesDataSource @Inject constructor(
                 it.copy {
                     if ( followed ) followedPodcastIds.put( podcastId, true )
                     else followedPodcastIds.remove( podcastId )
-                    updateShouldHideOnboardingIfNecessary()
+                    shouldHideOnboarding = !followedPodcastIds.isEmpty()
                 }
             }
         } catch ( ioException: IOException ) {
@@ -208,7 +217,7 @@ class CastifyPreferencesDataSource @Inject constructor(
 }
 
 private fun UserPreferencesKt.Dsl.updateShouldHideOnboardingIfNecessary() {
-    if ( followedPodcastIds.isEmpty() ) shouldHideOnboarding = false
+    shouldHideOnboarding = !followedPodcastIds.isEmpty()
 }
 
 const val DEFAULT_PLAYBACK_PITCH = 1f
