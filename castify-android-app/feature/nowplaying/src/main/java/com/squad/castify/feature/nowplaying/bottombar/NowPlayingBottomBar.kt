@@ -54,14 +54,37 @@ fun NowPlayingBottomBar(
     onShowNowPlayingScreen: () -> Unit,
 ) {
     val nowPlayingBottomBarUiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val playbackPosition by viewModel.playbackPosition.collectAsStateWithLifecycle()
 
-    NowPlayingBottomBarContent(
-        uiState = nowPlayingBottomBarUiState,
-        playbackPosition = playbackPosition,
-        onTogglePlay = viewModel::togglePlay,
-        onShowNowPlayingScreen = onShowNowPlayingScreen
-    )
+    Column (
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        NowPlayingBottomBarContent(
+            uiState = nowPlayingBottomBarUiState,
+            onTogglePlay = viewModel::togglePlay,
+            onShowNowPlayingScreen = onShowNowPlayingScreen
+        )
+        // Progress Bar
+        Box(
+            modifier = Modifier
+                .height(1.dp)
+                .fillMaxWidth()
+        ) {
+            val playbackPosition by viewModel.playbackPosition.collectAsStateWithLifecycle()
+            Box(
+                modifier = Modifier
+                    .background( MaterialTheme.colorScheme.primary.copy( 0.5f ) )
+                    .fillMaxWidth( playbackPosition.bufferedRatio )
+                    .fillMaxHeight()
+            )
+            Box(
+                modifier = Modifier
+                    .align( Alignment.CenterStart )
+                    .background( MaterialTheme.colorScheme.primary )
+                    .fillMaxWidth( playbackPosition.ratio )
+                    .fillMaxHeight()
+            )
+        }
+    }
 
 }
 
@@ -69,7 +92,6 @@ fun NowPlayingBottomBar(
 private fun NowPlayingBottomBarContent(
     modifier: Modifier = Modifier,
     uiState: NowPlayingScreenUiState,
-    playbackPosition: PlaybackPosition,
     onTogglePlay: ( Episode ) -> Unit,
     onShowNowPlayingScreen: () -> Unit,
 ) {
@@ -133,26 +155,6 @@ private fun NowPlayingBottomBarContent(
                                 }
                             }
                         }
-                        // Progress Bar
-                        Box(
-                            modifier = Modifier
-                                .height(1.dp)
-                                .fillMaxWidth()
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .background( MaterialTheme.colorScheme.primary.copy( 0.5f ) )
-                                    .fillMaxWidth( playbackPosition.bufferedRatio )
-                                    .fillMaxHeight()
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .align( Alignment.CenterStart )
-                                    .background( MaterialTheme.colorScheme.primary )
-                                    .fillMaxWidth( playbackPosition.ratio )
-                                    .fillMaxHeight()
-                            )
-                        }
                     }
                 }
             }
@@ -198,7 +200,6 @@ private fun NowPlayingBottomBarContentPreview(
                 seekBackDuration = 10,
                 seekForwardDuration = 30
             ),
-            playbackPosition = PlaybackPosition( 3, 4, 5 ),
             onTogglePlay = {},
             onShowNowPlayingScreen = {}
         )

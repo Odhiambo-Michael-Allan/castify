@@ -49,6 +49,7 @@
             <option value="$PROJECT_DIR$/feature/nowplaying" />
             <option value="$PROJECT_DIR$/feature/podcast" />
             <option value="$PROJECT_DIR$/feature/queue" />
+            <option value="$PROJECT_DIR$/feature/settings" />
             <option value="$PROJECT_DIR$/feature/subscriptions" />
             <option value="$PROJECT_DIR$/sync" />
           </set>

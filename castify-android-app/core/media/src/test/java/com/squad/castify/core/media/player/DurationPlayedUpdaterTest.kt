@@ -49,30 +49,45 @@ class DurationPlayedUpdaterTest {
             episodesRepository.fetchEpisodeWithUri( "episode-0-uri" ).first()?.durationPlayed
         )
 
-        playbackPositionUpdater.setTotalDurationPreviousMediaItemPlayed( 3L )
+        playbackPositionUpdater.setDurationPlayed( 3L )
 
+        // Playing episode hasn't changed, duration played should not be saved
+        assertEquals(
+            (0L).toDuration( DurationUnit.MILLISECONDS ),
+            episodesRepository.fetchEpisodeWithUri( "episode-0-uri" ).first()?.durationPlayed
+        )
+
+        episodePlayer.setPlayerState(
+            PlayerState(
+                currentlyPlayingEpisodeUri = "episode-1-uri"
+            )
+        )
+
+        // Playing episode has changed so duration played of previous episode should be saved
         assertEquals(
             (3L).toDuration( DurationUnit.MILLISECONDS ),
             episodesRepository.fetchEpisodeWithUri( "episode-0-uri" ).first()?.durationPlayed
         )
-    }
 
-    @Test
-    fun whenTheDurationPlayedIsGreaterThanTheEpisodeDuration_durationPlayedIsSetToEpisodeDuration() = runTest {
-        episodesRepository.sendEpisodes( sampleEpisodes )
+        playbackPositionUpdater.setDurationPlayed( 6L ) // Check duration played does not exceed episode duration
+
+        // Playing episode hasn't changed, so duration played should not have changed
+        assertEquals(
+            (3L).toDuration( DurationUnit.MILLISECONDS ),
+            episodesRepository.fetchEpisodeWithUri( "episode-1-uri" ).first()?.durationPlayed
+        )
+
         episodePlayer.setPlayerState(
             PlayerState(
-                currentlyPlayingEpisodeUri = "episode-0-uri"
+                currentlyPlayingEpisodeUri = "episode-2-uri"
             )
         )
 
-        playbackPositionUpdater.setTotalDurationPreviousMediaItemPlayed( 5L )
-
+        // Playing episode has changed, so duration played of previous episode should be saved
         assertEquals(
-            (4L).toDuration( DurationUnit.MILLISECONDS ),
-            episodesRepository.fetchEpisodeWithUri( "episode-0-uri" ).first()?.durationPlayed
+            (5L).toDuration( DurationUnit.MILLISECONDS ), // Duration played does not exceed episode duration
+            episodesRepository.fetchEpisodeWithUri( "episode-1-uri" ).first()?.durationPlayed
         )
-
     }
 
 }
@@ -107,8 +122,8 @@ private val sampleEpisodes = listOf(
         podcast = samplePodcast,
         audioUri = "",
         audioMimeType = "",
-        duration = Duration.ZERO,
-        durationPlayed = Duration.ZERO
+        duration = (5L).toDuration( DurationUnit.MILLISECONDS ),
+        durationPlayed = (3L).toDuration( DurationUnit.MILLISECONDS )
     ),
     Episode(
         uri = "episode-2-uri",

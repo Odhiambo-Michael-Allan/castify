@@ -25,6 +25,8 @@ class DurationPlayedUpdaterImpl @Inject constructor(
 ) : DurationPlayedUpdater {
 
     private val coroutineScope = CoroutineScope( dispatcher + SupervisorJob() )
+    private var currentlyPlayingEpisodeUri: String? = null
+    private var currentlyPlayingEpisodeDurationPlayed = 0L
 
     init {
         episodePlayerServiceConnection.addOnDisconnectListener { coroutineScope.cancel() }
@@ -35,19 +37,23 @@ class DurationPlayedUpdaterImpl @Inject constructor(
             ) { playerState, playbackPosition ->
                 println( "DURATION PLAYED UPDATER: PLAYER STATE: $playerState" )
                 println( "DURATION PLAYED UPDATER: DURATION PLAYED: ${playbackPosition.played}" )
-                playerState.currentlyPlayingEpisodeUri?.let { uri ->
-                    episodesRepository.fetchEpisodeWithUri( uri ).first()?.let { episode ->
-                        var durationPlayed = playbackPosition.played.toDuration( DurationUnit.MILLISECONDS )
-                        if ( durationPlayed > episode.duration ) {
-                            durationPlayed = episode.duration
-                        }
-                        episodesRepository.upsertEpisode(
-                            episode.copy(
-                                durationPlayed = durationPlayed
+                if ( currentlyPlayingEpisodeUri != playerState.currentlyPlayingEpisodeUri ) {
+                    currentlyPlayingEpisodeUri?.let { uri ->
+                        episodesRepository.fetchEpisodeWithUri( uri ).first()?.let { episode ->
+                            var durationPlayed = playbackPosition.played
+                            if ( durationPlayed > episode.duration.inWholeMilliseconds ) {
+                                durationPlayed = episode.duration.inWholeMilliseconds
+                            }
+                            episodesRepository.upsertEpisode(
+                                episode.copy(
+                                    durationPlayed = durationPlayed.toDuration( DurationUnit.MILLISECONDS )
+                                )
                             )
-                        )
+                        }
                     }
                 }
+                currentlyPlayingEpisodeUri = playerState.currentlyPlayingEpisodeUri
+                currentlyPlayingEpisodeDurationPlayed = playbackPosition.played
             }.collect()
         }
     }

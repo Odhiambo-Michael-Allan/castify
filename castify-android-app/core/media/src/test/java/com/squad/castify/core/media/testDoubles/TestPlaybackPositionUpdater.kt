@@ -16,7 +16,7 @@ class TestPlaybackPositionUpdater : PlaybackPositionUpdater {
         TODO("Not yet implemented")
     }
 
-    fun setTotalDurationPreviousMediaItemPlayed( duration: Long ) {
+    fun setDurationPlayed( duration: Long ) {
         _playbackPosition.value = _playbackPosition.value.copy( played = duration )
     }
 
